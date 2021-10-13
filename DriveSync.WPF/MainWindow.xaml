@@ -94,11 +94,28 @@
                 Background="#FFFBF7F4"
                 Padding="10">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                <TextBox Background="Transparent"
+                <!--<TextBox Background="Transparent"
                          BorderThickness="0"
                          IsReadOnly="True"
                          TextWrapping="NoWrap"
-                         Text="{Binding SourceDisplayText, Mode=OneWay}"/>
+                         Text="{Binding SourceDisplayText, Mode=OneWay}"/>-->
+                <ListView ItemsSource="{Binding SourceDirectories}" Background="Transparent" BorderThickness="0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+
+                                <Image Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Item.Name}" />
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" Text="{Binding IsDifferent}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </ScrollViewer>
         </Border>
         
@@ -109,11 +126,28 @@
                 Background="#FFFBF7F4"
                 Padding="10">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                <TextBox Background="Transparent"
+                <!--<TextBox Background="Transparent"
                          BorderThickness="0"
                          IsReadOnly="True"
                          TextWrapping="Wrap"
-                         Text="{Binding TargetDisplayText, Mode=OneWay}"/>
+                         Text="{Binding TargetDisplayText, Mode=OneWay}"/>-->
+                <ListView ItemsSource="{Binding TargetDirectories}" Background="Transparent" BorderThickness="0">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+
+                                <Image Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                                <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Item.Name}" />
+                                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" Text="{Binding IsDifferent}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </ScrollViewer>
             </Border>
         <!--Button Area-->

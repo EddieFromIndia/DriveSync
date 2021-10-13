@@ -1,5 +1,7 @@
-﻿using System;
+﻿using DriveSync.Models;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,8 +17,9 @@ namespace DriveSync.ViewModels
         #endregion
 
         #region Public Properties
-        public string SourceDisplayText { get; set; } = textIntroMessage;
-        public string TargetDisplayText { get; set; }
+        public ObservableCollection<PathItem> SourceDirectories { get; set; } = new ObservableCollection<PathItem>();
+        public ObservableCollection<PathItem> TargetDirectories { get; set; } = new ObservableCollection<PathItem>();
+        public string DisplayText { get; set; } = textIntroMessage;
         public string SourcePath { get; set; }
         public string TargetPath { get; set; }
         public string DeletePath { get; set; }
@@ -97,94 +100,58 @@ namespace DriveSync.ViewModels
 
         private async void ScanAsync(object sender)
         {
-            List<string> sourceDirectories = Directory.GetDirectories(SourcePath).ToList();
-            List<string> targetDirectories = Directory.GetDirectories(TargetPath).ToList();
+            DisplayText = "Scanning...";
 
-            SourceDisplayText = "Scanning...";
-            TargetDisplayText = "Scanning...";
-
-            foreach (string sourceDir in sourceDirectories.ToList())
+            foreach (string dir in Directory.GetDirectories(SourcePath))
             {
-                foreach (string targetDir in targetDirectories.ToList())
-                {
-                    if (await CompareDirectoriesAsync(targetDir, sourceDir))
-                    {
-                        _ = sourceDirectories.Remove(sourceDir);
-                        _ = targetDirectories.Remove(targetDir);
-                    }
-                }
+                SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Exists = false, IsDifferent = true, IsPathCorrect = false, RealPath = null });
             }
 
-            List<string> sourceFiles = Directory.GetFiles(SourcePath).ToList();
-            List<string> targetFiles = Directory.GetFiles(TargetPath).ToList();
-
-            foreach (string sourceFile in sourceFiles.ToList())
+            foreach (string file in Directory.GetFiles(SourcePath))
             {
-                foreach (string targetFile in targetFiles.ToList())
-                {
-                    if (await CompareDirectoriesAsync(targetFile, sourceFile))
-                    {
-                        _ = sourceFiles.Remove(sourceFile);
-                        _ = targetFiles.Remove(targetFile);
-                    }
-                }
+                SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Exists = false, IsDifferent = true, IsPathCorrect = false, RealPath = null });
             }
 
-            if (sourceDirectories.Count == 0 && targetDirectories.Count == 0 && sourceFiles.Count == 0 && targetFiles.Count == 0)
+            foreach (string dir in Directory.GetDirectories(TargetPath))
             {
-                SourceDisplayText = "No discrepancies found.";
-                TargetDisplayText = "No discrepancies found.";
+                TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Exists = false, IsDifferent = true, IsPathCorrect = false, RealPath = null });
             }
-            else
+
+            foreach (string file in Directory.GetFiles(TargetPath))
             {
-                SourceDisplayText = string.Empty;
-                TargetDisplayText = string.Empty;
-                if (sourceDirectories.Count > 0)
-                {
-                    SourceDisplayText += "*****INCONSISTENT DIRECTORIES:*****" + Environment.NewLine + Environment.NewLine;
+                TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Exists = false, IsDifferent = true, IsPathCorrect = false, RealPath = null });
+            }
 
-                    foreach (string directory in sourceDirectories)
+            foreach (PathItem sourceDir in SourceDirectories)
+            {
+                // Checks if the source directory exists in target
+                if (Directory.Exists(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), TargetPath)))
+                {
+                    SourceDirectories[SourceDirectories.IndexOf(sourceDir)].Exists = true;
+                    SourceDirectories[SourceDirectories.IndexOf(sourceDir)].IsPathCorrect = true;
+
+                    foreach (PathItem targetDir in TargetDirectories)
                     {
-                        SourceDisplayText += directory + Environment.NewLine;
+                        if (targetDir.Item.Name == sourceDir.Item.Name)
+                        {
+                            TargetDirectories[TargetDirectories.IndexOf(targetDir)].Exists = true;
+                            TargetDirectories[TargetDirectories.IndexOf(targetDir)].IsPathCorrect = true;
+                        }
                     }
 
-                    SourceDisplayText += Environment.NewLine;
-                }
-
-                if (targetDirectories.Count > 0)
-                {
-                    TargetDisplayText += "*****INCONSISTENT DIRECTORIES:*****" + Environment.NewLine + Environment.NewLine;
-
-                    foreach (string directory in targetDirectories)
+                    // Checks if source and target directories are equal
+                    if (await CompareDirectoriesAsync(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), TargetPath), sourceDir.Item.FullName))
                     {
-                        TargetDisplayText += directory + Environment.NewLine;
+                        SourceDirectories[SourceDirectories.IndexOf(sourceDir)].IsDifferent = false;
+
+                        foreach (PathItem targetDir in TargetDirectories)
+                        {
+                            if (targetDir.Item.Name == sourceDir.Item.Name)
+                            {
+                                TargetDirectories[TargetDirectories.IndexOf(targetDir)].IsDifferent = false;
+                            }
+                        }
                     }
-
-                    TargetDisplayText += Environment.NewLine;
-                }
-
-                if (sourceFiles.Count > 0)
-                {
-                    SourceDisplayText += "*****INCONSISTENT FILES:*****" + Environment.NewLine + Environment.NewLine;
-
-                    foreach (string file in sourceFiles)
-                    {
-                        SourceDisplayText += file + Environment.NewLine;
-                    }
-
-                    SourceDisplayText += Environment.NewLine;
-                }
-
-                if (targetFiles.Count > 0)
-                {
-                    TargetDisplayText += "*****INCONSISTENT FILES:*****" + Environment.NewLine + Environment.NewLine;
-
-                    foreach (string file in targetFiles)
-                    {
-                        TargetDisplayText += file + Environment.NewLine;
-                    }
-
-                    TargetDisplayText += Environment.NewLine;
                 }
             }
         }
@@ -204,15 +171,12 @@ namespace DriveSync.ViewModels
                     {
                         if (MessageBox.Show("This will overwrite any files present in the target! Are you sure?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                         {
-                            string previousSourceMessage = SourceDisplayText;
-                            string previousTargetMessage = TargetDisplayText;
-                            SourceDisplayText = "Copying...";
-                            TargetDisplayText = "Copying...";
+                            string previousSourceMessage = DisplayText;
+                            DisplayText = "Copying...";
 
                             await Task.Run(() => CopyFilesRecursively(SourcePath, TargetPath));
 
-                            SourceDisplayText = previousSourceMessage;
-                            TargetDisplayText = previousTargetMessage;
+                            DisplayText = previousSourceMessage;
                         }
                     }
                     else
@@ -233,8 +197,7 @@ namespace DriveSync.ViewModels
 
         private bool CanClear(object sender)
         {
-            if (SourceDisplayText == textIntroMessage
-                && string.IsNullOrWhiteSpace(TargetDisplayText)
+            if (DisplayText == textIntroMessage
                 && string.IsNullOrWhiteSpace(SourcePath)
                 && string.IsNullOrWhiteSpace(TargetPath)
                 && string.IsNullOrWhiteSpace(DeletePath))
@@ -247,8 +210,10 @@ namespace DriveSync.ViewModels
 
         private void Clear(object sender)
         {
-            SourceDisplayText = textIntroMessage;
-            TargetDisplayText = string.Empty;
+            DisplayText = textIntroMessage;
+
+            SourceDirectories = new ObservableCollection<PathItem>();
+            TargetDirectories = new ObservableCollection<PathItem>();
 
             SourcePath = string.Empty;
             TargetPath = string.Empty;

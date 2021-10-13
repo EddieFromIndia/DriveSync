@@ -9,17 +9,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\file.png" />
+    <None Remove="Assets\folder.png" />
     <None Remove="Assets\logo.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\file.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\folder.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 
   <ItemGroup>
