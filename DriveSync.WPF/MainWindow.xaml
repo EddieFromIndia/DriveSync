@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:DriveSync"
         mc:Ignorable="d"
         Icon="Assets\logo.png"
@@ -87,69 +88,123 @@
                     CommandParameter="Target"/>
         </Grid>
 
-        <Border Grid.Column="1"
-                Grid.Row="4"
-                BorderBrush="#FF92959A"
-                BorderThickness="1"
-                Background="#FFFBF7F4"
-                Padding="10">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                <!--<TextBox Background="Transparent"
-                         BorderThickness="0"
-                         IsReadOnly="True"
-                         TextWrapping="NoWrap"
-                         Text="{Binding SourceDisplayText, Mode=OneWay}"/>-->
-                <ListView ItemsSource="{Binding SourceDirectories}" Background="Transparent" BorderThickness="0">
+        <!--Source Display Area-->
+        <Grid Grid.Column="1" Grid.Row="4">
+            <Border BorderBrush="#FF92959A"
+                    BorderThickness="1"
+                    Background="#FFFBF7F4"
+                    Padding="10">
+                <ListView x:Name="SourceList"
+                          ItemsSource="{Binding SourceDirectories}"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding ExpandSourceDirectory}" CommandParameter="{Binding ElementName=SourceList, Path=SelectedItem.Item.FullName}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Grid>
                                 <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="40" />
+                                    <ColumnDefinition Width="30" />
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="100" />
                                 </Grid.ColumnDefinitions>
 
-                                <Image Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Item.Name}" />
-                                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" Text="{Binding IsDifferent}" />
+                                <Image Grid.Column="0"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       Width="20"
+                                       Source="{Binding IsFile,
+                                                Converter={x:Static local:BooleanToImageConverter.Instance}}" />
+                                <TextBlock Grid.Column="1"
+                                           VerticalAlignment="Center"
+                                           TextTrimming="CharacterEllipsis"
+                                           Foreground="{Binding Status,
+                                                        Converter={x:Static local:StatusToColorBrushConverter.Instance}}"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding Item.Name}" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
-            </ScrollViewer>
-        </Border>
-        
-        <Border Grid.Column="3"
-                Grid.Row="4"
-                BorderBrush="#FF92959A"
-                BorderThickness="1"
-                Background="#FFFBF7F4"
-                Padding="10">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-                <!--<TextBox Background="Transparent"
-                         BorderThickness="0"
-                         IsReadOnly="True"
-                         TextWrapping="Wrap"
-                         Text="{Binding TargetDisplayText, Mode=OneWay}"/>-->
-                <ListView ItemsSource="{Binding TargetDirectories}" Background="Transparent" BorderThickness="0">
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="40" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="100" />
-                                </Grid.ColumnDefinitions>
-
-                                <Image Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                                <TextBlock Grid.Column="1" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="{Binding Item.Name}" />
-                                <TextBlock Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" TextAlignment="Right" Text="{Binding IsDifferent}" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </ScrollViewer>
             </Border>
+            <TextBlock Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                       Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+                       Padding="10"
+                       Background="{Binding Text,
+                                    RelativeSource={RelativeSource Self},
+                                    Converter={x:Static local:StringToColorBrushConverter.Instance}}"
+                       Text="{Binding SourceDisplayText}"
+                       IsHitTestVisible="False"/>
+            <Border BorderBrush="#FF92959A"
+                    BorderThickness="1"
+                    Background="Transparent"
+                    Padding="10"
+                    IsHitTestVisible="False"/>
+        </Grid>
+
+        <!--Target Display Area-->
+        <Grid Grid.Column="3" Grid.Row="4">
+            <Border BorderBrush="#FF92959A"
+                    BorderThickness="1"
+                    Background="#FFFBF7F4"
+                    Padding="10">
+                <ListView x:Name="TargetList"
+                          ItemsSource="{Binding TargetDirectories}"
+                          Background="Transparent"
+                          BorderThickness="0"
+                          ScrollViewer.VerticalScrollBarVisibility="Auto"
+                          ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="MouseDoubleClick">
+                            <i:InvokeCommandAction Command="{Binding ExpandTargetDirectory}" CommandParameter="{Binding ElementName=TargetList, Path=SelectedItem.Item.FullName}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="30" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+
+                                <Image Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Width="20"
+                                    Source="{Binding IsFile,
+                                            Converter={x:Static local:BooleanToImageConverter.Instance}}" />
+                                <TextBlock Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        TextTrimming="CharacterEllipsis"
+                                        Foreground="{Binding Status,
+                                                    Converter={x:Static local:StatusToColorBrushConverter.Instance}}"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Item.Name}" />
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Border>
+            <TextBlock Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                       Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+                       Padding="10"
+                       Background="{Binding Text,
+                                    RelativeSource={RelativeSource Self},
+                                    Converter={x:Static local:StringToColorBrushConverter.Instance}}"
+                       Text="{Binding TargetDisplayText}"
+                       IsHitTestVisible="False"/>
+            <Border BorderBrush="#FF92959A"
+                    BorderThickness="1"
+                    Background="Transparent"
+                    Padding="10"
+                    IsHitTestVisible="False"/>
+        </Grid>
         <!--Button Area-->
         <StackPanel Grid.Column="1"
                     Grid.Row="6"
