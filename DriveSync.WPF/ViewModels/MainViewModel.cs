@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -72,16 +71,26 @@ namespace DriveSync.ViewModels
             using System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog() { ShowNewFolderButton = true, SelectedPath = TempPath };
             System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
-            if (result.ToString() != string.Empty)
+            if (dialog.SelectedPath != string.Empty)
             {
-                switch (sender.ToString())
+                if (dialog.SelectedPath != new DirectoryInfo(dialog.SelectedPath).Root.ToString())
                 {
-                    case "Source":
-                        SourcePath = dialog.SelectedPath;
-                        break;
-                    case "Target":
-                        TargetPath = dialog.SelectedPath;
-                        break;
+                    switch (sender.ToString())
+                    {
+                        case "Source":
+                            SourcePath = dialog.SelectedPath;
+                            break;
+                        case "Target":
+                            TargetPath = dialog.SelectedPath;
+                            break;
+                    }
+                }
+                else
+                {
+                    if (MessageBox.Show("You are not authorized to access the root drive. Choose another folder.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error) == MessageBoxResult.OK)
+                    {
+                        Browse(sender);
+                    }
                 }
             }
         }
@@ -214,10 +223,14 @@ namespace DriveSync.ViewModels
 
         private void Back(object sender)
         {
-            lastSourcePath = lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"));
-            lastTargetPath = lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"));
+            if (lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"))).Root.ToString() &&
+                lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"))).Root.ToString())
+            {
+                lastSourcePath = lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"));
+                lastTargetPath = lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"));
 
-            ScanAsync(lastSourcePath, lastTargetPath);
+                ScanAsync(lastSourcePath, lastTargetPath);
+            }
         }
 
         //private void Back(object sender)
