@@ -9,19 +9,35 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\back.png" />
     <None Remove="Assets\file.png" />
     <None Remove="Assets\folder.png" />
+    <None Remove="Assets\link.png" />
     <None Remove="Assets\logo.png" />
+    <None Remove="Assets\settings.png" />
+    <None Remove="Assets\unlink.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\back.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\file.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\folder.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\link.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\logo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\settings.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\unlink.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

@@ -25,8 +25,8 @@ namespace DriveSync.ViewModels
         public string TargetDisplayText { get; set; } = string.Empty;
         public string SourcePath { get; set; }
         public string TargetPath { get; set; }
-        public string DeletePath { get; set; }
-        public bool ResolveNonDestructively { get; set; } = false;
+        public int ResolveMethod { get; set; } = 0;
+        public bool IsLinked { get; set; } = true;
         #endregion
 
         #region Command Declarations
@@ -35,22 +35,22 @@ namespace DriveSync.ViewModels
         public ICommand AutoResolveButton_Click { get; set; }
         public ICommand ExpandSourceDirectory { get; set; }
         public ICommand ExpandTargetDirectory { get; set; }
-        public ICommand CopyButton_Click { get; set; }
         public ICommand ClearButton_Click { get; set; }
-        public ICommand DeleteButton_Click { get; set; }
+        public ICommand BackButton_Click { get; set; }
+        public ICommand Link_Click { get; set; }
         #endregion
 
         #region Constructor
         public MainViewModel()
         {
             BrowseButton_Click = new Command(Browse);
-            ScanButton_Click = new Command(Scan, CanScanResolveOrCopy);
-            AutoResolveButton_Click = new Command(AutoResolve, CanScanResolveOrCopy);
-            ExpandSourceDirectory = new Command(ExpandSource, CanScanResolveOrCopy);
-            ExpandTargetDirectory = new Command(ExpandTarget, CanScanResolveOrCopy);
-            CopyButton_Click = new Command(CopyAsync, CanScanResolveOrCopy);
+            ScanButton_Click = new Command(Scan, CanScanOrResolve);
+            AutoResolveButton_Click = new Command(AutoResolve, CanScanOrResolve);
+            ExpandSourceDirectory = new Command(ExpandSource);
+            ExpandTargetDirectory = new Command(ExpandTarget);
             ClearButton_Click = new Command(Clear, CanClear);
-            DeleteButton_Click = new Command(Delete, CanDelete);
+            BackButton_Click = new Command(Back);
+            Link_Click = new Command(ToggleLink);
         }
 
         #endregion
@@ -67,9 +67,6 @@ namespace DriveSync.ViewModels
                 case "Target":
                     TempPath = TargetPath;
                     break;
-                case "Delete":
-                    TempPath = DeletePath;
-                    break;
             }
 
             using System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog() { ShowNewFolderButton = true, SelectedPath = TempPath };
@@ -85,14 +82,11 @@ namespace DriveSync.ViewModels
                     case "Target":
                         TargetPath = dialog.SelectedPath;
                         break;
-                    case "Delete":
-                        DeletePath = dialog.SelectedPath;
-                        break;
                 }
             }
         }
 
-        private bool CanScanResolveOrCopy(object sender)
+        private bool CanScanOrResolve(object sender)
         {
             if (!string.IsNullOrWhiteSpace(SourcePath) && !string.IsNullOrWhiteSpace(TargetPath))
             {
@@ -120,32 +114,38 @@ namespace DriveSync.ViewModels
 
         private void ExpandSource(object sender)
         {
-            if (Directory.Exists(sender.ToString().Replace(new DirectoryInfo(sender.ToString()).Parent.ToString(), lastTargetPath)))
+            if (!((PathItem)sender).IsFile)
             {
-                ScanAsync(sender.ToString(), sender.ToString().Replace(new DirectoryInfo(sender.ToString()).Parent.ToString(), lastTargetPath));
-            }
-            else
-            {
-                ScanAsync(sender.ToString(), string.Empty);
-            }
+                if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), lastTargetPath)))
+                {
+                    ScanAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), lastTargetPath));
+                }
+                else
+                {
+                    ScanAsync(((PathItem)sender).Item.FullName, string.Empty);
+                }
 
-            lastSourcePath = sender.ToString();
-            lastTargetPath = sender.ToString().Replace(new DirectoryInfo(sender.ToString()).Parent.ToString(), lastTargetPath);
+                lastSourcePath = ((PathItem)sender).Item.FullName;
+                lastTargetPath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(lastSourcePath).Parent.ToString(), lastTargetPath);
+            }
         }
 
         private void ExpandTarget(object sender)
         {
-            if (Directory.Exists(sender.ToString().Replace(new DirectoryInfo(sender.ToString()).Parent.ToString(), lastSourcePath)))
+            if (!((PathItem)sender).IsFile)
             {
-                ScanAsync(sender.ToString().Replace(new DirectoryInfo(sender.ToString()).Parent.ToString(), lastSourcePath), sender.ToString());
-            }
-            else
-            {
-                ScanAsync(string.Empty, sender.ToString());
-            }
+                if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), lastSourcePath)))
+                {
+                    ScanAsync(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), lastSourcePath), ((PathItem)sender).Item.FullName);
+                }
+                else
+                {
+                    ScanAsync(string.Empty, ((PathItem)sender).Item.FullName);
+                }
 
-            lastSourcePath = sender.ToString().Replace(new DirectoryInfo(sender.ToString()).Parent.ToString(), lastSourcePath);
-            lastTargetPath = sender.ToString();
+                lastSourcePath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), lastSourcePath);
+                lastTargetPath = ((PathItem)sender).Item.FullName;
+            }
         }
 
         private async void CopyAsync(object sender)
@@ -159,9 +159,8 @@ namespace DriveSync.ViewModels
                         if (MessageBox.Show("This will overwrite any files present in the target! Are you sure?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
                         {
                             string previousSourceMessage = SourceDisplayText;
-                            SourceDisplayText = "Copying...";
-
                             string previousTargetMessage = TargetDisplayText;
+                            SourceDisplayText = "Copying...";
                             TargetDisplayText = "Copying...";
 
                             await Task.Run(() => CopyFilesRecursively(SourcePath, TargetPath));
@@ -189,10 +188,9 @@ namespace DriveSync.ViewModels
         private bool CanClear(object sender)
         {
             if (SourceDisplayText == textIntroMessage
-                && string.IsNullOrEmpty(TargetDisplayText)
+                && string.IsNullOrWhiteSpace(TargetDisplayText)
                 && string.IsNullOrWhiteSpace(SourcePath)
-                && string.IsNullOrWhiteSpace(TargetPath)
-                && string.IsNullOrWhiteSpace(DeletePath))
+                && string.IsNullOrWhiteSpace(TargetPath))
             {
                 return false;
             }
@@ -205,38 +203,98 @@ namespace DriveSync.ViewModels
             SourceDisplayText = textIntroMessage;
             TargetDisplayText = string.Empty;
 
-            SourceDirectories = new ObservableCollection<PathItem>();
-            TargetDirectories = new ObservableCollection<PathItem>();
-
             SourcePath = string.Empty;
             TargetPath = string.Empty;
-            DeletePath = string.Empty;
-
-            ResolveNonDestructively = false;
         }
 
-        private bool CanDelete(object sender)
+        private void ToggleLink(object sender)
         {
-            if (!string.IsNullOrWhiteSpace(DeletePath))
-            {
-                if (Directory.Exists(DeletePath))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            IsLinked = !IsLinked;
         }
 
-        private void Delete(object sender)
+        private void Back(object sender)
         {
-            if (MessageBox.Show($"This will delete {DeletePath}! Are you sure?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-            {
-                Directory.Delete(DeletePath, true);
+            lastSourcePath = lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"));
+            lastTargetPath = lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"));
 
-                _ = MessageBox.Show("Deleted successfully.", "Complete", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            ScanAsync(lastSourcePath, lastTargetPath);
         }
+
+        //private void Back(object sender)
+        //{
+        //    if (Directory.Exists(lastSourcePath))
+        //    {
+        //        if (new DirectoryInfo(lastSourcePath).Parent != null)
+        //        {
+        //            if (Directory.Exists(lastTargetPath))
+        //            {
+        //                if (new DirectoryInfo(lastTargetPath).Parent != null)
+        //                {
+        //                    ScanAsync(new DirectoryInfo(lastSourcePath).Parent.FullName, new DirectoryInfo(lastTargetPath).Parent.FullName);
+
+        //                    lastSourcePath = new DirectoryInfo(lastSourcePath).Parent.FullName;
+        //                    lastTargetPath = new DirectoryInfo(lastTargetPath).Parent.FullName;
+        //                }
+        //                else
+        //                {
+        //                    ScanAsync(new DirectoryInfo(lastSourcePath).Parent.FullName, string.Empty);
+
+        //                    lastSourcePath = new DirectoryInfo(lastSourcePath).Parent.FullName;
+        //                    lastTargetPath = lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"));
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (Directory.Exists(lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"))))
+        //                {
+        //                    ScanAsync(new DirectoryInfo(lastSourcePath).Parent.FullName, lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\")));
+        //                }
+        //                else
+        //                {
+        //                    ScanAsync(new DirectoryInfo(lastSourcePath).Parent.FullName, string.Empty);
+        //                }
+        //            }
+        //        }
+        //        else if (Directory.Exists(lastTargetPath))
+        //        {
+        //            if (new DirectoryInfo(lastTargetPath).Parent != null)
+        //            {
+        //                ScanAsync(string.Empty, new DirectoryInfo(lastTargetPath).Parent.FullName);
+
+        //                lastSourcePath = lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"));
+        //                lastTargetPath = new DirectoryInfo(lastTargetPath).Parent.FullName;
+        //            }
+        //            else
+        //            {
+        //                return;
+        //            }
+        //        }
+        //    }
+        //    else if (Directory.Exists(lastTargetPath))
+        //    {
+        //        if (new DirectoryInfo(lastTargetPath).Parent != null)
+        //        {
+        //            ScanAsync(string.Empty, new DirectoryInfo(lastTargetPath).Parent.FullName);
+
+        //            lastSourcePath = lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"));
+        //            lastTargetPath = new DirectoryInfo(lastTargetPath).Parent.FullName;
+        //        }
+        //        else
+        //        {
+        //            return;
+        //        }
+        //    }
+        //}
+
+        //private void Delete(object sender)
+        //{
+        //    if (MessageBox.Show($"This will delete {DeletePath}! Are you sure?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+        //    {
+        //        Directory.Delete(DeletePath, true);
+
+        //        _ = MessageBox.Show("Deleted successfully.", "Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+        //    }
+        //}
         #endregion
 
         #region Helper Methods
@@ -248,7 +306,7 @@ namespace DriveSync.ViewModels
             SourceDisplayText = "Scanning...";
             TargetDisplayText = "Scanning...";
 
-            if (!string.IsNullOrEmpty(sourcePath) && !string.IsNullOrEmpty(targetPath))
+            if (!string.IsNullOrEmpty(sourcePath) && Directory.Exists(sourcePath) && !string.IsNullOrEmpty(targetPath) && Directory.Exists(targetPath))
             {
                 // Initializing SourceDirectories
                 foreach (string dir in Directory.GetDirectories(sourcePath))
@@ -308,7 +366,7 @@ namespace DriveSync.ViewModels
                 SourceDisplayText = SourceDirectories.Count == 0 ? "No folders or files..." : string.Empty;
                 TargetDisplayText = TargetDirectories.Count == 0 ? "No folders or files..." : string.Empty;
             }
-            else if (string.IsNullOrEmpty(targetPath))
+            else if ((!string.IsNullOrEmpty(sourcePath) || Directory.Exists(sourcePath)) && (string.IsNullOrEmpty(targetPath) || !Directory.Exists(targetPath)))
             {
                 foreach (string dir in Directory.GetDirectories(sourcePath))
                 {
@@ -323,7 +381,7 @@ namespace DriveSync.ViewModels
                 SourceDisplayText = SourceDirectories.Count == 0 ? "No folders or files..." : string.Empty;
                 TargetDisplayText = "Does not exist...";
             }
-            else if (string.IsNullOrEmpty(sourcePath))
+            else if ((string.IsNullOrEmpty(sourcePath) || !Directory.Exists(sourcePath)) && (!string.IsNullOrEmpty(targetPath) || Directory.Exists(targetPath)))
             {
                 foreach (string dir in Directory.GetDirectories(targetPath))
                 {
