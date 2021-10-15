@@ -5,10 +5,10 @@ using System.Windows.Media.Imaging;
 
 namespace DriveSync
 {
-    [ValueConversion(typeof(bool), typeof(string))]
-    public class BooleanToImageConverter : IValueConverter
+    [ValueConversion(typeof(bool), typeof(BitmapImage))]
+    public class BooleanToFileFolderImageConverter : IValueConverter
     {
-        public static BooleanToImageConverter Instance = new BooleanToImageConverter();
+        public static BooleanToFileFolderImageConverter Instance = new BooleanToFileFolderImageConverter();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

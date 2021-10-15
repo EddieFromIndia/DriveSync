@@ -13,8 +13,6 @@ namespace DriveSync.ViewModels
     {
         #region Private Properties
         private static readonly string textIntroMessage = "Choose Source and Target directories\nand press Scan or Copy to begin...";
-        private string lastSourcePath = string.Empty;
-        private string lastTargetPath = string.Empty;
         #endregion
 
         #region Public Properties
@@ -24,7 +22,10 @@ namespace DriveSync.ViewModels
         public string TargetDisplayText { get; set; } = string.Empty;
         public string SourcePath { get; set; }
         public string TargetPath { get; set; }
+        public string LastSourcePath { get; set; } = string.Empty;
+        public string LastTargetPath { get; set; } = string.Empty;
         public int ResolveMethod { get; set; } = 0;
+        public bool IsVisible { get; set; } = true;
         public bool IsLinked { get; set; } = true;
         #endregion
 
@@ -36,6 +37,7 @@ namespace DriveSync.ViewModels
         public ICommand ExpandTargetDirectory { get; set; }
         public ICommand ClearButton_Click { get; set; }
         public ICommand BackButton_Click { get; set; }
+        public ICommand VisibilityButton_Click { get; set; }
         public ICommand Link_Click { get; set; }
         #endregion
 
@@ -49,6 +51,7 @@ namespace DriveSync.ViewModels
             ExpandTargetDirectory = new Command(ExpandTarget);
             ClearButton_Click = new Command(Clear, CanClear);
             BackButton_Click = new Command(Back);
+            VisibilityButton_Click = new Command(ToggleVisibility);
             Link_Click = new Command(ToggleLink);
         }
 
@@ -110,8 +113,8 @@ namespace DriveSync.ViewModels
 
         private void Scan(object sender)
         {
-            lastSourcePath = SourcePath;
-            lastTargetPath = TargetPath;
+            LastSourcePath = SourcePath;
+            LastTargetPath = TargetPath;
 
             ScanAsync(SourcePath, TargetPath);
         }
@@ -125,17 +128,17 @@ namespace DriveSync.ViewModels
         {
             if (!((PathItem)sender).IsFile)
             {
-                if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), lastTargetPath)))
+                if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastTargetPath)))
                 {
-                    ScanAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), lastTargetPath));
+                    ScanAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastTargetPath));
                 }
                 else
                 {
                     ScanAsync(((PathItem)sender).Item.FullName, string.Empty);
                 }
 
-                lastSourcePath = ((PathItem)sender).Item.FullName;
-                lastTargetPath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(lastSourcePath).Parent.ToString(), lastTargetPath);
+                LastSourcePath = ((PathItem)sender).Item.FullName;
+                LastTargetPath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(LastSourcePath).Parent.ToString(), LastTargetPath);
             }
         }
 
@@ -143,17 +146,17 @@ namespace DriveSync.ViewModels
         {
             if (!((PathItem)sender).IsFile)
             {
-                if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), lastSourcePath)))
+                if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath)))
                 {
-                    ScanAsync(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), lastSourcePath), ((PathItem)sender).Item.FullName);
+                    ScanAsync(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath), ((PathItem)sender).Item.FullName);
                 }
                 else
                 {
                     ScanAsync(string.Empty, ((PathItem)sender).Item.FullName);
                 }
 
-                lastSourcePath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), lastSourcePath);
-                lastTargetPath = ((PathItem)sender).Item.FullName;
+                LastSourcePath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath);
+                LastTargetPath = ((PathItem)sender).Item.FullName;
             }
         }
 
@@ -199,7 +202,9 @@ namespace DriveSync.ViewModels
             if (SourceDisplayText == textIntroMessage
                 && string.IsNullOrWhiteSpace(TargetDisplayText)
                 && string.IsNullOrWhiteSpace(SourcePath)
-                && string.IsNullOrWhiteSpace(TargetPath))
+                && string.IsNullOrWhiteSpace(TargetPath)
+                && LastSourcePath == string.Empty
+                && LastTargetPath == string.Empty)
             {
                 return false;
             }
@@ -212,8 +217,19 @@ namespace DriveSync.ViewModels
             SourceDisplayText = textIntroMessage;
             TargetDisplayText = string.Empty;
 
+            SourceDirectories = new ObservableCollection<PathItem>();
+            TargetDirectories = new ObservableCollection<PathItem>();
+
             SourcePath = string.Empty;
             TargetPath = string.Empty;
+
+            LastSourcePath = string.Empty;
+            LastTargetPath = string.Empty;
+        }
+
+        private void ToggleVisibility(object sender)
+        {
+            IsVisible = !IsVisible;
         }
 
         private void ToggleLink(object sender)
@@ -223,62 +239,59 @@ namespace DriveSync.ViewModels
 
         private void Back(object sender)
         {
-            if (!string.IsNullOrEmpty(lastSourcePath) && !string.IsNullOrEmpty(lastTargetPath))
+            if (LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\"))).Root.ToString() &&
+                LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\"))).Root.ToString())
             {
-                if (lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"))).Root.ToString() &&
-                lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"))).Root.ToString())
-                {
-                    lastSourcePath = lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"));
-                    lastTargetPath = lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"));
+                LastSourcePath = LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\"));
+                LastTargetPath = LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\"));
 
-                    ScanAsync(lastSourcePath, lastTargetPath);
-                }
+                ScanAsync(LastSourcePath, LastTargetPath);
             }
         }
 
         //private void Back(object sender)
         //{
-        //    if (Directory.Exists(lastSourcePath))
+        //    if (Directory.Exists(LastSourcePath))
         //    {
-        //        if (new DirectoryInfo(lastSourcePath).Parent != null)
+        //        if (new DirectoryInfo(LastSourcePath).Parent != null)
         //        {
-        //            if (Directory.Exists(lastTargetPath))
+        //            if (Directory.Exists(LastTargetPath))
         //            {
-        //                if (new DirectoryInfo(lastTargetPath).Parent != null)
+        //                if (new DirectoryInfo(LastTargetPath).Parent != null)
         //                {
-        //                    ScanAsync(new DirectoryInfo(lastSourcePath).Parent.FullName, new DirectoryInfo(lastTargetPath).Parent.FullName);
+        //                    ScanAsync(new DirectoryInfo(LastSourcePath).Parent.FullName, new DirectoryInfo(LastTargetPath).Parent.FullName);
 
-        //                    lastSourcePath = new DirectoryInfo(lastSourcePath).Parent.FullName;
-        //                    lastTargetPath = new DirectoryInfo(lastTargetPath).Parent.FullName;
+        //                    LastSourcePath = new DirectoryInfo(LastSourcePath).Parent.FullName;
+        //                    LastTargetPath = new DirectoryInfo(LastTargetPath).Parent.FullName;
         //                }
         //                else
         //                {
-        //                    ScanAsync(new DirectoryInfo(lastSourcePath).Parent.FullName, string.Empty);
+        //                    ScanAsync(new DirectoryInfo(LastSourcePath).Parent.FullName, string.Empty);
 
-        //                    lastSourcePath = new DirectoryInfo(lastSourcePath).Parent.FullName;
-        //                    lastTargetPath = lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"));
+        //                    LastSourcePath = new DirectoryInfo(LastSourcePath).Parent.FullName;
+        //                    LastTargetPath = LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\"));
         //                }
         //            }
         //            else
         //            {
-        //                if (Directory.Exists(lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"))))
+        //                if (Directory.Exists(LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\"))))
         //                {
-        //                    ScanAsync(new DirectoryInfo(lastSourcePath).Parent.FullName, lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\")));
+        //                    ScanAsync(new DirectoryInfo(LastSourcePath).Parent.FullName, LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\")));
         //                }
         //                else
         //                {
-        //                    ScanAsync(new DirectoryInfo(lastSourcePath).Parent.FullName, string.Empty);
+        //                    ScanAsync(new DirectoryInfo(LastSourcePath).Parent.FullName, string.Empty);
         //                }
         //            }
         //        }
-        //        else if (Directory.Exists(lastTargetPath))
+        //        else if (Directory.Exists(LastTargetPath))
         //        {
-        //            if (new DirectoryInfo(lastTargetPath).Parent != null)
+        //            if (new DirectoryInfo(LastTargetPath).Parent != null)
         //            {
-        //                ScanAsync(string.Empty, new DirectoryInfo(lastTargetPath).Parent.FullName);
+        //                ScanAsync(string.Empty, new DirectoryInfo(LastTargetPath).Parent.FullName);
 
-        //                lastSourcePath = lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"));
-        //                lastTargetPath = new DirectoryInfo(lastTargetPath).Parent.FullName;
+        //                LastSourcePath = LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\"));
+        //                LastTargetPath = new DirectoryInfo(LastTargetPath).Parent.FullName;
         //            }
         //            else
         //            {
@@ -286,14 +299,14 @@ namespace DriveSync.ViewModels
         //            }
         //        }
         //    }
-        //    else if (Directory.Exists(lastTargetPath))
+        //    else if (Directory.Exists(LastTargetPath))
         //    {
-        //        if (new DirectoryInfo(lastTargetPath).Parent != null)
+        //        if (new DirectoryInfo(LastTargetPath).Parent != null)
         //        {
-        //            ScanAsync(string.Empty, new DirectoryInfo(lastTargetPath).Parent.FullName);
+        //            ScanAsync(string.Empty, new DirectoryInfo(LastTargetPath).Parent.FullName);
 
-        //            lastSourcePath = lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"));
-        //            lastTargetPath = new DirectoryInfo(lastTargetPath).Parent.FullName;
+        //            LastSourcePath = LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\"));
+        //            LastTargetPath = new DirectoryInfo(LastTargetPath).Parent.FullName;
         //        }
         //        else
         //        {

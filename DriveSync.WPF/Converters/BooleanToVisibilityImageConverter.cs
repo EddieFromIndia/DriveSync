@@ -6,13 +6,13 @@ using System.Windows.Media.Imaging;
 namespace DriveSync
 {
     [ValueConversion(typeof(bool), typeof(BitmapImage))]
-    public class BooleanToLinkImageConverter : IValueConverter
+    public class BooleanToVisibilityImageConverter : IValueConverter
     {
-        public static BooleanToLinkImageConverter Instance = new BooleanToLinkImageConverter();
+        public static BooleanToVisibilityImageConverter Instance = new BooleanToVisibilityImageConverter();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string image = (bool)value ? "link" : "unlink";
+            string image = (bool)value ? "visible" : "invisible";
             return new BitmapImage(new Uri($"pack://application:,,,/Assets/{image}.png"));
         }
 

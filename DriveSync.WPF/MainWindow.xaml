@@ -5,8 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:DriveSync"
-        xmlns:viewmodels="clr-namespace:DriveSync.ViewModels"
-        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Icon="Assets\logo.png"
         Title="Drive Sync"
@@ -15,7 +13,7 @@
         WindowStartupLocation="CenterScreen">
 
     <Window.Resources>
-        <Style x:Key="BlankButton" TargetType="{x:Type Button}">
+        <Style x:Key="ImageButton" TargetType="{x:Type Button}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Padding" Value="0" />
@@ -31,6 +29,7 @@
         </Style>
 
         <BitmapImage x:Key="LinkImage" UriSource="/Assets/link.png" />
+        <BitmapImage x:Key="VisibleImage" UriSource="/Assets/visible.png" />
     </Window.Resources>
 
     <Grid Background="#FFECE9D8">
@@ -47,13 +46,14 @@
             <RowDefinition Height="30" /> <!--Source & Target Label-->
             <RowDefinition Height="30" /> <!--Source & Target TextBox-->
             <RowDefinition Height="10" /> <!--Padding-->
-            <RowDefinition Height="30" /> <!--Icons-->
+            <RowDefinition Height="30" /> <!--Address Display-->
             <RowDefinition Height="*" /> <!--Description Area-->
             <RowDefinition Height="10" /> <!--Padding-->
             <RowDefinition Height="30" /> <!--Buttons-->
             <RowDefinition Height="30" /> <!--Padding-->
         </Grid.RowDefinitions>
         
+        <!--Source-->
         <TextBlock Grid.Column="1"
                    Grid.Row="1"
                    Text="Source:"
@@ -86,6 +86,7 @@
             </Button>
         </Grid>
         
+        <!--Target-->
         <TextBlock Grid.Column="3"
                    Grid.Row="1"
                    Text="Target:"
@@ -117,47 +118,27 @@
                 <Image Source="/Assets/folder-open.png" Height="24" />
             </Button>
         </Grid>
+        
+        <!--Address Display Area-->
+        <TextBlock Grid.Column="1"
+                   Grid.Row="4"
+                   Margin="00 0 0 0"
+                   Padding="8 5"
+                   VerticalAlignment="Center"
+                   Text="{Binding LastSourcePath}"
+                   Background="#00DCD9C8"
+                   Foreground="#FF555555"
+                   TextTrimming="CharacterEllipsis" />
 
-        <Button Grid.Column="1"
-                Grid.Row="4"
-                Style="{DynamicResource BlankButton}"
-                Width="26"
-                Margin="5 0 0 0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Command="{Binding BackButton_Click}"
-                ToolTipService.InitialShowDelay="500"
-                ToolTipService.BetweenShowDelay="500"
-                ToolTipService.ShowOnDisabled="True"
-                ToolTip="Go back one level">
-            <Image Source="/Assets/back.png" />
-        </Button>
-
-        <Button Grid.Column="2"
-                Grid.Row="4"
-                Style="{DynamicResource BlankButton}"
-                Width="22"
-                HorizontalAlignment="Center"
-                Command="{Binding RefreshButton_Click}"
-                ToolTipService.InitialShowDelay="500"
-                ToolTipService.BetweenShowDelay="500"
-                ToolTipService.ShowOnDisabled="True"
-                ToolTip="Refresh">
-            <Image Source="/Assets/refresh.png" />
-        </Button>
-        <Button Grid.Column="3"
-                Grid.Row="4"
-                Style="{DynamicResource BlankButton}"
-                Width="26"
-                Margin="0 0 5 0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                ToolTipService.InitialShowDelay="500"
-                ToolTipService.BetweenShowDelay="500"
-                ToolTipService.ShowOnDisabled="True"
-                ToolTip="Settings">
-            <Image Source="/Assets/settings.png" />
-        </Button>
+        <TextBlock Grid.Column="3"
+                   Grid.Row="4"
+                   Margin="0 0 0 0"
+                   Padding="8 5"
+                   VerticalAlignment="Center"
+                   Text="{Binding LastTargetPath}"
+                   Background="#00DCD9C8"
+                   Foreground="#FF555555"
+                   TextTrimming="CharacterEllipsis" />
 
         <!--Source Display Area-->
         <Grid Grid.Column="1" Grid.Row="5">
@@ -191,7 +172,7 @@
                                        HorizontalAlignment="Center"
                                        Width="20"
                                        Source="{Binding IsFile,
-                                                Converter={x:Static local:BooleanToImageConverter.Instance}}" />
+                                                Converter={x:Static local:BooleanToFileFolderImageConverter.Instance}}" />
                                 <TextBlock Grid.Column="1"
                                            VerticalAlignment="Center"
                                            TextTrimming="CharacterEllipsis"
@@ -219,19 +200,68 @@
                     IsHitTestVisible="False"/>
         </Grid>
 
+        <!--Icon Column-->
+        <StackPanel Grid.Column="2" Grid.Row="5">
+            <Button Grid.Column="1"
+                Grid.Row="4"
+                Style="{DynamicResource ImageButton}"
+                Width="24"
+                Margin="0 0 0 12"
+                HorizontalAlignment="Center"
+                Command="{Binding BackButton_Click}"
+                ToolTipService.InitialShowDelay="500"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.ShowOnDisabled="True"
+                ToolTip="Go back one level">
+                <Image Source="/Assets/back.png" />
+            </Button>
+            <Button Grid.Column="2"
+                Grid.Row="4"
+                Style="{DynamicResource ImageButton}"
+                Width="20"
+                Margin="0 0 0 12"
+                HorizontalAlignment="Center"
+                Command="{Binding RefreshButton_Click}"
+                ToolTipService.InitialShowDelay="500"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.ShowOnDisabled="True"
+                ToolTip="Refresh">
+                <Image Source="/Assets/refresh.png" />
+            </Button>
+            <Button Grid.Column="3"
+                Grid.Row="4"
+                Style="{DynamicResource ImageButton}"
+                Width="22"
+                Margin="0 0 0 10"
+                HorizontalAlignment="Center"
+                Command="{Binding VisibilityButton_Click}"
+                ToolTipService.InitialShowDelay="500"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.ShowOnDisabled="True"
+                ToolTip="Show/hide folders and files that have no discrepancies.">
+                <Image Source="{Binding IsVisible,
+                                Converter={x:Static local:BooleanToVisibilityImageConverter.Instance},
+                                FallbackValue={StaticResource VisibleImage}}" />
+            </Button>
+        </StackPanel>
+        
+        <!--Link Icon-->
         <StackPanel Grid.Column="2"
                     Grid.Row="5"
                     VerticalAlignment="Center">
-            <Button Style="{DynamicResource BlankButton}"
+            <Button Style="{DynamicResource ImageButton}"
                     Width="26"
                     Command="{Binding Link_Click}"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
                     ToolTip="Scroll source and target together">
-                <Image Source="{Binding IsLinked, Converter={x:Static local:BooleanToLinkImageConverter.Instance}, FallbackValue={StaticResource LinkImage}}" />
+                <Image Source="{Binding IsLinked,
+                                Converter={x:Static local:BooleanToLinkImageConverter.Instance},
+                                FallbackValue={StaticResource LinkImage}}" />
             </Button>
         </StackPanel>
+        
         <!--Target Display Area-->
         <Grid Grid.Column="3" Grid.Row="5">
             <Border BorderBrush="#FF92959A"
@@ -264,7 +294,7 @@
                                     HorizontalAlignment="Center"
                                     Width="20"
                                     Source="{Binding IsFile,
-                                            Converter={x:Static local:BooleanToImageConverter.Instance}}" />
+                                            Converter={x:Static local:BooleanToFileFolderImageConverter.Instance}}" />
                                 <TextBlock Grid.Column="1"
                                         VerticalAlignment="Center"
                                         TextTrimming="CharacterEllipsis"
@@ -291,7 +321,8 @@
                     Padding="10"
                     IsHitTestVisible="False"/>
         </Grid>
-        <!--Button Area-->
+        
+        <!--Main Button Area-->
         <StackPanel Grid.Column="1"
                     Grid.Row="7"
                     Grid.ColumnSpan="3"

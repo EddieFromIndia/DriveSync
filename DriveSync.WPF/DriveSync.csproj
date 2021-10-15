@@ -14,6 +14,7 @@
     <None Remove="Assets\file.png" />
     <None Remove="Assets\folder-open.png" />
     <None Remove="Assets\folder.png" />
+    <None Remove="Assets\invisible.png" />
     <None Remove="Assets\link.png" />
     <None Remove="Assets\logo.png" />
     <None Remove="Assets\refresh.png" />
@@ -21,6 +22,7 @@
     <None Remove="Assets\scan.png" />
     <None Remove="Assets\settings.png" />
     <None Remove="Assets\unlink.png" />
+    <None Remove="Assets\visible.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +39,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\folder.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\invisible.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\link.png">
@@ -58,6 +63,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\unlink.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\visible.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
