@@ -10,10 +10,15 @@
 
   <ItemGroup>
     <None Remove="Assets\back.png" />
+    <None Remove="Assets\clear.png" />
     <None Remove="Assets\file.png" />
+    <None Remove="Assets\folder-open.png" />
     <None Remove="Assets\folder.png" />
     <None Remove="Assets\link.png" />
     <None Remove="Assets\logo.png" />
+    <None Remove="Assets\refresh.png" />
+    <None Remove="Assets\resolve.png" />
+    <None Remove="Assets\scan.png" />
     <None Remove="Assets\settings.png" />
     <None Remove="Assets\unlink.png" />
   </ItemGroup>
@@ -22,7 +27,13 @@
     <Resource Include="Assets\back.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\clear.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\file.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\folder-open.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\folder.png">
@@ -32,6 +43,15 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\logo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\refresh.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\resolve.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\scan.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\settings.png">

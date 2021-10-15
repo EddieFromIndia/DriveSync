@@ -29,8 +29,10 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <BitmapImage x:Key="LinkImage" UriSource="/Assets/link.png" />
     </Window.Resources>
-    
+
     <Grid Background="#FFECE9D8">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30" />
@@ -73,10 +75,15 @@
                  VerticalContentAlignment="Center"
                  Text="{Binding SourcePath}" />
             <Button Grid.Column="2"
-                    Content="Browse"
-                    Width="70"
+                    Width="50"
                     Command="{Binding BrowseButton_Click}"
-                    CommandParameter="Source"/>
+                    CommandParameter="Source"
+                    ToolTipService.InitialShowDelay="500"
+                    ToolTipService.BetweenShowDelay="500"
+                    ToolTipService.ShowOnDisabled="True"
+                    ToolTip="Browse">
+                <Image Source="/Assets/folder-open.png" Height="24" />
+            </Button>
         </Grid>
         
         <TextBlock Grid.Column="3"
@@ -100,30 +107,57 @@
                  VerticalContentAlignment="Center"
                  Text="{Binding TargetPath}" />
             <Button Grid.Column="2"
-                    Content="Browse"
-                    Width="70"
+                    Width="50"
                     Command="{Binding BrowseButton_Click}"
-                    CommandParameter="Target"/>
+                    CommandParameter="Target"
+                    ToolTipService.InitialShowDelay="500"
+                    ToolTipService.BetweenShowDelay="500"
+                    ToolTipService.ShowOnDisabled="True"
+                    ToolTip="Browse">
+                <Image Source="/Assets/folder-open.png" Height="24" />
+            </Button>
         </Grid>
 
         <Button Grid.Column="1"
                 Grid.Row="4"
                 Style="{DynamicResource BlankButton}"
                 Width="26"
+                Margin="5 0 0 0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                Command="{Binding BackButton_Click}">
+                Command="{Binding BackButton_Click}"
+                ToolTipService.InitialShowDelay="500"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.ShowOnDisabled="True"
+                ToolTip="Go back one level">
             <Image Source="/Assets/back.png" />
         </Button>
 
-        <!--<Button Grid.Column="3"
+        <Button Grid.Column="2"
+                Grid.Row="4"
+                Style="{DynamicResource BlankButton}"
+                Width="22"
+                HorizontalAlignment="Center"
+                Command="{Binding RefreshButton_Click}"
+                ToolTipService.InitialShowDelay="500"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.ShowOnDisabled="True"
+                ToolTip="Refresh">
+            <Image Source="/Assets/refresh.png" />
+        </Button>
+        <Button Grid.Column="3"
                 Grid.Row="4"
                 Style="{DynamicResource BlankButton}"
                 Width="26"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center">
-            <Image Source="/Assets/back.png" />
-        </Button>-->
+                Margin="0 0 5 0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                ToolTipService.InitialShowDelay="500"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.ShowOnDisabled="True"
+                ToolTip="Settings">
+            <Image Source="/Assets/settings.png" />
+        </Button>
 
         <!--Source Display Area-->
         <Grid Grid.Column="1" Grid.Row="5">
@@ -185,16 +219,19 @@
                     IsHitTestVisible="False"/>
         </Grid>
 
-        <Button Grid.Column="2"
-                Grid.Row="5"
-                Style="{DynamicResource BlankButton}"
-                Width="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Command="{Binding Link_Click}">
-            <Image Source="{Binding IsLinked, Converter={x:Static local:BooleanToLinkImageConverter.Instance}}" />
-        </Button>
-        
+        <StackPanel Grid.Column="2"
+                    Grid.Row="5"
+                    VerticalAlignment="Center">
+            <Button Style="{DynamicResource BlankButton}"
+                    Width="26"
+                    Command="{Binding Link_Click}"
+                    ToolTipService.InitialShowDelay="500"
+                    ToolTipService.BetweenShowDelay="500"
+                    ToolTipService.ShowOnDisabled="True"
+                    ToolTip="Scroll source and target together">
+                <Image Source="{Binding IsLinked, Converter={x:Static local:BooleanToLinkImageConverter.Instance}, FallbackValue={StaticResource LinkImage}}" />
+            </Button>
+        </StackPanel>
         <!--Target Display Area-->
         <Grid Grid.Column="3" Grid.Row="5">
             <Border BorderBrush="#FF92959A"
@@ -255,22 +292,13 @@
                     IsHitTestVisible="False"/>
         </Grid>
         <!--Button Area-->
-        <Button Grid.Column="1"
-                Grid.Row="7"
-                Style="{DynamicResource BlankButton}"
-                Width="30"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center">
-            <Image Source="/Assets/settings.png" />
-        </Button>
         <StackPanel Grid.Column="1"
                     Grid.Row="7"
                     Grid.ColumnSpan="3"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
-            <Button Content="Scan"
-                    Width="100"
-                    Margin="0 0 10 0"
+            <Button Width="100"
+                    Margin="0 0 20 0"
                     Command="{Binding ScanButton_Click}"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
@@ -278,11 +306,17 @@
                     ToolTip="{Binding RelativeSource={x:Static RelativeSource.Self},
                             Converter={x:Static local:ButtonEnabledToStringConverter.Instance},
                             ConverterParameter='Compare the source and target for discrepancies.',
-                            Path=IsEnabled, Mode=OneWay}" />
+                            Path=IsEnabled, Mode=OneWay}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Assets/scan.png" Height="20" Margin="0 0 4 0" />
+                    <TextBlock Text="Scan" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+            
             <ComboBox VerticalAlignment="Center"
                       Width="100"
                       Height="30"
-                      Margin="0 0 10 0"
+                      Margin="0 0 7 0"
                       SelectedIndex="{Binding ResolveMethod, Mode=TwoWay}"
                       VerticalContentAlignment="Center"
                       Padding="10 0 0 0"
@@ -296,9 +330,8 @@
                 <ComboBoxItem Content="Left To Right" />
                 <ComboBoxItem Content="Right To Left" />
             </ComboBox>
-            <Button Content="Auto-Resolve"
-                    Width="100"
-                    Margin="0 0 10 0"
+            <Button Width="120"
+                    Margin="0 0 20 0"
                     Command="{Binding AutoResolveButton_Click}"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
@@ -306,14 +339,23 @@
                     ToolTip="{Binding RelativeSource={x:Static RelativeSource.Self},
                             Converter={x:Static local:ButtonEnabledToStringConverter.Instance},
                             ConverterParameter='Auto-resolve all discrepancies.',
-                            Path=IsEnabled, Mode=OneWay}" />
-            <Button Content="Clear"
-                    Width="100"
+                            Path=IsEnabled, Mode=OneWay}">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Assets/resolve.png" Height="20" Margin="0 0 4 0" />
+                    <TextBlock Text="Auto-Resolve" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
+            <Button Width="100"
                     Command="{Binding ClearButton_Click}"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Clears everything." />
+                    ToolTip="Clears everything.">
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="/Assets/clear.png" Height="18" Margin="0 0 5 0" />
+                    <TextBlock Text="Clear" VerticalAlignment="Center" />
+                </StackPanel>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>

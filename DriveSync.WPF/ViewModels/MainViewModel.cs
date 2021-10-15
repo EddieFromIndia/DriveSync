@@ -223,13 +223,16 @@ namespace DriveSync.ViewModels
 
         private void Back(object sender)
         {
-            if (lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"))).Root.ToString() &&
-                lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"))).Root.ToString())
+            if (!string.IsNullOrEmpty(lastSourcePath) && !string.IsNullOrEmpty(lastTargetPath))
             {
-                lastSourcePath = lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"));
-                lastTargetPath = lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"));
+                if (lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"))).Root.ToString() &&
+                lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"))).Root.ToString())
+                {
+                    lastSourcePath = lastSourcePath.Substring(0, lastSourcePath.LastIndexOf("\\"));
+                    lastTargetPath = lastTargetPath.Substring(0, lastTargetPath.LastIndexOf("\\"));
 
-                ScanAsync(lastSourcePath, lastTargetPath);
+                    ScanAsync(lastSourcePath, lastTargetPath);
+                }
             }
         }
 
