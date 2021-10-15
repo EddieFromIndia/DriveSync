@@ -42,7 +42,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="10" /> <!--Padding-->
+            <RowDefinition Height="50" /> <!--Padding-->
             <RowDefinition Height="30" /> <!--Source & Target Label-->
             <RowDefinition Height="30" /> <!--Source & Target TextBox-->
             <RowDefinition Height="10" /> <!--Padding-->
@@ -52,7 +52,55 @@
             <RowDefinition Height="30" /> <!--Buttons-->
             <RowDefinition Height="30" /> <!--Padding-->
         </Grid.RowDefinitions>
-        
+
+        <!--Icon Group-->
+        <Border Grid.Column="0"
+                Grid.Row="0"
+                Grid.ColumnSpan="5"
+                BorderBrush="#FFC7C6C1"
+                BorderThickness="0 0 0 1">
+            <StackPanel Orientation="Horizontal"
+                        Background="#FFF9F8F3">
+
+                <Button Style="{DynamicResource ImageButton}"
+                        Width="30"
+                        Margin="30 0 20 0"
+                        HorizontalAlignment="Center"
+                        Command="{Binding BackButton_Click}"
+                        ToolTipService.InitialShowDelay="500"
+                        ToolTipService.BetweenShowDelay="500"
+                        ToolTipService.ShowOnDisabled="True"
+                        ToolTip="Go back one level">
+                    <Image Source="/Assets/back.png" />
+                </Button>
+                <Button Style="{DynamicResource ImageButton}"
+                        Width="28"
+                        Margin="0 0 20 0"
+                        HorizontalAlignment="Center"
+                        Command="{Binding RefreshButton_Click}"
+                        ToolTipService.InitialShowDelay="500"
+                        ToolTipService.BetweenShowDelay="500"
+                        ToolTipService.ShowOnDisabled="True"
+                        ToolTip="Refresh">
+                    <Image Source="/Assets/refresh.png" />
+                </Button>
+                <Button Style="{DynamicResource ImageButton}"
+                        Width="30"
+                        Margin="0 0 20 0"
+                        HorizontalAlignment="Center"
+                        Command="{Binding VisibilityButton_Click}"
+                        ToolTipService.InitialShowDelay="500"
+                        ToolTipService.BetweenShowDelay="500"
+                        ToolTipService.ShowOnDisabled="True"
+                        ToolTip="Show/hide folders and files that have no discrepancies.">
+                    <Image Source="{Binding IsVisible,
+                                    Converter={x:Static local:BooleanToVisibilityImageConverter.Instance},
+                                    FallbackValue={StaticResource VisibleImage}}" />
+                </Button>
+
+            </StackPanel>
+        </Border>
+
         <!--Source-->
         <TextBlock Grid.Column="1"
                    Grid.Row="1"
@@ -120,25 +168,31 @@
         </Grid>
         
         <!--Address Display Area-->
-        <TextBlock Grid.Column="1"
-                   Grid.Row="4"
-                   Margin="00 0 0 0"
-                   Padding="8 5"
-                   VerticalAlignment="Center"
-                   Text="{Binding LastSourcePath}"
-                   Background="#00DCD9C8"
-                   Foreground="#FF555555"
-                   TextTrimming="CharacterEllipsis" />
+        <Border Grid.Column="1"
+                Grid.Row="4"
+                Background="#FFF0ECE8"
+                BorderBrush="#FF92959A"
+                BorderThickness="1 1 1 0">
+            <TextBlock Margin="0 0 0 0"
+                       Padding="20 0 10 0"
+                       VerticalAlignment="Center"
+                       Text="{Binding LastSourcePath}"
+                       Foreground="#FF555555"
+                       TextTrimming="CharacterEllipsis" />
+        </Border>
 
-        <TextBlock Grid.Column="3"
-                   Grid.Row="4"
-                   Margin="0 0 0 0"
-                   Padding="8 5"
-                   VerticalAlignment="Center"
-                   Text="{Binding LastTargetPath}"
-                   Background="#00DCD9C8"
-                   Foreground="#FF555555"
-                   TextTrimming="CharacterEllipsis" />
+        <Border Grid.Column="3"
+                Grid.Row="4"
+                Background="#FFF0ECE8"
+                BorderBrush="#FF92959A"
+                BorderThickness="1 1 1 0">
+            <TextBlock Margin="0 0 0 0"
+                       Padding="20 0 10 0"
+                       VerticalAlignment="Center"
+                       Text="{Binding LastTargetPath}"
+                       Foreground="#FF555555"
+                       TextTrimming="CharacterEllipsis" />
+        </Border>
 
         <!--Source Display Area-->
         <Grid Grid.Column="1" Grid.Row="5">
@@ -200,51 +254,6 @@
                     IsHitTestVisible="False"/>
         </Grid>
 
-        <!--Icon Column-->
-        <StackPanel Grid.Column="2" Grid.Row="5">
-            <Button Grid.Column="1"
-                Grid.Row="4"
-                Style="{DynamicResource ImageButton}"
-                Width="24"
-                Margin="0 0 0 12"
-                HorizontalAlignment="Center"
-                Command="{Binding BackButton_Click}"
-                ToolTipService.InitialShowDelay="500"
-                ToolTipService.BetweenShowDelay="500"
-                ToolTipService.ShowOnDisabled="True"
-                ToolTip="Go back one level">
-                <Image Source="/Assets/back.png" />
-            </Button>
-            <Button Grid.Column="2"
-                Grid.Row="4"
-                Style="{DynamicResource ImageButton}"
-                Width="20"
-                Margin="0 0 0 12"
-                HorizontalAlignment="Center"
-                Command="{Binding RefreshButton_Click}"
-                ToolTipService.InitialShowDelay="500"
-                ToolTipService.BetweenShowDelay="500"
-                ToolTipService.ShowOnDisabled="True"
-                ToolTip="Refresh">
-                <Image Source="/Assets/refresh.png" />
-            </Button>
-            <Button Grid.Column="3"
-                Grid.Row="4"
-                Style="{DynamicResource ImageButton}"
-                Width="22"
-                Margin="0 0 0 10"
-                HorizontalAlignment="Center"
-                Command="{Binding VisibilityButton_Click}"
-                ToolTipService.InitialShowDelay="500"
-                ToolTipService.BetweenShowDelay="500"
-                ToolTipService.ShowOnDisabled="True"
-                ToolTip="Show/hide folders and files that have no discrepancies.">
-                <Image Source="{Binding IsVisible,
-                                Converter={x:Static local:BooleanToVisibilityImageConverter.Instance},
-                                FallbackValue={StaticResource VisibleImage}}" />
-            </Button>
-        </StackPanel>
-        
         <!--Link Icon-->
         <StackPanel Grid.Column="2"
                     Grid.Row="5"
@@ -323,6 +332,26 @@
         </Grid>
         
         <!--Main Button Area-->
+        <StackPanel Grid.Column="1"
+                    Grid.Row="7"
+                    Grid.ColumnSpan="3">
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left">
+                <Rectangle Width="10" Height="10" Fill="#FFB4B4B4" Margin="10 0" />
+                <TextBlock VerticalAlignment="Center" Text="No Discrepancy" />
+
+                <Rectangle Width="10" Height="10" Fill="#FF7C578B" Margin="44 0 10 0" />
+                <TextBlock VerticalAlignment="Center" Text="Exists on another location" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left">
+                <Rectangle Width="10" Height="10" Fill="#FFB0892E" Margin="10 0" />
+                <TextBlock VerticalAlignment="Center" Text="Different Contents" />
+
+                <Rectangle Width="10" Height="10" Fill="#FFC4514B" Margin="30 0 10 0" />
+                <TextBlock VerticalAlignment="Center" Text="Does not exist" />
+            </StackPanel>
+        </StackPanel>
         <StackPanel Grid.Column="1"
                     Grid.Row="7"
                     Grid.ColumnSpan="3"
