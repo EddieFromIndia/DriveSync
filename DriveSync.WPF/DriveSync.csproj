@@ -22,6 +22,7 @@
     <None Remove="Assets\scan.png" />
     <None Remove="Assets\settings.png" />
     <None Remove="Assets\unlink.png" />
+    <None Remove="Assets\update.png" />
     <None Remove="Assets\visible.png" />
   </ItemGroup>
 
@@ -63,6 +64,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\unlink.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\update.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\visible.png">
