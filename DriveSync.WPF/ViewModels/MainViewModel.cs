@@ -50,7 +50,7 @@ namespace DriveSync.ViewModels
             ExpandSourceDirectory = new Command(ExpandSource);
             ExpandTargetDirectory = new Command(ExpandTarget);
             ClearButton_Click = new Command(Clear, CanClear);
-            BackButton_Click = new Command(Back);
+            BackButton_Click = new Command(Back, CanBack);
             VisibilityButton_Click = new Command(ToggleVisibility);
             Link_Click = new Command(ToggleLink);
         }
@@ -237,16 +237,19 @@ namespace DriveSync.ViewModels
             IsLinked = !IsLinked;
         }
 
+        private bool CanBack(object sender)
+        {
+            return (!string.IsNullOrEmpty(LastSourcePath) || !string.IsNullOrEmpty(LastTargetPath))
+                && LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(LastSourcePath).Root.ToString() &&
+                LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(LastTargetPath).Root.ToString();
+        }
+
         private void Back(object sender)
         {
-            if (LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\"))).Root.ToString() &&
-                LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\"))).Root.ToString())
-            {
-                LastSourcePath = LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\"));
-                LastTargetPath = LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\"));
+            LastSourcePath = LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\"));
+            LastTargetPath = LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\"));
 
-                ScanAsync(LastSourcePath, LastTargetPath);
-            }
+            ScanAsync(LastSourcePath, LastTargetPath);
         }
 
         //private void Back(object sender)

@@ -26,11 +26,15 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <!--<Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="Red"></Setter>
+                </Trigger>
+            </Style.Triggers>-->
         </Style>
 
         <BitmapImage x:Key="LinkImage" UriSource="/Assets/link.png" />
         <BitmapImage x:Key="VisibleImage" UriSource="/Assets/visible.png" />
-        <BitmapImage x:Key="BackImage" UriSource="/Assets/arrow-up.png" />
     </Window.Resources>
 
     <Grid Background="#FFECE9D8">
@@ -261,10 +265,12 @@
                         ToolTipService.BetweenShowDelay="500"
                         ToolTipService.ShowOnDisabled="True"
                         ToolTip="Up one level">
-                    <Image Source="{Binding IsVisible,
+                    <Image Source="{Binding Path=IsEnabled,
+                                    RelativeSource={RelativeSource FindAncestor,
+                                    AncestorType={x:Type Button},
+                                    AncestorLevel=1},
                                     Converter={x:Static local:BooleanToImageConverter.Instance},
-                                    ConverterParameter='back',
-                                    FallbackValue={StaticResource BackImage}}" />
+                                    ConverterParameter='back'}" />
                 </Button>
                 <TextBlock Grid.Column="1"
                            Padding="0 0 10 0"
@@ -297,10 +303,12 @@
                         ToolTipService.BetweenShowDelay="500"
                         ToolTipService.ShowOnDisabled="True"
                         ToolTip="Up one level">
-                    <Image Source="{Binding IsVisible,
+                    <Image Source="{Binding Path=IsEnabled,
+                                    RelativeSource={RelativeSource FindAncestor,
+                                    AncestorType={x:Type Button},
+                                    AncestorLevel=1},
                                     Converter={x:Static local:BooleanToImageConverter.Instance},
-                                    ConverterParameter='back',
-                                    FallbackValue={StaticResource BackImage}}" />
+                                    ConverterParameter='back'}" />
                 </Button>
                 <TextBlock Grid.Column="1"
                            Padding="0 0 10 0"

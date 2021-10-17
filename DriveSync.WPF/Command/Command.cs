@@ -36,14 +36,7 @@ namespace DriveSync
 
         public bool CanExecute(object parameter)
         {
-            if (canExecuteMethod == null)
-            {
-                return true;
-            }
-            else
-            {
-                return canExecuteMethod(parameter);
-            }
+            return canExecuteMethod == null || canExecuteMethod(parameter);
         }
 
         public void Execute(object parameter)
