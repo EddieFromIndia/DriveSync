@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\arrow-up.png" />
     <None Remove="Assets\back.png" />
     <None Remove="Assets\clear.png" />
     <None Remove="Assets\file.png" />
@@ -21,12 +22,16 @@
     <None Remove="Assets\resolve.png" />
     <None Remove="Assets\scan.png" />
     <None Remove="Assets\settings.png" />
+    <None Remove="Assets\tutorial.png" />
     <None Remove="Assets\unlink.png" />
     <None Remove="Assets\update.png" />
     <None Remove="Assets\visible.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\arrow-up.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\back.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -61,6 +66,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\settings.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\tutorial.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\unlink.png">

@@ -12,7 +12,7 @@ namespace DriveSync.ViewModels
     public class MainViewModel : BaseViewModel
     {
         #region Private Properties
-        private static readonly string textIntroMessage = "Choose Source and Target directories\nand press Scan or Copy to begin...";
+        private static readonly string textIntroMessage = "Choose Source and Target directories...";
         #endregion
 
         #region Public Properties

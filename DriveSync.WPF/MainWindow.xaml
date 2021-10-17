@@ -30,6 +30,7 @@
 
         <BitmapImage x:Key="LinkImage" UriSource="/Assets/link.png" />
         <BitmapImage x:Key="VisibleImage" UriSource="/Assets/visible.png" />
+        <BitmapImage x:Key="BackImage" UriSource="/Assets/arrow-up.png" />
     </Window.Resources>
 
     <Grid Background="#FFECE9D8">
@@ -104,7 +105,8 @@
                         ToolTip="Show/hide folders and files that have no discrepancies.">
                     <StackPanel>
                         <Image Width="36" Source="{Binding IsVisible,
-                                    Converter={x:Static local:BooleanToVisibilityImageConverter.Instance},
+                                    Converter={x:Static local:BooleanToImageConverter.Instance},
+                                    ConverterParameter='visibility',
                                     FallbackValue={StaticResource VisibleImage}}" />
                         <TextBlock Text="{Binding IsVisible,
                                     Converter={x:Static local:BooleanToVisibilityTextConverter.Instance},
@@ -113,7 +115,7 @@
                     
                 </Button>
                 
-                <Line X1="0" Y1="10" X2="0" Y2="65" Stroke="Black" StrokeThickness="0.5" Margin="20 0 10 0"/>
+                <Line X1="0" Y1="10" X2="0" Y2="65" Stroke="#FFBBBAB6" StrokeThickness="1" Margin="20 0 10 0" UseLayoutRounding="True" />
 
                 <Button Style="{DynamicResource ImageButton}"
                         Width="62"
@@ -143,6 +145,24 @@
                     <StackPanel>
                         <Image Source="/Assets/update.png" Width="32" Margin="2" />
                         <TextBlock Text="Check for updates" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
+                </Button>
+
+                <Line X1="0" Y1="10" X2="0" Y2="65" Stroke="#FFBBBAB6" StrokeThickness="1" Margin="20 0 10 0" UseLayoutRounding="True" />
+
+                <Button Style="{DynamicResource ImageButton}"
+                        Width="62"
+                        Margin="0 2 0 0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Command="{Binding TutorialButton_Click}"
+                        ToolTipService.InitialShowDelay="500"
+                        ToolTipService.BetweenShowDelay="500"
+                        ToolTipService.ShowOnDisabled="True"
+                        ToolTip="Tutorials">
+                    <StackPanel>
+                        <Image Source="/Assets/tutorial.png" Width="32" Margin="2" />
+                        <TextBlock Text="Tutorials" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
                     </StackPanel>
                 </Button>
             </StackPanel>
@@ -206,6 +226,7 @@
                  VerticalContentAlignment="Center"
                  Text="{Binding TargetPath}" />
             <Button Grid.Column="2"
+                    Style="{StaticResource ImageButton}"
                     Width="30"
                     Command="{Binding BrowseButton_Click}"
                     CommandParameter="Target"
@@ -223,12 +244,33 @@
                 Background="#FFF0ECE8"
                 BorderBrush="#FF92959A"
                 BorderThickness="1 1 1 0">
-            <TextBlock Margin="0 0 0 0"
-                       Padding="20 0 10 0"
-                       VerticalAlignment="Center"
-                       Text="{Binding LastSourcePath}"
-                       Foreground="#FF555555"
-                       TextTrimming="CharacterEllipsis" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0"
+                        Style="{StaticResource ImageButton}"
+                        Margin="5"
+                        Command="{Binding BackButton_Click}"
+                        CommandParameter="Target"
+                        ToolTipService.InitialShowDelay="500"
+                        ToolTipService.BetweenShowDelay="500"
+                        ToolTipService.ShowOnDisabled="True"
+                        ToolTip="Up one level">
+                    <Image Source="{Binding IsVisible,
+                                    Converter={x:Static local:BooleanToImageConverter},
+                                    ConverterParameter='back',
+                                    FallbackValue={StaticResource BackImage}}" />
+                </Button>
+                <TextBlock Grid.Column="1"
+                           Padding="20 0 10 0"
+                           VerticalAlignment="Center"
+                           Text="{Binding LastSourcePath}"
+                           Foreground="#FF555555"
+                           TextTrimming="CharacterEllipsis" />
+            </Grid>
         </Border>
 
         <Border Grid.Column="3"
@@ -236,12 +278,33 @@
                 Background="#FFF0ECE8"
                 BorderBrush="#FF92959A"
                 BorderThickness="1 1 1 0">
-            <TextBlock Margin="0 0 0 0"
-                       Padding="20 0 10 0"
-                       VerticalAlignment="Center"
-                       Text="{Binding LastTargetPath}"
-                       Foreground="#FF555555"
-                       TextTrimming="CharacterEllipsis" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0"
+                        Style="{StaticResource ImageButton}"
+                        Margin="5"
+                        Command="{Binding BackButton_Click}"
+                        CommandParameter="Target"
+                        ToolTipService.InitialShowDelay="500"
+                        ToolTipService.BetweenShowDelay="500"
+                        ToolTipService.ShowOnDisabled="True"
+                        ToolTip="Up one level">
+                    <Image Source="{Binding IsVisible,
+                                    Converter={x:Static local:BooleanToImageConverter},
+                                    ConverterParameter='back',
+                                    FallbackValue={StaticResource BackImage}}" />
+                </Button>
+                <TextBlock Grid.Column="1"
+                           Padding="20 0 10 0"
+                           VerticalAlignment="Center"
+                           Text="{Binding LastTargetPath}"
+                           Foreground="#FF555555"
+                           TextTrimming="CharacterEllipsis" />
+            </Grid>
         </Border>
 
         <!--Source Display Area-->
@@ -316,7 +379,8 @@
                     ToolTipService.ShowOnDisabled="True"
                     ToolTip="Scroll source and target together">
                 <Image Source="{Binding IsLinked,
-                                Converter={x:Static local:BooleanToLinkImageConverter.Instance},
+                                Converter={x:Static local:BooleanToImageConverter.Instance},
+                                ConverterParameter='link',
                                 FallbackValue={StaticResource LinkImage}}" />
             </Button>
         </StackPanel>
