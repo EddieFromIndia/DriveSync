@@ -24,6 +24,9 @@ namespace DriveSync
                 case "visibility":
                     image = (bool)value ? "visible" : "invisible";
                     break;
+                case "file-folder":
+                    image = (bool)value ? "file" : "folder";
+                    break;
             }
 
             return new BitmapImage(new Uri($"pack://application:,,,/Assets/{image}.png"));

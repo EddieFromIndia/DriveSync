@@ -260,7 +260,7 @@
                         ToolTipService.ShowOnDisabled="True"
                         ToolTip="Up one level">
                     <Image Source="{Binding IsVisible,
-                                    Converter={x:Static local:BooleanToImageConverter},
+                                    Converter={x:Static local:BooleanToImageConverter.Instance},
                                     ConverterParameter='back',
                                     FallbackValue={StaticResource BackImage}}" />
                 </Button>
@@ -294,7 +294,7 @@
                         ToolTipService.ShowOnDisabled="True"
                         ToolTip="Up one level">
                     <Image Source="{Binding IsVisible,
-                                    Converter={x:Static local:BooleanToImageConverter},
+                                    Converter={x:Static local:BooleanToImageConverter.Instance},
                                     ConverterParameter='back',
                                     FallbackValue={StaticResource BackImage}}" />
                 </Button>
@@ -339,7 +339,8 @@
                                        HorizontalAlignment="Center"
                                        Width="20"
                                        Source="{Binding IsFile,
-                                                Converter={x:Static local:BooleanToFileFolderImageConverter.Instance}}" />
+                                                Converter={x:Static local:BooleanToImageConverter.Instance},
+                                                ConverterParameter='file-folder'}" />
                                 <TextBlock Grid.Column="1"
                                            VerticalAlignment="Center"
                                            TextTrimming="CharacterEllipsis"
@@ -417,7 +418,8 @@
                                     HorizontalAlignment="Center"
                                     Width="20"
                                     Source="{Binding IsFile,
-                                            Converter={x:Static local:BooleanToFileFolderImageConverter.Instance}}" />
+                                            Converter={x:Static local:BooleanToImageConverter.Instance},
+                                            ConverterParameter='file-folder'}" />
                                 <TextBlock Grid.Column="1"
                                         VerticalAlignment="Center"
                                         TextTrimming="CharacterEllipsis"
