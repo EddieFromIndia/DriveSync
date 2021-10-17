@@ -112,7 +112,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="30" />
             </Grid.ColumnDefinitions>
             
             <TextBox Grid.Column="0"
@@ -123,14 +123,15 @@
                  VerticalContentAlignment="Center"
                  Text="{Binding SourcePath}" />
             <Button Grid.Column="2"
-                    Width="50"
+                    Style="{StaticResource ImageButton}"
+                    Width="30"
                     Command="{Binding BrowseButton_Click}"
                     CommandParameter="Source"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
                     ToolTip="Browse">
-                <Image Source="/Assets/folder-open.png" Height="24" />
+                <Image Source="/Assets/folder-open.png" />
             </Button>
         </Grid>
         
@@ -145,7 +146,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="70" />
+                <ColumnDefinition Width="30" />
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0"
@@ -156,14 +157,14 @@
                  VerticalContentAlignment="Center"
                  Text="{Binding TargetPath}" />
             <Button Grid.Column="2"
-                    Width="50"
+                    Width="30"
                     Command="{Binding BrowseButton_Click}"
                     CommandParameter="Target"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
                     ToolTip="Browse">
-                <Image Source="/Assets/folder-open.png" Height="24" />
+                <Image Source="/Assets/folder-open.png" />
             </Button>
         </Grid>
         
@@ -338,9 +339,9 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Left">
                 <Rectangle Width="10" Height="10" Fill="#FFB4B4B4" Margin="10 0" />
-                <TextBlock VerticalAlignment="Center" Text="No Discrepancy" />
+                <TextBlock VerticalAlignment="Center" Text="No Differences" />
 
-                <Rectangle Width="10" Height="10" Fill="#FF7C578B" Margin="44 0 10 0" />
+                <Rectangle Width="10" Height="10" Fill="#FF7C578B" Margin="49 0 10 0" />
                 <TextBlock VerticalAlignment="Center" Text="Exists on another location" />
             </StackPanel>
             <StackPanel Orientation="Horizontal"
