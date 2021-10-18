@@ -256,7 +256,7 @@ namespace DriveSync.ViewModels
 
         private bool CanRefresh(object sender)
         {
-            return !string.IsNullOrEmpty(LastSourcePath) || !string.IsNullOrEmpty(LastTargetPath);
+            return !string.IsNullOrEmpty(LastSourcePath) && !string.IsNullOrEmpty(LastTargetPath);
         }
 
         private void Refresh(object sender)
