@@ -28,6 +28,31 @@
             </Setter>
         </Style>
 
+        <Style x:Key="MenuButton" TargetType="{x:Type Button}" BasedOn="{StaticResource ImageButton}">
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalContentAlignment" Value="Top" />
+            <Setter Property="Height" Value="70" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ButtonBase}">
+                        <Border x:Name="border" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFBEF6FD" />
+                    <Setter Property="BorderBrush" Value="#FF74ECFB" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <BitmapImage x:Key="LinkImage" UriSource="/Assets/link.png" />
         <BitmapImage x:Key="VisibleImage" UriSource="/Assets/visible.png" />
         <BitmapImage x:Key="EmptyFolderImage" UriSource="/Assets/folder-empty.png" />
@@ -63,11 +88,9 @@
             <StackPanel Orientation="Horizontal"
                         Background="#FFF9F8F3">
 
-                <Button Style="{DynamicResource ImageButton}"
+                <Button Style="{DynamicResource MenuButton}"
                         Width="65"
                         Margin="30 2 0 0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
                         Command="{Binding RefreshButton_Click}"
                         ToolTipService.InitialShowDelay="500"
                         ToolTipService.BetweenShowDelay="500"
@@ -78,11 +101,9 @@
                         <TextBlock Text="Refresh" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
                     </StackPanel>
                 </Button>
-                <Button Style="{DynamicResource ImageButton}"
+                <Button Style="{DynamicResource MenuButton}"
                         Width="70"
                         Margin="0 2 0 0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
                         Command="{Binding VisibilityButton_Click}"
                         ToolTipService.InitialShowDelay="500"
                         ToolTipService.BetweenShowDelay="500"
@@ -99,11 +120,9 @@
                                     FallbackValue='Hide equal files/folders'}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
                     </StackPanel>
                 </Button>
-                <Button Style="{DynamicResource ImageButton}"
+                <Button Style="{DynamicResource MenuButton}"
                         Width="70"
                         Margin="0 2 0 0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
                         Command="{Binding ShowHideEmptyFolderButton_Click}"
                         ToolTipService.InitialShowDelay="500"
                         ToolTipService.BetweenShowDelay="500"
@@ -123,11 +142,9 @@
                 
                 <Line X1="0" Y1="10" X2="0" Y2="65" Stroke="#FFBBBAB6" StrokeThickness="1" Margin="20 0 10 0" UseLayoutRounding="True" />
 
-                <Button Style="{DynamicResource ImageButton}"
+                <Button Style="{DynamicResource MenuButton}"
                         Width="65"
                         Margin="0 2 0 0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
                         Command="{Binding SettingsButton_Click}"
                         ToolTipService.InitialShowDelay="500"
                         ToolTipService.BetweenShowDelay="500"
@@ -138,11 +155,9 @@
                         <TextBlock Text="Settings" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
                     </StackPanel>
                 </Button>
-                <Button Style="{DynamicResource ImageButton}"
+                <Button Style="{DynamicResource MenuButton}"
                         Width="65"
                         Margin="0 2 0 0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
                         Command="{Binding UpdateButton_Click}"
                         ToolTipService.InitialShowDelay="500"
                         ToolTipService.BetweenShowDelay="500"
@@ -156,11 +171,9 @@
 
                 <Line X1="0" Y1="10" X2="0" Y2="65" Stroke="#FFBBBAB6" StrokeThickness="1" Margin="20 0 10 0" UseLayoutRounding="True" />
 
-                <Button Style="{DynamicResource ImageButton}"
+                <Button Style="{DynamicResource MenuButton}"
                         Width="65"
                         Margin="0 2 0 0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
                         Command="{Binding TutorialButton_Click}"
                         ToolTipService.InitialShowDelay="500"
                         ToolTipService.BetweenShowDelay="500"

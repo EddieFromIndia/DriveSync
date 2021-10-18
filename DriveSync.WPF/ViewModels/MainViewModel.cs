@@ -227,6 +227,9 @@ namespace DriveSync.ViewModels
 
             SourceDirectories = new ObservableCollection<PathItem>();
             TargetDirectories = new ObservableCollection<PathItem>();
+            
+            SourceDirectoriesToDisplay = new ObservableCollection<PathItem>();
+            TargetDirectoriesToDisplay = new ObservableCollection<PathItem>();
 
             SourcePath = string.Empty;
             TargetPath = string.Empty;
