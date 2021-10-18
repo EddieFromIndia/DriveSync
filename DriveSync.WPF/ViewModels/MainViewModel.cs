@@ -37,6 +37,7 @@ namespace DriveSync.ViewModels
         public ICommand ExpandTargetDirectory { get; set; }
         public ICommand ClearButton_Click { get; set; }
         public ICommand BackButton_Click { get; set; }
+        public ICommand RefreshButton_Click { get; set; }
         public ICommand VisibilityButton_Click { get; set; }
         public ICommand Link_Click { get; set; }
         #endregion
@@ -51,6 +52,7 @@ namespace DriveSync.ViewModels
             ExpandTargetDirectory = new Command(ExpandTarget);
             ClearButton_Click = new Command(Clear, CanClear);
             BackButton_Click = new Command(Back, CanBack);
+            RefreshButton_Click = new Command(Refresh, CanRefresh);
             VisibilityButton_Click = new Command(ToggleVisibility);
             Link_Click = new Command(ToggleLink);
         }
@@ -249,6 +251,16 @@ namespace DriveSync.ViewModels
             LastSourcePath = LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\"));
             LastTargetPath = LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\"));
 
+            ScanAsync(LastSourcePath, LastTargetPath);
+        }
+
+        private bool CanRefresh(object sender)
+        {
+            return !string.IsNullOrEmpty(LastSourcePath) || !string.IsNullOrEmpty(LastTargetPath);
+        }
+
+        private void Refresh(object sender)
+        {
             ScanAsync(LastSourcePath, LastTargetPath);
         }
 
