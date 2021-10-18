@@ -14,6 +14,8 @@
     <None Remove="Assets\back.png" />
     <None Remove="Assets\clear.png" />
     <None Remove="Assets\file.png" />
+    <None Remove="Assets\folder-empty-disabled.png" />
+    <None Remove="Assets\folder-empty.png" />
     <None Remove="Assets\folder-open.png" />
     <None Remove="Assets\folder.png" />
     <None Remove="Assets\invisible.png" />
@@ -43,6 +45,12 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\file.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\folder-empty-disabled.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\folder-empty.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\folder-open.png">

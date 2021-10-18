@@ -15,17 +15,20 @@ namespace DriveSync
             string image = string.Empty;
             switch (parameter.ToString())
             {
-                case "link":
-                    image = (bool)value ? "link" : "unlink";
-                    break;
                 case "back":
                     image = (bool)value ? "arrow-up" : "arrow-up-disabled";
                     break;
-                case "visibility":
-                    image = (bool)value ? "visible" : "invisible";
+                case "link":
+                    image = (bool)value ? "link" : "unlink";
                     break;
                 case "file-folder":
                     image = (bool)value ? "file" : "folder";
+                    break;
+                case "folder-empty":
+                    image = (bool)value ? "folder-empty" : "folder-empty-disabled";
+                    break;
+                case "visibility":
+                    image = (bool)value ? "visible" : "invisible";
                     break;
             }
 

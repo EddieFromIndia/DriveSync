@@ -26,15 +26,11 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <!--<Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="Red"></Setter>
-                </Trigger>
-            </Style.Triggers>-->
         </Style>
 
         <BitmapImage x:Key="LinkImage" UriSource="/Assets/link.png" />
         <BitmapImage x:Key="VisibleImage" UriSource="/Assets/visible.png" />
+        <BitmapImage x:Key="EmptyFolderImage" UriSource="/Assets/folder-empty.png" />
     </Window.Resources>
 
     <Grid Background="#FFECE9D8">
@@ -68,23 +64,8 @@
                         Background="#FFF9F8F3">
 
                 <Button Style="{DynamicResource ImageButton}"
-                        Width="62"
+                        Width="65"
                         Margin="30 2 0 0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
-                        Command="{Binding BackButton_Click}"
-                        ToolTipService.InitialShowDelay="500"
-                        ToolTipService.BetweenShowDelay="500"
-                        ToolTipService.ShowOnDisabled="True"
-                        ToolTip="Go back one level">
-                    <StackPanel>
-                        <Image Source="/Assets/back.png" Width="36" />
-                        <TextBlock Text="Up one level" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                    </StackPanel>
-                </Button>
-                <Button Style="{DynamicResource ImageButton}"
-                        Width="62"
-                        Margin="0 2 0 0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
                         Command="{Binding RefreshButton_Click}"
@@ -98,7 +79,7 @@
                     </StackPanel>
                 </Button>
                 <Button Style="{DynamicResource ImageButton}"
-                        Width="62"
+                        Width="70"
                         Margin="0 2 0 0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
@@ -113,16 +94,37 @@
                                     ConverterParameter='visibility',
                                     FallbackValue={StaticResource VisibleImage}}" />
                         <TextBlock Text="{Binding IsVisible,
-                                    Converter={x:Static local:BooleanToVisibilityTextConverter.Instance},
+                                    Converter={x:Static local:BooleanToTextConverter.Instance},
+                                    ConverterParameter='visibility',
                                     FallbackValue='Hide equal files/folders'}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
                     </StackPanel>
-                    
+                </Button>
+                <Button Style="{DynamicResource ImageButton}"
+                        Width="70"
+                        Margin="0 2 0 0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
+                        Command="{Binding ShowHideEmptyFolderButton_Click}"
+                        ToolTipService.InitialShowDelay="500"
+                        ToolTipService.BetweenShowDelay="500"
+                        ToolTipService.ShowOnDisabled="True"
+                        ToolTip="Show/hide empty folders">
+                    <StackPanel>
+                        <Image Width="36" Source="{Binding ShowEmptyFolder,
+                                    Converter={x:Static local:BooleanToImageConverter.Instance},
+                                    ConverterParameter='folder-empty',
+                                    FallbackValue={StaticResource EmptyFolderImage}}" />
+                        <TextBlock Text="{Binding ShowEmptyFolder,
+                                    Converter={x:Static local:BooleanToTextConverter.Instance},
+                                    ConverterParameter='folder-empty',
+                                    FallbackValue='Hide empty folders'}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
+                    </StackPanel>
                 </Button>
                 
                 <Line X1="0" Y1="10" X2="0" Y2="65" Stroke="#FFBBBAB6" StrokeThickness="1" Margin="20 0 10 0" UseLayoutRounding="True" />
 
                 <Button Style="{DynamicResource ImageButton}"
-                        Width="62"
+                        Width="65"
                         Margin="0 2 0 0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
@@ -137,7 +139,7 @@
                     </StackPanel>
                 </Button>
                 <Button Style="{DynamicResource ImageButton}"
-                        Width="62"
+                        Width="65"
                         Margin="0 2 0 0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"
@@ -155,7 +157,7 @@
                 <Line X1="0" Y1="10" X2="0" Y2="65" Stroke="#FFBBBAB6" StrokeThickness="1" Margin="20 0 10 0" UseLayoutRounding="True" />
 
                 <Button Style="{DynamicResource ImageButton}"
-                        Width="62"
+                        Width="65"
                         Margin="0 2 0 0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top"

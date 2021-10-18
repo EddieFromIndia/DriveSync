@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -28,6 +29,7 @@ namespace DriveSync.ViewModels
         public string LastTargetPath { get; set; } = string.Empty;
         public int ResolveMethod { get; set; } = 0;
         public bool IsVisible { get; set; } = true;
+        public bool ShowEmptyFolder { get; set; } = true;
         public bool IsLinked { get; set; } = true;
         #endregion
 
@@ -41,6 +43,7 @@ namespace DriveSync.ViewModels
         public ICommand BackButton_Click { get; set; }
         public ICommand RefreshButton_Click { get; set; }
         public ICommand VisibilityButton_Click { get; set; }
+        public ICommand ShowHideEmptyFolderButton_Click { get; set; }
         public ICommand Link_Click { get; set; }
         #endregion
 
@@ -56,6 +59,7 @@ namespace DriveSync.ViewModels
             BackButton_Click = new Command(Back, CanBack);
             RefreshButton_Click = new Command(Refresh, CanRefresh);
             VisibilityButton_Click = new Command(ToggleVisibility);
+            ShowHideEmptyFolderButton_Click = new Command(ShowHideEmptyFolder);
             Link_Click = new Command(ToggleLink);
         }
 
@@ -234,6 +238,13 @@ namespace DriveSync.ViewModels
         private void ToggleVisibility(object sender)
         {
             IsVisible = !IsVisible;
+
+            UpdateDataVisibility();
+        }
+
+        private void ShowHideEmptyFolder(object sender)
+        {
+            ShowEmptyFolder = !ShowEmptyFolder;
 
             UpdateDataVisibility();
         }
@@ -582,7 +593,7 @@ namespace DriveSync.ViewModels
 
         private void UpdateDataVisibility()
         {
-            if (IsVisible)
+            if (IsVisible && ShowEmptyFolder)
             {
                 SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories);
                 TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories);
@@ -596,9 +607,17 @@ namespace DriveSync.ViewModels
                 {
                     foreach (PathItem dir in SourceDirectories)
                     {
-                        if (dir.Status == ItemStatus.ExistsAndEqual)
+                        if (!IsVisible && dir.Status == ItemStatus.ExistsAndEqual)
                         {
                             _ = SourceDirectoriesToDisplay.Remove(dir);
+                        }
+
+                        if (!ShowEmptyFolder && !dir.IsFile)
+                        {
+                            if (IsDirectoryEmpty(dir.Item.FullName))
+                            {
+                                _ = SourceDirectoriesToDisplay.Remove(dir);
+                            }
                         }
                     }
                 }
@@ -607,13 +626,26 @@ namespace DriveSync.ViewModels
                 {
                     foreach (PathItem dir in TargetDirectories)
                     {
-                        if (dir.Status == ItemStatus.ExistsAndEqual)
+                        if (!IsVisible && dir.Status == ItemStatus.ExistsAndEqual)
                         {
                             _ = TargetDirectoriesToDisplay.Remove(dir);
+                        }
+
+                        if (!ShowEmptyFolder && !dir.IsFile)
+                        {
+                            if (IsDirectoryEmpty(dir.Item.FullName))
+                            {
+                                _ = TargetDirectoriesToDisplay.Remove(dir);
+                            }
                         }
                     }
                 }
             }
+        }
+
+        private bool IsDirectoryEmpty(string path)
+        {
+            return !Directory.EnumerateFileSystemEntries(path).Any();
         }
         #endregion
     }
