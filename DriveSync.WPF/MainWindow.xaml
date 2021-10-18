@@ -43,8 +43,13 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FFD7F9FE" />
+                    <Setter Property="BorderBrush" Value="#FFA5F3FC" />
+                    <Setter Property="BorderThickness" Value="1" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
                     <Setter Property="Background" Value="#FFBEF6FD" />
-                    <Setter Property="BorderBrush" Value="#FF74ECFB" />
+                    <Setter Property="BorderBrush" Value="#FF8DEFFB" />
                     <Setter Property="BorderThickness" Value="1" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
@@ -71,10 +76,10 @@
             <RowDefinition Height="75" /> <!--Menu-->
             <RowDefinition Height="40" /> <!--Source & Target Label-->
             <RowDefinition Height="30" /> <!--Source & Target TextBox-->
-            <RowDefinition Height="10" /> <!--Padding-->
+            <RowDefinition Height="15" /> <!--Padding-->
             <RowDefinition Height="30" /> <!--Address Display-->
             <RowDefinition Height="*" /> <!--Description Area-->
-            <RowDefinition Height="10" /> <!--Padding-->
+            <RowDefinition Height="20" /> <!--Padding-->
             <RowDefinition Height="30" /> <!--Buttons-->
             <RowDefinition Height="30" /> <!--Padding-->
         </Grid.RowDefinitions>
