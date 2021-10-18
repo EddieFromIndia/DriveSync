@@ -18,6 +18,8 @@ namespace DriveSync.ViewModels
         #region Public Properties
         public ObservableCollection<PathItem> SourceDirectories { get; set; } = new ObservableCollection<PathItem>();
         public ObservableCollection<PathItem> TargetDirectories { get; set; } = new ObservableCollection<PathItem>();
+        public ObservableCollection<PathItem> SourceDirectoriesToDisplay { get; set; } = new ObservableCollection<PathItem>();
+        public ObservableCollection<PathItem> TargetDirectoriesToDisplay { get; set; } = new ObservableCollection<PathItem>();
         public string SourceDisplayText { get; set; } = textIntroMessage;
         public string TargetDisplayText { get; set; } = string.Empty;
         public string SourcePath { get; set; }
@@ -232,6 +234,8 @@ namespace DriveSync.ViewModels
         private void ToggleVisibility(object sender)
         {
             IsVisible = !IsVisible;
+
+            UpdateDataVisibility();
         }
 
         private void ToggleLink(object sender)
@@ -407,8 +411,10 @@ namespace DriveSync.ViewModels
                     }
                 }
 
-                SourceDisplayText = SourceDirectories.Count == 0 ? "No folders or files..." : string.Empty;
-                TargetDisplayText = TargetDirectories.Count == 0 ? "No folders or files..." : string.Empty;
+                UpdateDataVisibility();
+
+                SourceDisplayText = SourceDirectoriesToDisplay.Count == 0 ? "No folders or files..." : string.Empty;
+                TargetDisplayText = TargetDirectoriesToDisplay.Count == 0 ? "No folders or files..." : string.Empty;
             }
             else if ((!string.IsNullOrEmpty(sourcePath) || Directory.Exists(sourcePath)) && (string.IsNullOrEmpty(targetPath) || !Directory.Exists(targetPath)))
             {
@@ -571,6 +577,42 @@ namespace DriveSync.ViewModels
             foreach (PathItem item in tempList)
             {
                 TargetDirectories.Add(item);
+            }
+        }
+
+        private void UpdateDataVisibility()
+        {
+            if (IsVisible)
+            {
+                SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories);
+                TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories);
+            }
+            else
+            {
+                SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories);
+                TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories);
+
+                if (SourceDirectories.Count > 0)
+                {
+                    foreach (PathItem dir in SourceDirectories)
+                    {
+                        if (dir.Status == ItemStatus.ExistsAndEqual)
+                        {
+                            _ = SourceDirectoriesToDisplay.Remove(dir);
+                        }
+                    }
+                }
+
+                if (TargetDirectories.Count > 0)
+                {
+                    foreach (PathItem dir in TargetDirectories)
+                    {
+                        if (dir.Status == ItemStatus.ExistsAndEqual)
+                        {
+                            _ = TargetDirectoriesToDisplay.Remove(dir);
+                        }
+                    }
+                }
             }
         }
         #endregion

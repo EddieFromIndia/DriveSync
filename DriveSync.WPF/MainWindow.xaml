@@ -326,7 +326,7 @@
                     Background="#FFFBF7F4"
                     Padding="10">
                 <ListView x:Name="SourceList"
-                          ItemsSource="{Binding SourceDirectories}"
+                          ItemsSource="{Binding SourceDirectoriesToDisplay}"
                           Background="Transparent"
                           BorderThickness="0"
                           ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -405,7 +405,7 @@
                     Background="#FFFBF7F4"
                     Padding="10">
                 <ListView x:Name="TargetList"
-                          ItemsSource="{Binding TargetDirectories}"
+                          ItemsSource="{Binding TargetDirectoriesToDisplay}"
                           Background="Transparent"
                           BorderThickness="0"
                           ScrollViewer.VerticalScrollBarVisibility="Auto"
