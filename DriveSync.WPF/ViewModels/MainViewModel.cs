@@ -27,10 +27,13 @@ namespace DriveSync.ViewModels
         public string TargetPath { get; set; }
         public string LastSourcePath { get; set; } = string.Empty;
         public string LastTargetPath { get; set; } = string.Empty;
-        public int ResolveMethod { get; set; } = 0;
+        public ResolveMethods ResolveMethod { get; set; } = 0;
         public bool IsVisible { get; set; } = true;
         public bool ShowEmptyFolder { get; set; } = true;
         public bool IsLinked { get; set; } = true;
+        public Visibility ProgressVisibility { get; set; } = Visibility.Hidden;
+        public string ProgressString { get; set; } = string.Empty;
+        public int ProgressPercentage { get; set; } = 0;
         #endregion
 
         #region Command Declarations
@@ -119,30 +122,124 @@ namespace DriveSync.ViewModels
             return false;
         }
 
-        private void Scan(object sender)
+        private async void Scan(object sender)
         {
             LastSourcePath = SourcePath;
             LastTargetPath = TargetPath;
 
-            ScanAsync(SourcePath, TargetPath);
+            await ScanAsync(SourcePath, TargetPath);
         }
 
-        private void AutoResolve(object sender)
+        private async void AutoResolve(object sender)
         {
+            SourceDisplayText = "Resolving. Please wait!";
+            TargetDisplayText = "Resolving. Please wait!";
+            ProgressVisibility = Visibility.Visible;
+            ProgressString = "Modifying files";
+            ProgressPercentage = 10;
 
+            switch (ResolveMethod)
+            {
+                case ResolveMethods.LeftToRightDestructive:
+                case ResolveMethods.LeftToRightNonDestructive:
+                    await MergeAsync(SourcePath, TargetPath);
+                    break;
+
+                case ResolveMethods.RightToLeftDestructive:
+                case ResolveMethods.RightToLeftNonDestructive:
+                    await MergeAsync(TargetPath, SourcePath);
+                    break;
+            }
+
+            //await ScanAsync(SourcePath, TargetPath);
+            //ProgressString = "Calculating";
+            //ProgressPercentage = 20;
+
+            //List<Task> tasks = new List<Task>();
+            //switch (ResolveMethod)
+            //{
+            //    case ResolveMethods.LeftToRightDestructive:
+            //    case ResolveMethods.LeftToRightNonDestructive:
+            //        foreach (PathItem item in TargetDirectories)
+            //        {
+
+            //        }
+
+            //        foreach (PathItem item in SourceDirectories)
+            //        {
+            //            if (item.IsFile)
+            //            {
+            //                tasks.Add(Task.Run(() => File.Copy(item.Item.FullName, item.Item.FullName.Replace(SourcePath, TargetPath))));
+            //            }
+            //            else
+            //            {
+            //                switch (item.Status)
+            //                {
+            //                    case ItemStatus.ExistsButDifferent:
+            //                            tasks.Add(Task.Run(() => MergeAsync(item.Item.FullName, item.Item.FullName.Replace(SourcePath, TargetPath))));
+            //                        break;
+            //                    case ItemStatus.DoesNotExist:
+            //                        tasks.Add(Task.Run(() => CopyFilesRecursively(item.Item.FullName, TargetPath)));
+            //                        break;
+            //                }
+            //            }
+            //        }
+            //        break;
+
+            //    case ResolveMethods.RightToLeftDestructive:
+            //    case ResolveMethods.RightToLeftNonDestructive:
+            //        foreach (PathItem item in TargetDirectories)
+            //        {
+            //            if (item.IsFile)
+            //            {
+            //                tasks.Add(Task.Run(() => File.Copy(item.Item.FullName, item.Item.FullName.Replace(TargetPath, SourcePath))));
+            //            }
+            //            else
+            //            {
+            //                switch (item.Status)
+            //                {
+            //                    case ItemStatus.ExistsButDifferent:
+            //                        tasks.Add(Task.Run(() => MergeAsync(item.Item.FullName, item.Item.FullName.Replace(TargetPath, SourcePath))));
+            //                        break;
+            //                    case ItemStatus.DoesNotExist:
+            //                        tasks.Add(Task.Run(() => CopyFilesRecursively(item.Item.FullName, SourcePath)));
+            //                        break;
+            //                }
+            //            }
+            //        }
+            //        break;
+            //}
+
+            
+            //await Task.WhenAll(tasks);
+
+            ProgressString = "Verifying";
+            ProgressPercentage = 80;
+
+            LastSourcePath = SourcePath;
+            LastTargetPath = TargetPath;
+            await ScanAsync (SourcePath, TargetPath);
+
+            ProgressString = "Done";
+            ProgressPercentage = 100;
+            _ = MessageBox.Show("Resolve Complete.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            ProgressString = string.Empty;
+            ProgressVisibility = Visibility.Hidden;
+            SourceDisplayText = string.Empty;
+            TargetDisplayText = string.Empty;
         }
 
-        private void ExpandSource(object sender)
+        private async void ExpandSource(object sender)
         {
             if (!((PathItem)sender).IsFile)
             {
                 if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastTargetPath)))
                 {
-                    ScanAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastTargetPath));
+                    await ScanAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastTargetPath));
                 }
                 else
                 {
-                    ScanAsync(((PathItem)sender).Item.FullName, string.Empty);
+                    await ScanAsync(((PathItem)sender).Item.FullName, string.Empty);
                 }
 
                 LastSourcePath = ((PathItem)sender).Item.FullName;
@@ -150,17 +247,17 @@ namespace DriveSync.ViewModels
             }
         }
 
-        private void ExpandTarget(object sender)
+        private async void ExpandTarget(object sender)
         {
             if (!((PathItem)sender).IsFile)
             {
                 if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath)))
                 {
-                    ScanAsync(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath), ((PathItem)sender).Item.FullName);
+                    await ScanAsync (((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath), ((PathItem)sender).Item.FullName);
                 }
                 else
                 {
-                    ScanAsync(string.Empty, ((PathItem)sender).Item.FullName);
+                    await ScanAsync (string.Empty, ((PathItem)sender).Item.FullName);
                 }
 
                 LastSourcePath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath);
@@ -264,12 +361,12 @@ namespace DriveSync.ViewModels
                 LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(LastTargetPath).Root.ToString();
         }
 
-        private void Back(object sender)
+        private async void Back(object sender)
         {
             LastSourcePath = LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\"));
             LastTargetPath = LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\"));
 
-            ScanAsync(LastSourcePath, LastTargetPath);
+            await ScanAsync(LastSourcePath, LastTargetPath);
         }
 
         private bool CanRefresh(object sender)
@@ -277,9 +374,9 @@ namespace DriveSync.ViewModels
             return !string.IsNullOrEmpty(LastSourcePath) && !string.IsNullOrEmpty(LastTargetPath);
         }
 
-        private void Refresh(object sender)
+        private async void Refresh(object sender)
         {
-            ScanAsync(LastSourcePath, LastTargetPath);
+            await ScanAsync(LastSourcePath, LastTargetPath);
         }
 
         //private void Delete(object sender)
@@ -294,7 +391,7 @@ namespace DriveSync.ViewModels
         #endregion
 
         #region Helper Methods
-        private async void ScanAsync(string sourcePath, string targetPath)
+        private async Task ScanAsync(string sourcePath, string targetPath)
         {
             SourceDirectories.Clear();
             TargetDirectories.Clear();
@@ -329,10 +426,10 @@ namespace DriveSync.ViewModels
                 foreach (PathItem sourceDir in SourceDirectories)
                 {
                     // Checks if the source directory exists in target
-                    if (Directory.Exists(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath)) || File.Exists(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath)))
+                    if ((!sourceDir.IsFile && Directory.Exists(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath))) || (sourceDir.IsFile && File.Exists(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath))))
                     {
                         // Checks if source and target directories are equal
-                        if (await CompareDirectoriesAsync(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath), sourceDir.Item.FullName))
+                        if (await CompareFileSystemEntriesAsync(sourceDir.Item.FullName, sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath)))
                         {
                             SourceDirectories[SourceDirectories.IndexOf(sourceDir)].Status = ItemStatus.ExistsAndEqual;
 
@@ -405,12 +502,13 @@ namespace DriveSync.ViewModels
         /// <param name="dir1"></param>
         /// <param name="dir2"></param>
         /// <returns>true if they are equal; otherwise false</returns>
-        private static async Task<bool> CompareDirectoriesAsync(string dir1, string dir2)
+        private static async Task<bool> CompareFileSystemEntriesAsync(string entry1, string entry2)
         {
-            List<Task<long>> tasks = new List<Task<long>>();
-
-            tasks.Add(Task.Run(() => CalculateSize(dir1)));
-            tasks.Add(Task.Run(() => CalculateSize(dir2)));
+            List<Task<long>> tasks = new List<Task<long>>
+            {
+                Task.Run(() => CalculateSize(entry1)),
+                Task.Run(() => CalculateSize(entry2))
+            };
 
             long[] results = await Task.WhenAll(tasks);
 
@@ -424,7 +522,7 @@ namespace DriveSync.ViewModels
         /// <returns>The file/folder size in bytes.</returns>
         private static long CalculateSize(string path)
         {
-            long folderSize = 0;
+            long size = 0;
             try
             {
                 //Checks if the path is valid or not
@@ -433,9 +531,9 @@ namespace DriveSync.ViewModels
                     if (File.Exists(path))
                     {
                         FileInfo finfo = new FileInfo(path);
-                        folderSize += finfo.Length;
+                        size += finfo.Length;
                     }
-                    return folderSize;
+                    return size;
                 }
                 else
                 {
@@ -446,20 +544,20 @@ namespace DriveSync.ViewModels
                             if (File.Exists(file))
                             {
                                 FileInfo finfo = new FileInfo(file);
-                                folderSize += finfo.Length;
+                                size += finfo.Length;
                             }
                         }
 
                         foreach (string dir in Directory.GetDirectories(path))
                         {
-                            folderSize += CalculateSize(dir);
+                            size += CalculateSize(dir);
                         }
                     }
                     catch (NotSupportedException)
                     {
                         if (MessageBox.Show("Unable to calculate folder size.", "Error", MessageBoxButton.OK, MessageBoxImage.Error) == MessageBoxResult.OK)
                         {
-                            return folderSize;
+                            return size;
                         }
                     }
                 }
@@ -468,14 +566,14 @@ namespace DriveSync.ViewModels
             {
                 if (MessageBox.Show("You are not authorized to access this folder.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error) == MessageBoxResult.OK)
                 {
-                    return folderSize;
+                    return size;
                 }
             }
-            return folderSize;
+            return size;
         }
 
         /// <summary>
-        /// Copies the contents of the source path to the target path.
+        /// Copies the directory source path to the target path.
         /// It replaces any contents present in the target path.
         /// </summary>
         /// <param name="sourcePath"></param>
@@ -499,8 +597,68 @@ namespace DriveSync.ViewModels
             {
                 File.Copy(newPath, newPath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath), true);
             }
+        }
 
-            _ = MessageBox.Show("Copy Complete.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        private async Task MergeAsync(string sourcePath, string targetPath)
+        {
+            List<Task> tasks = new List<Task>();
+
+            //Deletes folders in target that are not in source
+            foreach (string tDir in Directory.GetDirectories(targetPath))
+            {
+                if (Directory.GetDirectories(sourcePath, new DirectoryInfo(tDir).Name).Length == 0)
+                {
+                    tasks.Add(Task.Run(() => Directory.Delete(tDir, true)));
+                }
+            }
+
+            //Deletes files in target that are not in source
+            foreach (string tFile in Directory.GetFiles(targetPath))
+            {
+                if (Directory.GetFiles(sourcePath, new DirectoryInfo(tFile).Name).Length == 0)
+                {
+                    tasks.Add(Task.Run(() => Directory.Delete(tFile)));
+                }
+            }
+
+            await Task.WhenAll(tasks);
+            tasks.Clear();
+
+            foreach (string sFile in Directory.GetFiles(sourcePath))
+            {
+                string[] tFiles = Directory.GetFiles(targetPath, new DirectoryInfo(sFile).Name);
+
+                if (tFiles.Length > 0)
+                {
+                    if (!await CompareFileSystemEntriesAsync(sFile, tFiles[0]))
+                    {
+                        tasks.Add(Task.Run(() => File.Copy(sFile, sFile.Replace(sourcePath, targetPath), true)));
+                    }
+                }
+                else
+                {
+                    tasks.Add(Task.Run(() => File.Copy(sFile, sFile.Replace(sourcePath, targetPath), true)));
+                }
+            }
+
+            await Task.WhenAll(tasks);
+
+            foreach (string sDir in Directory.GetDirectories(sourcePath))
+            {
+                string[] tDirs = Directory.GetDirectories(targetPath, new DirectoryInfo(sDir).Name);
+
+                if (tDirs.Length > 0)
+                {
+                    if (!await CompareFileSystemEntriesAsync(sDir, tDirs[0]))
+                    {
+                        await MergeAsync(sDir, tDirs[0]);
+                    }
+                }
+                else
+                {
+                    await Task.Run(() => CopyFilesRecursively(sDir, targetPath));
+                }
+            }
         }
 
         private void RefreshCollection()
@@ -585,5 +743,13 @@ namespace DriveSync.ViewModels
             return !Directory.EnumerateFileSystemEntries(path).Any();
         }
         #endregion
+    }
+
+    public enum ResolveMethods
+    {
+        LeftToRightDestructive,
+        LeftToRightNonDestructive,
+        RightToLeftDestructive,
+        RightToLeftNonDestructive
     }
 }

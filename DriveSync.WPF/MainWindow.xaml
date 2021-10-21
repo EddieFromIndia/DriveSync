@@ -81,7 +81,8 @@
             <RowDefinition Height="*" /> <!--Description Area-->
             <RowDefinition Height="20" /> <!--Padding-->
             <RowDefinition Height="30" /> <!--Buttons-->
-            <RowDefinition Height="30" /> <!--Padding-->
+            <RowDefinition Height="10" /> <!--Padding-->
+            <RowDefinition Height="30" /> <!--Footer-->
         </Grid.RowDefinitions>
 
         <!--Menu-->
@@ -536,8 +537,10 @@
                               Converter={x:Static local:ButtonEnabledToStringConverter.Instance},
                               ConverterParameter='Determines how to handle auto-resolve.',
                               Path=IsEnabled, Mode=OneWay}">
-                <ComboBoxItem Content="Left To Right" />
-                <ComboBoxItem Content="Right To Left" />
+                <ComboBoxItem IsSelected="True" Content="Left To Right Destructive" />
+                <ComboBoxItem Content="Left To Right Non-Destructive" />
+                <ComboBoxItem Content="Right To Left Destructive" />
+                <ComboBoxItem Content="Right To Left Non-Destructive" />
             </ComboBox>
             <Button Width="120"
                     Margin="0 0 20 0"
@@ -565,6 +568,23 @@
                     <TextBlock Text="Clear" VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
+        </StackPanel>
+
+        <StackPanel Grid.Column="3"
+                    Grid.Row="9"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Visibility="{Binding ProgressVisibility}">
+
+            <TextBlock Text="{Binding ProgressString}"
+                       Margin="0 0 10 0"
+                       FontSize="11" />
+            <ProgressBar Width="120"
+                         Height="16"
+                         Minimum="0"
+                         Maximum="100"
+                         Value="{Binding ProgressPercentage}" />
         </StackPanel>
     </Grid>
 </Window>
