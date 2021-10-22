@@ -580,7 +580,7 @@ namespace DriveSync.ViewModels
         /// <param name="targetPath"></param>
         private static void CopyFilesRecursively(string sourcePath, string targetPath)
         {
-            //Creates all of the directories
+            // Creates all of the directories
             if (Directory.Exists(sourcePath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath)))
             {
                 Directory.Delete(sourcePath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath), true);
@@ -592,18 +592,24 @@ namespace DriveSync.ViewModels
                 _ = Directory.CreateDirectory(dirPath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath));
             }
 
-            //Copies all the files & Replaces any files with the same name
+            // Copies all the files & Replaces any files with the same name
             foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
             {
                 File.Copy(newPath, newPath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath), true);
             }
         }
 
+        /// <summary>
+        /// Merges the directory source path to the target path.
+        /// It replaces any contents present in the target path.
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="targetPath"></param>
         private async Task MergeAsync(string sourcePath, string targetPath)
         {
             List<Task> tasks = new List<Task>();
 
-            //Deletes folders in target that are not in source
+            // Deletes folders in target that are not in source
             foreach (string tDir in Directory.GetDirectories(targetPath))
             {
                 if (Directory.GetDirectories(sourcePath, new DirectoryInfo(tDir).Name).Length == 0)
@@ -612,18 +618,20 @@ namespace DriveSync.ViewModels
                 }
             }
 
-            //Deletes files in target that are not in source
+            // Deletes files in target that are not in source
             foreach (string tFile in Directory.GetFiles(targetPath))
             {
                 if (Directory.GetFiles(sourcePath, new DirectoryInfo(tFile).Name).Length == 0)
                 {
-                    tasks.Add(Task.Run(() => Directory.Delete(tFile)));
+                    tasks.Add(Task.Run(() => File.Delete(tFile)));
                 }
             }
 
             await Task.WhenAll(tasks);
             tasks.Clear();
 
+            // For every File in source, if file exists in target but aren't equal,
+            // or if it doesn't exist, copy it to target
             foreach (string sFile in Directory.GetFiles(sourcePath))
             {
                 string[] tFiles = Directory.GetFiles(targetPath, new DirectoryInfo(sFile).Name);
@@ -643,6 +651,8 @@ namespace DriveSync.ViewModels
 
             await Task.WhenAll(tasks);
 
+            // For every Folder in source, if folder exists in target but aren't equal,
+            // merge it to target, or if it doesn't exist, copy it to target
             foreach (string sDir in Directory.GetDirectories(sourcePath))
             {
                 string[] tDirs = Directory.GetDirectories(targetPath, new DirectoryInfo(sDir).Name);
@@ -661,6 +671,15 @@ namespace DriveSync.ViewModels
             }
         }
 
+        /// <summary>
+        /// Re-scans the source and target paths.
+        /// </summary>
+        /// <remarks>
+        /// It is necessary when the source or target files/folders are modified
+        /// outside the application and needs to be updated in the display.
+        /// </remarks>
+        /// <param name="sourcePath"></param>
+        /// <param name="targetPath"></param>
         private void RefreshCollection()
         {
             ObservableCollection<PathItem> tempList = new ObservableCollection<PathItem>();
@@ -686,6 +705,19 @@ namespace DriveSync.ViewModels
             }
         }
 
+        /// <summary>
+        /// Updates the displayed files and folders according to the flags set by user.
+        /// It automatically gets called while scanning, or when a flag is changed.
+        /// </summary>
+        /// <remarks>
+        /// Flags that it accounts for are:
+        /// <list type="bullet">
+        /// <item>Equal file and folder visibility</item>
+        /// <item>Empty folder visibility</item>
+        /// </list>
+        /// </remarks>
+        /// <param name="sourcePath"></param>
+        /// <param name="targetPath"></param>
         private void UpdateDataVisibility()
         {
             if (IsVisible && ShowEmptyFolder)
@@ -738,6 +770,11 @@ namespace DriveSync.ViewModels
             }
         }
 
+        /// <summary>
+        /// Checks if a directory is empty.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns>true if empty, false if not.</returns>
         private bool IsDirectoryEmpty(string path)
         {
             return !Directory.EnumerateFileSystemEntries(path).Any();
