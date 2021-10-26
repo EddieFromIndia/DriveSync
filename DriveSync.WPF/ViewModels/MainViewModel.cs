@@ -40,6 +40,9 @@ namespace DriveSync.ViewModels
         public ICommand BrowseButton_Click { get; set; }
         public ICommand ScanButton_Click { get; set; }
         public ICommand AutoResolveButton_Click { get; set; }
+        public ICommand MergeSource_Click { get; set; }
+        public ICommand MergeTarget_Click { get; set; }
+        public ICommand DeleteButton_Click { get; set; }
         public ICommand ExpandSourceDirectory { get; set; }
         public ICommand ExpandTargetDirectory { get; set; }
         public ICommand ClearButton_Click { get; set; }
@@ -47,6 +50,9 @@ namespace DriveSync.ViewModels
         public ICommand RefreshButton_Click { get; set; }
         public ICommand VisibilityButton_Click { get; set; }
         public ICommand ShowHideEmptyFolderButton_Click { get; set; }
+        public ICommand SettingsButton_Click { get; set; }
+        public ICommand UpdateButton_Click { get; set; }
+        public ICommand TutorialButton_Click { get; set; }
         public ICommand Link_Click { get; set; }
         #endregion
 
@@ -56,6 +62,9 @@ namespace DriveSync.ViewModels
             BrowseButton_Click = new Command(Browse);
             ScanButton_Click = new Command(Scan, CanScanOrResolve);
             AutoResolveButton_Click = new Command(AutoResolve, CanScanOrResolve);
+            MergeSource_Click = new Command(MergeSourceAsync);
+            MergeTarget_Click = new Command(MergeTargetAsync);
+            DeleteButton_Click = new Command(Delete);
             ExpandSourceDirectory = new Command(ExpandSource);
             ExpandTargetDirectory = new Command(ExpandTarget);
             ClearButton_Click = new Command(Clear, CanClear);
@@ -63,6 +72,9 @@ namespace DriveSync.ViewModels
             RefreshButton_Click = new Command(Refresh, CanRefresh);
             VisibilityButton_Click = new Command(ToggleVisibility);
             ShowHideEmptyFolderButton_Click = new Command(ShowHideEmptyFolder);
+            SettingsButton_Click = new Command(Settings);
+            UpdateButton_Click = new Command(CheckForUpdates);
+            TutorialButton_Click = new Command(Tutorial);
             Link_Click = new Command(ToggleLink);
         }
 
@@ -229,8 +241,152 @@ namespace DriveSync.ViewModels
             TargetDisplayText = string.Empty;
         }
 
+        private async void MergeSourceAsync(object sender)
+        {
+            TargetDisplayText = string.Empty;
+            ProgressVisibility = Visibility.Visible;
+            ProgressString = "Awaiting authentication";
+            ProgressPercentage = 0;
+            switch (((PathItem)sender).Status)
+            {
+                case ItemStatus.ExistsButDifferent:
+                    if (((PathItem)sender).IsFile)
+                    {
+                        SourceDisplayText = "Copying file. Please wait!";
+                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(SourcePath, TargetPath), true);
+                    }
+                    else
+                    {
+                        SourceDisplayText = "Merging folders. Please wait!";
+                        await MergeAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(SourcePath, TargetPath));
+                    }
+
+                    break;
+                case ItemStatus.ExistsElsewhere:
+                    // Not implemented
+                    break;
+                case ItemStatus.DoesNotExist:
+                    if (((PathItem)sender).IsFile)
+                    {
+                        SourceDisplayText = "Copying file. Please wait!";
+                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(SourcePath, TargetPath), true);
+                    }
+                    else
+                    {
+                        SourceDisplayText = "Copying. Please wait!";
+                        CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(SourcePath, TargetPath));
+                    }
+                    break;
+            }
+
+            ProgressVisibility = Visibility.Visible;
+            ProgressPercentage = 80;
+            ProgressString = "Verifying";
+            SourceDisplayText = string.Empty;
+
+            await ScanAsync(LastSourcePath, LastTargetPath);
+
+            ProgressPercentage = 100;
+            ProgressString = "Done";
+            _ = MessageBox.Show("Done.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            ProgressVisibility = Visibility.Hidden;
+        }
+
+        private async void MergeTargetAsync(object sender)
+        {
+            SourceDisplayText = string.Empty;
+            ProgressVisibility = Visibility.Visible;
+            ProgressString = "Awaiting authentication";
+            ProgressPercentage = 0;
+            switch (((PathItem)sender).Status)
+            {
+                case ItemStatus.ExistsButDifferent:
+                    if (((PathItem)sender).IsFile)
+                    {
+                        TargetDisplayText = "Copying file. Please wait!";
+                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(TargetPath, SourcePath), true);
+                    }
+                    else
+                    {
+                        TargetDisplayText = "Merging folders. Please wait!";
+                        await MergeAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(TargetPath, SourcePath));
+                    }
+
+                    break;
+                case ItemStatus.ExistsElsewhere:
+                    // Not implemented
+                    break;
+                case ItemStatus.DoesNotExist:
+                    if (((PathItem)sender).IsFile)
+                    {
+                        TargetDisplayText = "Copying file. Please wait!";
+                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(TargetPath, SourcePath), true);
+                    }
+                    else
+                    {
+                        TargetDisplayText = "Copying. Please wait!";
+                        CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(TargetPath, SourcePath));
+                    }
+                    break;
+            }
+
+            ProgressVisibility = Visibility.Visible;
+            ProgressPercentage = 80;
+            ProgressString = "Verifying";
+            TargetDisplayText = string.Empty;
+
+            await ScanAsync(LastSourcePath, LastTargetPath);
+
+            ProgressPercentage = 100;
+            ProgressString = "Done";
+            _ = MessageBox.Show("Done.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            ProgressVisibility = Visibility.Hidden;
+        }
+
+        private async void Delete(object sender)
+        {
+            SourceDisplayText = "Deleting. Please wait!";
+            TargetDisplayText = string.Empty;
+            ProgressVisibility = Visibility.Visible;
+            ProgressString = "Awaiting authentication";
+            ProgressPercentage = 0;
+
+            if (MessageBox.Show($"This will delete {((PathItem)sender).Item.Name}! Are you sure?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                ProgressString = $"Deleting {((PathItem)sender).Item.FullName}";
+                ProgressPercentage = 20;
+
+                if (((PathItem)sender).IsFile)
+                {
+                    await Task.Run(() => File.Delete(((PathItem)sender).Item.FullName));
+                }
+                else
+                {
+                    await Task.Run(() => Directory.Delete(((PathItem)sender).Item.FullName, true));
+                }
+
+                ProgressString = "Verifying";
+                ProgressPercentage = 80;
+
+                await ScanAsync(LastSourcePath, LastTargetPath);
+
+                ProgressString = "Done";
+                ProgressPercentage = 100;
+                SourceDisplayText = string.Empty;
+                TargetDisplayText = string.Empty;
+                _ = MessageBox.Show("Deleted successfully.", "Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            ProgressString = string.Empty;
+            ProgressVisibility = Visibility.Hidden;
+        }
+
         private async void ExpandSource(object sender)
         {
+            if (sender == null)
+            {
+                return;
+            }
+
             if (!((PathItem)sender).IsFile)
             {
                 if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastTargetPath)))
@@ -249,6 +405,11 @@ namespace DriveSync.ViewModels
 
         private async void ExpandTarget(object sender)
         {
+            if (sender == null)
+            {
+                return;
+            }
+
             if (!((PathItem)sender).IsFile)
             {
                 if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath)))
@@ -262,43 +423,6 @@ namespace DriveSync.ViewModels
 
                 LastSourcePath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath);
                 LastTargetPath = ((PathItem)sender).Item.FullName;
-            }
-        }
-
-        private async void CopyAsync(object sender)
-        {
-            if (!string.IsNullOrWhiteSpace(SourcePath) && !string.IsNullOrWhiteSpace(TargetPath))
-            {
-                if (Directory.Exists(SourcePath))
-                {
-                    if (Directory.Exists(TargetPath))
-                    {
-                        if (MessageBox.Show("This will overwrite any files present in the target! Are you sure?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                        {
-                            string previousSourceMessage = SourceDisplayText;
-                            string previousTargetMessage = TargetDisplayText;
-                            SourceDisplayText = "Copying...";
-                            TargetDisplayText = "Copying...";
-
-                            await Task.Run(() => CopyFilesRecursively(SourcePath, TargetPath));
-
-                            SourceDisplayText = previousSourceMessage;
-                            TargetDisplayText = previousTargetMessage;
-                        }
-                    }
-                    else
-                    {
-                        _ = MessageBox.Show("Target path does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    }
-                }
-                else
-                {
-                    _ = MessageBox.Show("The source path does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
-            else
-            {
-                _ = MessageBox.Show("The source and target fields cannot be left blank.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -379,15 +503,20 @@ namespace DriveSync.ViewModels
             await ScanAsync(LastSourcePath, LastTargetPath);
         }
 
-        //private void Delete(object sender)
-        //{
-        //    if (MessageBox.Show($"This will delete {DeletePath}! Are you sure?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
-        //    {
-        //        Directory.Delete(DeletePath, true);
+        private void Settings(object sender)
+        {
 
-        //        _ = MessageBox.Show("Deleted successfully.", "Complete", MessageBoxButton.OK, MessageBoxImage.Information);
-        //    }
-        //}
+        }
+
+        private void CheckForUpdates(object sender)
+        {
+
+        }
+
+        private void Tutorial(object sender)
+        {
+
+        }
         #endregion
 
         #region Helper Methods

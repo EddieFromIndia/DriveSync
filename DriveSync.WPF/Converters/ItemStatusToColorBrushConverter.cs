@@ -8,9 +8,9 @@ using System.Windows.Media.Imaging;
 namespace DriveSync
 {
     [ValueConversion(typeof(ItemStatus), typeof(SolidColorBrush))]
-    public class StatusToColorBrushConverter : IValueConverter
+    public class ItemStatusToColorBrushConverter : IValueConverter
     {
-        public static StatusToColorBrushConverter Instance = new StatusToColorBrushConverter();
+        public static ItemStatusToColorBrushConverter Instance = new ItemStatusToColorBrushConverter();
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
