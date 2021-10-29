@@ -653,10 +653,8 @@
                               Converter={x:Static local:ButtonEnabledToStringConverter.Instance},
                               ConverterParameter='Determines how to handle auto-resolve.',
                               Path=IsEnabled, Mode=OneWay}">
-                <ComboBoxItem IsSelected="True" Content="Left To Right Destructive" />
-                <ComboBoxItem Content="Left To Right Non-Destructive" />
-                <ComboBoxItem Content="Right To Left Destructive" />
-                <ComboBoxItem Content="Right To Left Non-Destructive" />
+                <ComboBoxItem IsSelected="True" Content="Left To Right" />
+                <ComboBoxItem Content="Right To Left" />
             </ComboBox>
             <Button Width="120"
                     Margin="0 0 20 0"

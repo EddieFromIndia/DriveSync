@@ -152,13 +152,11 @@ namespace DriveSync.ViewModels
 
             switch (ResolveMethod)
             {
-                case ResolveMethods.LeftToRightDestructive:
-                case ResolveMethods.LeftToRightNonDestructive:
+                case ResolveMethods.LeftToRight:
                     await MergeAsync(SourcePath, TargetPath);
                     break;
 
-                case ResolveMethods.RightToLeftDestructive:
-                case ResolveMethods.RightToLeftNonDestructive:
+                case ResolveMethods.RightToLeft:
                     await MergeAsync(TargetPath, SourcePath);
                     break;
             }
@@ -895,9 +893,7 @@ namespace DriveSync.ViewModels
 
     public enum ResolveMethods
     {
-        LeftToRightDestructive,
-        LeftToRightNonDestructive,
-        RightToLeftDestructive,
-        RightToLeftNonDestructive
+        LeftToRight,
+        RightToLeft
     }
 }
