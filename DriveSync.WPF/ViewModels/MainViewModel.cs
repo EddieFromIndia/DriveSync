@@ -326,6 +326,12 @@ namespace DriveSync.ViewModels
                     if (((PathItem)sender).IsFile)
                     {
                         TargetDisplayText = "Copying file. Please wait!";
+
+                        if (!Directory.Exists(((PathItem)sender).Item.Parent.ToString().Replace(SourcePath, TargetPath)))
+                        {
+                            _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(SourcePath, TargetPath));
+                        }
+
                         File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(TargetPath, SourcePath), true);
                     }
                     else
