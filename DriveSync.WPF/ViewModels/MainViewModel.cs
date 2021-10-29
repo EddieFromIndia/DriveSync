@@ -14,11 +14,11 @@ namespace DriveSync.ViewModels
     {
         #region Private Properties
         private static readonly string textIntroMessage = "Choose Source and Target directories...";
+        private ObservableCollection<PathItem> SourceDirectories = new ObservableCollection<PathItem>();
+        private ObservableCollection<PathItem> TargetDirectories = new ObservableCollection<PathItem>();
         #endregion
 
         #region Public Properties
-        public ObservableCollection<PathItem> SourceDirectories { get; set; } = new ObservableCollection<PathItem>();
-        public ObservableCollection<PathItem> TargetDirectories { get; set; } = new ObservableCollection<PathItem>();
         public ObservableCollection<PathItem> SourceDirectoriesToDisplay { get; set; } = new ObservableCollection<PathItem>();
         public ObservableCollection<PathItem> TargetDirectoriesToDisplay { get; set; } = new ObservableCollection<PathItem>();
         public string SourceDisplayText { get; set; } = textIntroMessage;
@@ -641,8 +641,8 @@ namespace DriveSync.ViewModels
         /// <summary>
         /// Compares the two directories according to size.
         /// </summary>
-        /// <param name="dir1"></param>
-        /// <param name="dir2"></param>
+        /// <param name="entry1"></param>
+        /// <param name="entry2"></param>
         /// <returns>true if they are equal; otherwise false</returns>
         private static async Task<bool> CompareFileSystemEntriesAsync(string entry1, string entry2)
         {
