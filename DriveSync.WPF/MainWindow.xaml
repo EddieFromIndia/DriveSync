@@ -624,12 +624,13 @@
             <Button Width="100"
                     Margin="0 0 20 0"
                     Command="{Binding ScanButton_Click}"
+                    IsDefault="True"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
                     ToolTip="{Binding RelativeSource={x:Static RelativeSource.Self},
                             Converter={x:Static local:ButtonEnabledToStringConverter.Instance},
-                            ConverterParameter='Compare the source and target for discrepancies.',
+                            ConverterParameter='Compare the source and target for discrepancies (Enter).',
                             Path=IsEnabled, Mode=OneWay}">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Assets/scan.png" Height="20" Margin="0 0 4 0" />
@@ -673,10 +674,11 @@
             </Button>
             <Button Width="100"
                     Command="{Binding ClearButton_Click}"
+                    IsCancel="True"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Clears everything.">
+                    ToolTip="Clears everything (Esc).">
                 <StackPanel Orientation="Horizontal">
                     <Image Source="/Assets/clear.png" Height="18" Margin="0 0 5 0" />
                     <TextBlock Text="Clear" VerticalAlignment="Center" />
