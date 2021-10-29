@@ -269,6 +269,12 @@ namespace DriveSync.ViewModels
                     if (((PathItem)sender).IsFile)
                     {
                         SourceDisplayText = "Copying file. Please wait!";
+
+                        if (!Directory.Exists(((PathItem)sender).Item.Parent.ToString().Replace(SourcePath, TargetPath)))
+                        {
+                            _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(SourcePath, TargetPath));
+                        }
+
                         File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(SourcePath, TargetPath), true);
                     }
                     else
@@ -602,6 +608,8 @@ namespace DriveSync.ViewModels
                     SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, RealPath = null });
                 }
 
+                UpdateDataVisibility();
+
                 SourceDisplayText = SourceDirectories.Count == 0 ? "No folders or files..." : string.Empty;
                 TargetDisplayText = "Does not exist...";
             }
@@ -617,12 +625,11 @@ namespace DriveSync.ViewModels
                     TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, RealPath = null });
                 }
 
+                UpdateDataVisibility();
+
                 SourceDisplayText = "Does not exist...";
                 TargetDisplayText = TargetDirectories.Count == 0 ? "No folders or files..." : string.Empty;
             }
-
-            RefreshCollection();
-            //_ = MessageBox.Show("Scan Complete.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         /// <summary>
@@ -801,40 +808,6 @@ namespace DriveSync.ViewModels
         }
 
         /// <summary>
-        /// Re-scans the source and target paths.
-        /// </summary>
-        /// <remarks>
-        /// It is necessary when the source or target files/folders are modified
-        /// outside the application and needs to be updated in the display.
-        /// </remarks>
-        /// <param name="sourcePath"></param>
-        /// <param name="targetPath"></param>
-        private void RefreshCollection()
-        {
-            ObservableCollection<PathItem> tempList = new ObservableCollection<PathItem>();
-            foreach (PathItem item in SourceDirectories)
-            {
-                tempList.Add(item);
-            }
-            SourceDirectories.Clear();
-            foreach (PathItem item in tempList)
-            {
-                SourceDirectories.Add(item);
-            }
-
-            tempList.Clear();
-            foreach (PathItem item in TargetDirectories)
-            {
-                tempList.Add(item);
-            }
-            TargetDirectories.Clear();
-            foreach (PathItem item in tempList)
-            {
-                TargetDirectories.Add(item);
-            }
-        }
-
-        /// <summary>
         /// Updates the displayed files and folders according to the flags set by user.
         /// It automatically gets called while scanning, or when a flag is changed.
         /// </summary>
@@ -897,6 +870,9 @@ namespace DriveSync.ViewModels
                     }
                 }
             }
+
+            SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectoriesToDisplay.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectoriesToDisplay.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
         }
 
         /// <summary>
