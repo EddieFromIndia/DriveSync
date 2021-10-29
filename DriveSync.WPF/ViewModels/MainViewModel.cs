@@ -125,7 +125,7 @@ namespace DriveSync.ViewModels
         {
             if (!string.IsNullOrWhiteSpace(SourcePath) && !string.IsNullOrWhiteSpace(TargetPath))
             {
-                if (Directory.Exists(SourcePath) && Directory.Exists(TargetPath))
+                if (Directory.Exists(SourcePath) && Directory.Exists(TargetPath) && SourcePath != TargetPath)
                 {
                     return true;
                 }
@@ -260,9 +260,55 @@ namespace DriveSync.ViewModels
                     }
 
                     break;
-                case ItemStatus.ExistsElsewhere:
-                    // Not implemented
+
+                case ItemStatus.ExistsWithDifferentName:
+                    if (((PathItem)sender).IsFile)
+                    {
+                        if (!File.Exists(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath)))
+                        {
+                            if (File.Exists(((PathItem)sender).DifferentPath))
+                            {
+                                SourceDisplayText = "Renaming file. Please wait!";
+
+                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath));
+                            }
+                        }
+                        else
+                        {
+                            if (MessageBox.Show($"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath)).Parent.Name} already exists. Do you want to overwrite it?",
+                                "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                            {
+                                SourceDisplayText = "Renaming file. Please wait!";
+
+                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath), true);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!Directory.Exists(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath)))
+                        {
+                            if (File.Exists(((PathItem)sender).DifferentPath))
+                            {
+                                SourceDisplayText = "Renaming file. Please wait!";
+
+                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath));
+                            }
+                        }
+                        else
+                        {
+                            if (MessageBox.Show($"The folder {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath)).Parent.Name} already exists. Do you want to overwrite it?",
+                                "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                            {
+                                SourceDisplayText = "Renaming folder. Please wait!";
+
+                                Directory.Delete(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath), true);
+                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath));
+                            }
+                        }
+                    }
                     break;
+
                 case ItemStatus.DoesNotExist:
                     if (((PathItem)sender).IsFile)
                     {
@@ -317,8 +363,52 @@ namespace DriveSync.ViewModels
                     }
 
                     break;
-                case ItemStatus.ExistsElsewhere:
-                    // Not implemented
+                case ItemStatus.ExistsWithDifferentName:
+                    if (((PathItem)sender).IsFile)
+                    {
+                        if (!File.Exists(((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath)))
+                        {
+                            if (File.Exists(((PathItem)sender).DifferentPath))
+                            {
+                                SourceDisplayText = "Renaming file. Please wait!";
+
+                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath));
+                            }
+                        }
+                        else
+                        {
+                            if (MessageBox.Show($"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath)).Parent.Name} already exists. Do you want to overwrite it?",
+                                "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                            {
+                                SourceDisplayText = "Renaming file. Please wait!";
+
+                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath), true);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (!Directory.Exists(((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath)))
+                        {
+                            if (File.Exists(((PathItem)sender).DifferentPath))
+                            {
+                                SourceDisplayText = "Renaming file. Please wait!";
+
+                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath));
+                            }
+                        }
+                        else
+                        {
+                            if (MessageBox.Show($"The folder {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath)).Parent.Name} already exists. Do you want to overwrite it?",
+                                "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                            {
+                                SourceDisplayText = "Renaming folder. Please wait!";
+
+                                Directory.Delete(((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath), true);
+                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath));
+                            }
+                        }
+                    }
                     break;
                 case ItemStatus.DoesNotExist:
                     if (((PathItem)sender).IsFile)
@@ -543,23 +633,23 @@ namespace DriveSync.ViewModels
                 // Initializing SourceDirectories
                 foreach (string dir in Directory.GetDirectories(sourcePath))
                 {
-                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, RealPath = null });
+                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, DifferentPath = null });
                 }
 
                 foreach (string file in Directory.GetFiles(sourcePath))
                 {
-                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, RealPath = null });
+                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, DifferentPath = null });
                 }
 
                 // Initializing TargetDirectories
                 foreach (string dir in Directory.GetDirectories(targetPath))
                 {
-                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, RealPath = null });
+                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, DifferentPath = null });
                 }
 
                 foreach (string file in Directory.GetFiles(targetPath))
                 {
-                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, RealPath = null });
+                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, DifferentPath = null });
                 }
 
                 foreach (PathItem sourceDir in SourceDirectories)
@@ -586,10 +676,24 @@ namespace DriveSync.ViewModels
 
                             foreach (PathItem targetDir in TargetDirectories)
                             {
-                                if (targetDir.Item.Name == sourceDir.Item.Name)
+                                if (targetDir.Item.Name == sourceDir.Item.Name && targetDir.Status != ItemStatus.ExistsWithDifferentName)
                                 {
                                     TargetDirectories[TargetDirectories.IndexOf(targetDir)].Status = ItemStatus.ExistsButDifferent;
                                 }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (PathItem targetDir in TargetDirectories)
+                        {
+                            if (await CompareFileSystemEntriesAsync(sourceDir.Item.FullName, targetDir.Item.FullName))
+                            {
+                                SourceDirectories[SourceDirectories.IndexOf(sourceDir)].Status = ItemStatus.ExistsWithDifferentName;
+                                TargetDirectories[TargetDirectories.IndexOf(targetDir)].Status = ItemStatus.ExistsWithDifferentName;
+
+                                SourceDirectories[SourceDirectories.IndexOf(sourceDir)].DifferentPath = targetDir.Item.FullName;
+                                TargetDirectories[TargetDirectories.IndexOf(targetDir)].DifferentPath = sourceDir.Item.FullName;
                             }
                         }
                     }
@@ -604,12 +708,12 @@ namespace DriveSync.ViewModels
             {
                 foreach (string dir in Directory.GetDirectories(sourcePath))
                 {
-                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, RealPath = null });
+                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, DifferentPath = null });
                 }
 
                 foreach (string file in Directory.GetFiles(sourcePath))
                 {
-                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, RealPath = null });
+                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, DifferentPath = null });
                 }
 
                 UpdateDataVisibility();
@@ -621,12 +725,12 @@ namespace DriveSync.ViewModels
             {
                 foreach (string dir in Directory.GetDirectories(targetPath))
                 {
-                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, RealPath = null });
+                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, DifferentPath = null });
                 }
 
                 foreach (string file in Directory.GetFiles(targetPath))
                 {
-                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, RealPath = null });
+                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, DifferentPath = null });
                 }
 
                 UpdateDataVisibility();

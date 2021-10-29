@@ -23,7 +23,7 @@ namespace DriveSync
                 case ItemStatus.ExistsButDifferent:
                     brush.Color = Color.FromArgb(255, 176, 137, 46);
                     break;
-                case ItemStatus.ExistsElsewhere:
+                case ItemStatus.ExistsWithDifferentName:
                     brush.Color = Color.FromArgb(255, 124, 87, 139);
                     break;
                 case ItemStatus.DoesNotExist:

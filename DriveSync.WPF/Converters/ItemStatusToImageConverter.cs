@@ -22,8 +22,8 @@ namespace DriveSync
                         case ItemStatus.ExistsButDifferent:
                             image = "merge-right";
                             break;
-                        case ItemStatus.ExistsElsewhere:
-                            // Not Implemented
+                        case ItemStatus.ExistsWithDifferentName:
+                            image = "rename";
                             break;
                         case ItemStatus.DoesNotExist:
                             image = "copy-right";
@@ -39,8 +39,8 @@ namespace DriveSync
                         case ItemStatus.ExistsButDifferent:
                             image = "merge-left";
                             break;
-                        case ItemStatus.ExistsElsewhere:
-                            // Not Implemented
+                        case ItemStatus.ExistsWithDifferentName:
+                            image = "rename";
                             break;
                         case ItemStatus.DoesNotExist:
                             image = "copy-left";

@@ -9,7 +9,7 @@ namespace DriveSync.Models
     {
         ExistsAndEqual,
         ExistsButDifferent,
-        ExistsElsewhere,
+        ExistsWithDifferentName,
         DoesNotExist
     }
     public class PathItem
@@ -17,6 +17,6 @@ namespace DriveSync.Models
         public DirectoryInfo Item { get; set; }
         public bool IsFile { get; set; }
         public ItemStatus Status { get; set; }
-        public string RealPath { get; set; }
+        public string DifferentPath { get; set; }
     }
 }

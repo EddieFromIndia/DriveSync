@@ -27,6 +27,7 @@
     <None Remove="Assets\merge-left.png" />
     <None Remove="Assets\merge-right.png" />
     <None Remove="Assets\refresh.png" />
+    <None Remove="Assets\rename.png" />
     <None Remove="Assets\resolve.png" />
     <None Remove="Assets\scan.png" />
     <None Remove="Assets\settings.png" />
@@ -89,6 +90,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\refresh.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\rename.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\resolve.png">

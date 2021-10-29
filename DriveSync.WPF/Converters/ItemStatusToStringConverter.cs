@@ -21,8 +21,8 @@ namespace DriveSync
                         case ItemStatus.ExistsButDifferent:
                             message = "Merge with Target";
                             break;
-                        case ItemStatus.ExistsElsewhere:
-                            // Not Implemented
+                        case ItemStatus.ExistsWithDifferentName:
+                            message = "Rename to match Target";
                             break;
                         case ItemStatus.DoesNotExist:
                             message = "Copy to Target";
@@ -35,8 +35,8 @@ namespace DriveSync
                         case ItemStatus.ExistsButDifferent:
                             message = "Merge with Source";
                             break;
-                        case ItemStatus.ExistsElsewhere:
-                            // Not Implemented
+                        case ItemStatus.ExistsWithDifferentName:
+                            message = "Rename to match Source";
                             break;
                         case ItemStatus.DoesNotExist:
                             message = "Copy to Source";

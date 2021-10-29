@@ -17,7 +17,7 @@ namespace DriveSync
             }
             else
             {
-                return "Source or Target does not exist.";
+                return "Source or Target does not exist, or are equal.";
             }
         }
 

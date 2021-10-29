@@ -88,6 +88,14 @@
                 <MultiDataTrigger>
                     <MultiDataTrigger.Conditions>
                         <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}, AncestorLevel=1}}" Value="True" />
+                        <Condition Binding="{Binding Path=DataContext.Status, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}, AncestorLevel=1}}" Value="{x:Static model:ItemStatus.ExistsWithDifferentName}" />
+                    </MultiDataTrigger.Conditions>
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Setter Property="Opacity" Value="0.5" />
+                </MultiDataTrigger>
+                <MultiDataTrigger>
+                    <MultiDataTrigger.Conditions>
+                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}, AncestorLevel=1}}" Value="True" />
                         <Condition Binding="{Binding Path=DataContext.Status, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}, AncestorLevel=1}}" Value="{x:Static model:ItemStatus.DoesNotExist}" />
                     </MultiDataTrigger.Conditions>
                     <Setter Property="Visibility" Value="Visible" />
@@ -605,7 +613,7 @@
                 <TextBlock VerticalAlignment="Center" Text="No Differences" />
 
                 <Rectangle Width="10" Height="10" Fill="#FF7C578B" Margin="49 0 10 0" />
-                <TextBlock VerticalAlignment="Center" Text="Exists on another location" />
+                <TextBlock VerticalAlignment="Center" Text="Exists with different name" />
             </StackPanel>
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Left">
