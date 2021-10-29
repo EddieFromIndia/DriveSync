@@ -28,7 +28,7 @@ namespace DriveSync.ViewModels
         public string LastSourcePath { get; set; } = string.Empty;
         public string LastTargetPath { get; set; } = string.Empty;
         public ResolveMethods ResolveMethod { get; set; } = 0;
-        public bool IsVisible { get; set; } = true;
+        public bool ShowEqualEntries { get; set; } = true;
         public bool ShowEmptyFolder { get; set; } = true;
         public bool IsLinked { get; set; } = true;
         public Visibility ProgressVisibility { get; set; } = Visibility.Hidden;
@@ -561,7 +561,7 @@ namespace DriveSync.ViewModels
 
         private void ToggleVisibility(object sender)
         {
-            IsVisible = !IsVisible;
+            ShowEqualEntries = !ShowEqualEntries;
 
             UpdateDataVisibility();
         }
@@ -620,6 +620,12 @@ namespace DriveSync.ViewModels
         #endregion
 
         #region Helper Methods
+        /// <summary>
+        /// Scans two paths given for discrepancies.
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="targetPath"></param>
+        /// <returns></returns>
         private async Task ScanAsync(string sourcePath, string targetPath)
         {
             SourceDirectories.Clear();
@@ -685,6 +691,14 @@ namespace DriveSync.ViewModels
                     }
                     else
                     {
+                        if (!sourceDir.IsFile)
+                        {
+                            if (IsDirectoryEmpty(sourceDir.Item.FullName))
+                            {
+                                continue;
+                            }
+                        }
+
                         foreach (PathItem targetDir in TargetDirectories)
                         {
                             if (await CompareFileSystemEntriesAsync(sourceDir.Item.FullName, targetDir.Item.FullName))
@@ -930,61 +944,88 @@ namespace DriveSync.ViewModels
         /// <param name="targetPath"></param>
         private void UpdateDataVisibility()
         {
-            if (IsVisible && ShowEmptyFolder)
+            //if (ShowEqualEntries && ShowEmptyFolder)
+            //{
+            //    SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories);
+            //    TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories);
+            //}
+            //else
+            //{
+            //    SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories);
+            //    TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories);
+
+            //    if (SourceDirectories.Count > 0)
+            //    {
+            //        foreach (PathItem dir in SourceDirectories)
+            //        {
+            //            if (!ShowEqualEntries && dir.Status == ItemStatus.ExistsAndEqual)
+            //            {
+            //                _ = SourceDirectoriesToDisplay.Remove(dir);
+            //            }
+
+            //            if (!ShowEmptyFolder && !dir.IsFile)
+            //            {
+            //                if (IsDirectoryEmpty(dir.Item.FullName))
+            //                {
+            //                    _ = SourceDirectoriesToDisplay.Remove(dir);
+            //                }
+            //            }
+            //        }
+            //    }
+
+            //    if (TargetDirectories.Count > 0)
+            //    {
+            //        foreach (PathItem dir in TargetDirectories)
+            //        {
+            //            if (!ShowEqualEntries && dir.Status == ItemStatus.ExistsAndEqual)
+            //            {
+            //                _ = TargetDirectoriesToDisplay.Remove(dir);
+            //            }
+
+            //            if (!ShowEmptyFolder && !dir.IsFile)
+            //            {
+            //                if (IsDirectoryEmpty(dir.Item.FullName))
+            //                {
+            //                    _ = TargetDirectoriesToDisplay.Remove(dir);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+
+            if (ShowEqualEntries && ShowEmptyFolder)
             {
-                SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories);
-                TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories);
+                SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+                TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            }
+            else if (ShowEqualEntries && !ShowEmptyFolder)
+            {
+                SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories.Where(entry => (!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+                TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories.Where(entry => (!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            }
+            else if (!ShowEqualEntries && ShowEmptyFolder)
+            {
+                SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+                TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
             }
             else
             {
-                SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories);
-                TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories);
-
-                if (SourceDirectories.Count > 0)
-                {
-                    foreach (PathItem dir in SourceDirectories)
-                    {
-                        if (!IsVisible && dir.Status == ItemStatus.ExistsAndEqual)
-                        {
-                            _ = SourceDirectoriesToDisplay.Remove(dir);
-                        }
-
-                        if (!ShowEmptyFolder && !dir.IsFile)
-                        {
-                            if (IsDirectoryEmpty(dir.Item.FullName))
-                            {
-                                _ = SourceDirectoriesToDisplay.Remove(dir);
-                            }
-                        }
-                    }
-                }
-
-                if (TargetDirectories.Count > 0)
-                {
-                    foreach (PathItem dir in TargetDirectories)
-                    {
-                        if (!IsVisible && dir.Status == ItemStatus.ExistsAndEqual)
-                        {
-                            _ = TargetDirectoriesToDisplay.Remove(dir);
-                        }
-
-                        if (!ShowEmptyFolder && !dir.IsFile)
-                        {
-                            if (IsDirectoryEmpty(dir.Item.FullName))
-                            {
-                                _ = TargetDirectoriesToDisplay.Remove(dir);
-                            }
-                        }
-                    }
-                }
+                SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual && ((!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile)).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+                TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual && ((!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile)).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
             }
 
-            SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectoriesToDisplay.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
-            TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectoriesToDisplay.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            SourceDisplayText = SourceDirectoriesToDisplay.Count == 0
+                ? string.IsNullOrEmpty(SourceDisplayText) ? "No folders or files..." : SourceDisplayText
+                : string.Empty;
+
+            TargetDisplayText = TargetDirectoriesToDisplay.Count == 0
+                ? string.IsNullOrEmpty(TargetDisplayText) ? "No folders or files..." : TargetDisplayText
+                : string.Empty;
         }
 
         /// <summary>
         /// Checks if a directory is empty.
+        /// Throws an exception for a file.
         /// </summary>
         /// <param name="path"></param>
         /// <returns>true if empty, false if not.</returns>

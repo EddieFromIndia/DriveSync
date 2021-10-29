@@ -170,11 +170,11 @@
                         ToolTipService.ShowOnDisabled="True"
                         ToolTip="Show/hide folders and files that have no discrepancies.">
                     <StackPanel>
-                        <Image Width="36" Source="{Binding IsVisible,
+                        <Image Width="36" Source="{Binding ShowEqualEntries,
                                     Converter={x:Static local:BooleanToImageConverter.Instance},
                                     ConverterParameter='visibility',
                                     FallbackValue={StaticResource VisibleImage}}" />
-                        <TextBlock Text="{Binding IsVisible,
+                        <TextBlock Text="{Binding ShowEqualEntries,
                                     Converter={x:Static local:BooleanToTextConverter.Instance},
                                     ConverterParameter='visibility',
                                     FallbackValue='Hide equal files/folders'}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
