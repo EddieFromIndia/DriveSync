@@ -12,11 +12,34 @@ namespace DriveSync.Models
         ExistsWithDifferentName,
         DoesNotExist
     }
+
+    public enum ItemType
+    {
+        Folder,
+        File,
+        Android,
+        Archive,
+        Audio,
+        Code,
+        DiskImage,
+        Executable,
+        Font,
+        Image,
+        PDF,
+        Presentation,
+        Spreadsheet,
+        System,
+        Text,
+        Video,
+        Webpage
+    }
+
     public class PathItem
     {
         public DirectoryInfo Item { get; set; }
         public bool IsFile { get; set; }
         public ItemStatus Status { get; set; }
+        public ItemType Type { get; set; }
         public string DifferentPath { get; set; }
     }
 }

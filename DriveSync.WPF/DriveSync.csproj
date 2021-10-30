@@ -16,6 +16,21 @@
     <None Remove="Assets\copy-left.png" />
     <None Remove="Assets\copy-right.png" />
     <None Remove="Assets\delete.png" />
+    <None Remove="Assets\file-android.png" />
+    <None Remove="Assets\file-archive.png" />
+    <None Remove="Assets\file-audio.png" />
+    <None Remove="Assets\file-code.png" />
+    <None Remove="Assets\file-disk-image.png" />
+    <None Remove="Assets\file-executable.png" />
+    <None Remove="Assets\file-font.png" />
+    <None Remove="Assets\file-image.png" />
+    <None Remove="Assets\file-pdf.png" />
+    <None Remove="Assets\file-presentation.png" />
+    <None Remove="Assets\file-spreadsheet.png" />
+    <None Remove="Assets\file-system.png" />
+    <None Remove="Assets\file-text.png" />
+    <None Remove="Assets\file-video.png" />
+    <None Remove="Assets\file-webpage.png" />
     <None Remove="Assets\file.png" />
     <None Remove="Assets\folder-empty-disabled.png" />
     <None Remove="Assets\folder-empty.png" />
@@ -57,6 +72,51 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\delete.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-android.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-archive.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-audio.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-code.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-disk-image.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-executable.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-font.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-image.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-pdf.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-presentation.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-spreadsheet.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-system.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-text.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-video.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\file-webpage.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\file.png">

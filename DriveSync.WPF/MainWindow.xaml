@@ -425,9 +425,8 @@
                                        VerticalAlignment="Center"
                                        HorizontalAlignment="Center"
                                        Width="20"
-                                       Source="{Binding IsFile,
-                                                Converter={x:Static local:BooleanToImageConverter.Instance},
-                                                ConverterParameter='file-folder'}" />
+                                       Source="{Binding Type,
+                                                Converter={x:Static local:ItemTypeToImageConverter.Instance}" />
                                 <TextBlock Grid.Column="1"
                                            VerticalAlignment="Center"
                                            TextTrimming="CharacterEllipsis"
@@ -538,9 +537,8 @@
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Center"
                                     Width="20"
-                                    Source="{Binding IsFile,
-                                            Converter={x:Static local:BooleanToImageConverter.Instance},
-                                            ConverterParameter='file-folder'}" />
+                                    Source="{Binding Type,
+                                             Converter={x:Static local:ItemTypeToImageConverter.Instance}" />
                                 <TextBlock Grid.Column="1"
                                         VerticalAlignment="Center"
                                         TextTrimming="CharacterEllipsis"

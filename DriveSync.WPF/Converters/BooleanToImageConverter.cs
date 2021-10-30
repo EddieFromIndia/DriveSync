@@ -21,9 +21,6 @@ namespace DriveSync
                 case "link":
                     image = (bool)value ? "link" : "unlink";
                     break;
-                case "file-folder":
-                    image = (bool)value ? "file" : "folder";
-                    break;
                 case "folder-empty":
                     image = (bool)value ? "folder-empty" : "folder-empty-disabled";
                     break;
