@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -660,10 +661,10 @@ namespace DriveSync.ViewModels
 
                 foreach (PathItem sourceDir in SourceDirectories)
                 {
-                    // Checks if the source directory exists in target
+                    // Checks if the source folder or file exists in target
                     if ((!sourceDir.IsFile && Directory.Exists(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath))) || (sourceDir.IsFile && File.Exists(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath))))
                     {
-                        // Checks if source and target directories are equal
+                        // Checks if source and target folders or files are equal
                         if (await CompareFileSystemEntriesAsync(sourceDir.Item.FullName, sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath)))
                         {
                             SourceDirectories[SourceDirectories.IndexOf(sourceDir)].Status = ItemStatus.ExistsAndEqual;
@@ -699,7 +700,7 @@ namespace DriveSync.ViewModels
                             }
                         }
 
-                        foreach (PathItem targetDir in TargetDirectories)
+                        foreach (PathItem targetDir in TargetDirectories.Where(item => item.IsFile == sourceDir.IsFile))
                         {
                             if (await CompareFileSystemEntriesAsync(sourceDir.Item.FullName, targetDir.Item.FullName))
                             {
@@ -760,17 +761,81 @@ namespace DriveSync.ViewModels
         /// <param name="entry1"></param>
         /// <param name="entry2"></param>
         /// <returns>true if they are equal; otherwise false</returns>
-        private static async Task<bool> CompareFileSystemEntriesAsync(string entry1, string entry2)
+        private async Task<bool> CompareFileSystemEntriesAsync(string entry1, string entry2)
         {
-            List<Task<long>> tasks = new List<Task<long>>
+            //List<Task<long>> tasks = new List<Task<long>>
+            //{
+            //    Task.Run(() => CalculateSize(entry1)),
+            //    Task.Run(() => CalculateSize(entry2))
+            //};
+
+            //long[] results = await Task.WhenAll(tasks);
+
+            //return results[0] == results[1];
+            if (File.Exists(entry1))
             {
-                Task.Run(() => CalculateSize(entry1)),
-                Task.Run(() => CalculateSize(entry2))
-            };
+                if (FileExtensions.DeepSearchable.Contains(FileExtensions.GetFileType(new DirectoryInfo(entry1).Extension)))
+                {
+                    if (!await Task.Run(() => CompareFileHashes(entry1, entry2)))
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    if (new FileInfo(entry1).Length != new FileInfo(entry2).Length)
+                    {
+                        return false;
+                    }
+                }
+            }
+            else
+            {
+                // Check all files inside entry1
+                foreach (string file in Directory.GetFiles(entry1))
+                {
+                    if (File.Exists(file.Replace(entry1, entry2)))
+                    {
+                        if (FileExtensions.DeepSearchable.Contains(FileExtensions.GetFileType(new DirectoryInfo(file).Extension)))
+                        {
+                            if (!await Task.Run(() => CompareFileHashes(file, file.Replace(entry1, entry2))))
+                            {
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if (new FileInfo(file).Length != new FileInfo(file.Replace(entry1, entry2)).Length)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
 
-            long[] results = await Task.WhenAll(tasks);
+                // Check all folders inside entry1
+                foreach (string dir in Directory.GetDirectories(entry1))
+                {
+                    // if items does not exist in entry2, return false, else search deeper
+                    if (Directory.Exists(dir.Replace(entry1, entry2)))
+                    {
+                        if (!await CompareFileSystemEntriesAsync(dir, dir.Replace(entry1, entry2)))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
 
-            return results[0] == results[1];
+            return true;
         }
 
         /// <summary>
@@ -778,7 +843,7 @@ namespace DriveSync.ViewModels
         /// </summary>
         /// <param name="path"></param>
         /// <returns>The file/folder size in bytes.</returns>
-        private static long CalculateSize(string path)
+        private long CalculateSize(string path)
         {
             long size = 0;
             try
@@ -831,12 +896,36 @@ namespace DriveSync.ViewModels
         }
 
         /// <summary>
+        /// Checks if the files are equal, comparing their hash values.
+        /// </summary>
+        /// <param name="file1"></param>
+        /// <param name="file2"></param>
+        /// <returns></returns>
+        private bool CompareFileHashes(string file1, string file2)
+        {
+            using FileStream fs1 = new FileInfo(file1).OpenRead();
+            using FileStream fs2 = new FileInfo(file2).OpenRead();
+
+            byte[] firstHash = MD5.Create().ComputeHash(fs1);
+            byte[] secondHash = MD5.Create().ComputeHash(fs2);
+
+            for (int i = 0; i < firstHash.Length; i++)
+            {
+                if (firstHash[i] != secondHash[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Copies the directory source path to the target path.
         /// It replaces any contents present in the target path.
         /// </summary>
         /// <param name="sourcePath"></param>
         /// <param name="targetPath"></param>
-        private static void CopyFilesRecursively(string sourcePath, string targetPath)
+        private void CopyFilesRecursively(string sourcePath, string targetPath)
         {
             // Creates all of the directories
             if (Directory.Exists(sourcePath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath)))

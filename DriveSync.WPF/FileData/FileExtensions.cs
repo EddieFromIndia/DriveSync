@@ -58,11 +58,23 @@ namespace DriveSync
         public static List<string> Webpage =
             new List<string> { "asp", "aspx", "dhtml", "htm", "html", "htmls", "rhtml", "xaml", "xhtml", "xml" };
 
+        public static List<ItemType> DeepSearchable = new List<ItemType>
+        {
+            ItemType.Code,
+            ItemType.File,
+            ItemType.Image,
+            ItemType.Presentation,
+            ItemType.Spreadsheet,
+            ItemType.System,
+            ItemType.Text,
+            ItemType.Webpage
+        };
+
         public static ItemType GetFileType(string extension)
         {
             // Remove the first dot in the extension name if any
             // Else, return the file type as File
-            if (extension.Substring(0, 1) == ".")
+            if (extension.Length > 0)
             {
                 extension = extension[1..];
             }

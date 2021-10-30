@@ -352,7 +352,11 @@
                            VerticalAlignment="Center"
                            Text="{Binding LastSourcePath}"
                            Foreground="#FF555555"
-                           TextTrimming="CharacterEllipsis" />
+                           TextTrimming="CharacterEllipsis"
+                           ToolTipService.InitialShowDelay="500"
+                           ToolTipService.BetweenShowDelay="500"
+                           ToolTipService.ShowOnDisabled="True"
+                           ToolTip="{Binding LastSourcePath}" />
             </Grid>
         </Border>
 
@@ -390,7 +394,11 @@
                            VerticalAlignment="Center"
                            Text="{Binding LastTargetPath}"
                            Foreground="#FF555555"
-                           TextTrimming="CharacterEllipsis" />
+                           TextTrimming="CharacterEllipsis"
+                           ToolTipService.InitialShowDelay="500"
+                           ToolTipService.BetweenShowDelay="500"
+                           ToolTipService.ShowOnDisabled="True"
+                           ToolTip="{Binding LastTargetPath}" />
             </Grid>
         </Border>
 
