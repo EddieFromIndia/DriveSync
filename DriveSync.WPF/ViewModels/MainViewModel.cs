@@ -722,12 +722,12 @@ namespace DriveSync.ViewModels
             {
                 foreach (string dir in Directory.GetDirectories(sourcePath))
                 {
-                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, DifferentPath = null });
+                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
                 }
 
                 foreach (string file in Directory.GetFiles(sourcePath))
                 {
-                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, DifferentPath = null });
+                    SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
                 }
 
                 UpdateDataVisibility();
@@ -739,12 +739,12 @@ namespace DriveSync.ViewModels
             {
                 foreach (string dir in Directory.GetDirectories(targetPath))
                 {
-                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, DifferentPath = null });
+                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
                 }
 
                 foreach (string file in Directory.GetFiles(targetPath))
                 {
-                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, DifferentPath = null });
+                    TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
                 }
 
                 UpdateDataVisibility();

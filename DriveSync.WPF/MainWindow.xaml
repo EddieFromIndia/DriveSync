@@ -426,7 +426,7 @@
                                        HorizontalAlignment="Center"
                                        Width="20"
                                        Source="{Binding Type,
-                                                Converter={x:Static local:ItemTypeToImageConverter.Instance}" />
+                                                Converter={x:Static local:ItemTypeToImageConverter.Instance}}" />
                                 <TextBlock Grid.Column="1"
                                            VerticalAlignment="Center"
                                            TextTrimming="CharacterEllipsis"
@@ -538,7 +538,7 @@
                                     HorizontalAlignment="Center"
                                     Width="20"
                                     Source="{Binding Type,
-                                             Converter={x:Static local:ItemTypeToImageConverter.Instance}" />
+                                             Converter={x:Static local:ItemTypeToImageConverter.Instance}}" />
                                 <TextBlock Grid.Column="1"
                                         VerticalAlignment="Center"
                                         TextTrimming="CharacterEllipsis"

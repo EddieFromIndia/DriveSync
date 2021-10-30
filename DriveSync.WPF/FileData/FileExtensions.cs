@@ -60,6 +60,17 @@ namespace DriveSync
 
         public static ItemType GetFileType(string extension)
         {
+            // Remove the first dot in the extension name if any
+            // Else, return the file type as File
+            if (extension.Substring(0, 1) == ".")
+            {
+                extension = extension[1..];
+            }
+            else
+            {
+                return ItemType.File;
+            }
+
             if (Android.Contains(extension.ToLower()))
             {
                 return ItemType.Android;

@@ -13,7 +13,7 @@ namespace DriveSync
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string image = string.Empty;
+            string image;
             switch ((ItemType)value)
             {
                 case ItemType.Folder:
