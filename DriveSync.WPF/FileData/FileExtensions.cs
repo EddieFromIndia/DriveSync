@@ -58,7 +58,7 @@ namespace DriveSync
             new List<string> { "3g2", "3gp", "amv", "asf", "avi", "drc", "f4v", "flv", "gifv", "m4v", "mkv", "m2ts", "m2v", "m4p", "m4v",
                 "mov", "mp4", "mpe", "mpeg", "mpg", "mpv", "mts", "mxf", "nsv", "ogv", "rm", "rmvb", "ts", "viv", "vob", "webm", "wmv" };
 
-        private static List<string> HashSearchableExtensions =
+        private static readonly List<string> HashSearchableExtensions =
             new List<string> { "abap", "ada", "c", "cbl", "cls", "cob", "cpp", "cs", "css", "dart", "f", "f90", "for", "go", "gml", "groovy",
                 "java", "jl", "js", "json", "jsp", "jspx", "kt", "kts", "lua", "m", "mat", "pas", "php", "php3", "pl", "pp", "py", "r",
                 "rb", "rs", "sc", "scala", "swift", "ts", "yaml", "bmp", "pam", "pbm", "ppm", "xbm", "xpm", "asp", "aspx", "dhtml", "htm",
