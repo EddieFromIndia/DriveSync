@@ -45,9 +45,9 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#FFD7F9FE" />
+                    <Setter Property="Background" Value="#FFF0F3FF" />
                     <Setter Property="BorderBrush" Value="#FFA5F3FC" />
-                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="BorderThickness" Value="0" />
                 </Trigger>
                 <Trigger Property="IsPressed" Value="True">
                     <Setter Property="Background" Value="#FFBEF6FD" />
@@ -134,7 +134,7 @@
         <BitmapImage x:Key="EmptyFolderImage" UriSource="/Assets/folder-empty.png" />
     </Window.Resources>
 
-    <Grid Background="#FFECE9D8">
+    <Grid Background="#FFE7EFF5">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="30" />
             <ColumnDefinition Width="*" />
@@ -161,9 +161,9 @@
                 Grid.Row="0"
                 Grid.ColumnSpan="5"
                 BorderBrush="#FFC7C6C1"
-                BorderThickness="0 0 0 1">
+                BorderThickness="0 0 0 0">
             <StackPanel Orientation="Horizontal"
-                        Background="#FFF9F8F3">
+                        Background="White">
 
                 <Button Style="{DynamicResource MenuButton}"
                         Width="65"
@@ -278,14 +278,11 @@
                 <ColumnDefinition Width="10" />
                 <ColumnDefinition Width="30" />
             </Grid.ColumnDefinitions>
-            
+
             <TextBox Grid.Column="0"
-                 BorderBrush="#FF92959A"
-                 Background="#FFEFEFEF"
-                 FontSize="12"
-                 Padding="10 0"
-                 VerticalContentAlignment="Center"
-                 Text="{Binding SourcePath}" />
+                     Style="{DynamicResource DefaultTextBoxStyle}"
+                     VerticalContentAlignment="Center"
+                     Text="{Binding SourcePath}" />
             <Button Grid.Column="2"
                     Style="{StaticResource ImageButton}"
                     Width="30"
@@ -315,12 +312,9 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0"
-                 BorderBrush="#FF92959A"
-                 Background="#FFEFEFEF"
-                 FontSize="12"
-                 Padding="10 0"
-                 VerticalContentAlignment="Center"
-                 Text="{Binding TargetPath}" />
+                     Style="{DynamicResource DefaultTextBoxStyle}"
+                     VerticalContentAlignment="Center"
+                     Text="{Binding TargetPath}" />
             <Button Grid.Column="2"
                     Style="{StaticResource ImageButton}"
                     Width="30"
@@ -337,9 +331,9 @@
         <!--Address Display Area-->
         <Border Grid.Column="1"
                 Grid.Row="4"
-                Background="#FFF0ECE8"
-                BorderBrush="#FF92959A"
-                BorderThickness="1 1 1 0">
+                CornerRadius="6 6 0 0"
+                Background="#FFE0E8ED"
+                BorderThickness="0">
             <Grid Visibility="{Binding LastSourcePath,
                                Converter={x:Static local:StringToVisibilityConverter.Instance},
                                FallbackValue=Hidden}">
@@ -379,9 +373,9 @@
 
         <Border Grid.Column="3"
                 Grid.Row="4"
-                Background="#FFF0ECE8"
-                BorderBrush="#FF92959A"
-                BorderThickness="1 1 1 0">
+                CornerRadius="6 6 0 0"
+                Background="#FFE0E8ED"
+                BorderThickness="0">
             <Grid Visibility="{Binding LastSourcePath,
                                Converter={x:Static local:StringToVisibilityConverter.Instance},
                                FallbackValue=Hidden}">
@@ -421,9 +415,9 @@
 
         <!--Source Display Area-->
         <Grid Grid.Column="1" Grid.Row="5">
-            <Border BorderBrush="#FF92959A"
-                    BorderThickness="1"
-                    Background="#FFFBF7F4"
+            <Border Background="White"
+                    BorderThickness="0"
+                    CornerRadius="0 0 6 6"
                     Padding="10">
                 <ListView x:Name="SourceList"
                           ItemsSource="{Binding SourceDirectoriesToDisplay}"
@@ -504,19 +498,18 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </Border>
-            <TextBlock Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
-                       Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
-                       Padding="10"
-                       Background="{Binding Text,
-                                    RelativeSource={RelativeSource Self},
-                                    Converter={x:Static local:StringToColorBrushConverter.Instance}}"
-                       Text="{Binding SourceDisplayText}"
-                       IsHitTestVisible="False"/>
-            <Border BorderBrush="#FF92959A"
-                    BorderThickness="1"
-                    Background="Transparent"
-                    Padding="10"
-                    IsHitTestVisible="False"/>
+            <Border Background="{Binding ElementName=SourceText,
+                                 Path=Text,
+                                 Converter={x:Static local:StringToColorBrushConverter.Instance}}"
+                    CornerRadius="0 0 6 6"
+                    IsHitTestVisible="False">
+                <TextBlock x:Name="SourceText"
+                           Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                           Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+                           Padding="10"
+                           Text="{Binding SourceDisplayText}"
+                           IsHitTestVisible="False"/>
+            </Border>
         </Grid>
 
         <!--Link Icon-->
@@ -539,9 +532,9 @@
         
         <!--Target Display Area-->
         <Grid Grid.Column="3" Grid.Row="5">
-            <Border BorderBrush="#FF92959A"
-                    BorderThickness="1"
-                    Background="#FFFBF7F4"
+            <Border Background="White"
+                    BorderThickness="0"
+                    CornerRadius="0 0 6 6"
                     Padding="10">
                 <ListView x:Name="TargetList"
                           ItemsSource="{Binding TargetDirectoriesToDisplay}"
@@ -622,19 +615,18 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </Border>
-            <TextBlock Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
-                       Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
-                       Padding="10"
-                       Background="{Binding Text,
-                                    RelativeSource={RelativeSource Self},
-                                    Converter={x:Static local:StringToColorBrushConverter.Instance}}"
-                       Text="{Binding TargetDisplayText}"
-                       IsHitTestVisible="False"/>
-            <Border BorderBrush="#FF92959A"
-                    BorderThickness="1"
-                    Background="Transparent"
-                    Padding="10"
-                    IsHitTestVisible="False"/>
+            <Border Background="{Binding ElementName=TargetText,
+                                 Path=Text,
+                                 Converter={x:Static local:StringToColorBrushConverter.Instance}}"
+                    CornerRadius="0 0 6 6"
+                    IsHitTestVisible="False">
+                <TextBlock x:Name="TargetText"
+                           Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
+                           Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
+                           Padding="10"
+                           Text="{Binding TargetDisplayText}"
+                           IsHitTestVisible="False"/>
+            </Border>
         </Grid>
         
         <!--Main Button Area-->
@@ -644,18 +636,18 @@
                     VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Left">
-                <Rectangle Width="10" Height="10" Fill="#FFB4B4B4" Margin="10 0" />
+                <Ellipse Width="10" Height="10" Fill="#FFB4B4B4" Margin="10 0" />
                 <TextBlock VerticalAlignment="Center" Text="No Differences" />
 
-                <Rectangle Width="10" Height="10" Fill="#FF7C578B" Margin="49 0 10 0" />
+                <Ellipse Width="10" Height="10" Fill="#FF7C578B" Margin="49 0 10 0" />
                 <TextBlock VerticalAlignment="Center" Text="Exists with different name" />
             </StackPanel>
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Left">
-                <Rectangle Width="10" Height="10" Fill="#FFB0892E" Margin="10 0" />
+                <Ellipse Width="10" Height="10" Fill="#FFB0892E" Margin="10 0" />
                 <TextBlock VerticalAlignment="Center" Text="Different Contents" />
 
-                <Rectangle Width="10" Height="10" Fill="#FFC4514B" Margin="30 0 10 0" />
+                <Ellipse Width="10" Height="10" Fill="#FFC4514B" Margin="30 0 10 0" />
                 <TextBlock VerticalAlignment="Center" Text="Does not exist" />
             </StackPanel>
         </StackPanel>
@@ -664,7 +656,8 @@
                     Grid.ColumnSpan="3"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
-            <Button Width="100"
+            <Button Style="{DynamicResource GeneralButton}"
+                    Width="100"
                     Margin="0 0 20 0"
                     Command="{Binding ScanButton_Click}"
                     IsDefault="True"
@@ -676,12 +669,12 @@
                             ConverterParameter='Compare the source and target for discrepancies (Enter).',
                             Path=IsEnabled, Mode=OneWay}">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Assets/scan.png" Height="20" Margin="0 0 4 0" />
-                    <TextBlock Text="Scan" VerticalAlignment="Center" />
+                    <!--<Image Source="/Assets/scan.png" Height="20" Margin="0 0 4 0" />-->
+                    <TextBlock Foreground="{DynamicResource ButtonTextBrush}" Text="Scan" VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
             
-            <ComboBox VerticalAlignment="Center"
+            <ComboBox Style="{DynamicResource DefaultComboBoxStyle}" VerticalAlignment="Center"
                       Width="100"
                       Height="30"
                       Margin="0 0 7 0"
@@ -700,7 +693,8 @@
                 <ComboBoxItem IsSelected="True" Content="Left To Right" />
                 <ComboBoxItem Content="Right To Left" />
             </ComboBox>
-            <Button Width="120"
+            <Button Style="{DynamicResource GeneralButton}"
+                    Width="120"
                     Margin="0 0 20 0"
                     Command="{Binding AutoResolveButton_Click}"
                     ToolTipService.InitialShowDelay="500"
@@ -711,11 +705,12 @@
                             ConverterParameter='Auto-resolve all discrepancies.',
                             Path=IsEnabled, Mode=OneWay}">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Assets/resolve.png" Height="20" Margin="0 0 4 0" />
-                    <TextBlock Text="Auto-Resolve" VerticalAlignment="Center" />
+                    <!--<Image Source="/Assets/resolve.png" Height="20" Margin="0 0 4 0" />-->
+                    <TextBlock Foreground="{DynamicResource ButtonTextBrush}" Text="Auto-Resolve" VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
-            <Button Width="100"
+            <Button Style="{DynamicResource GeneralButton}"
+                    Width="100"
                     Command="{Binding ClearButton_Click}"
                     IsCancel="True"
                     ToolTipService.InitialShowDelay="500"
@@ -723,8 +718,8 @@
                     ToolTipService.ShowOnDisabled="True"
                     ToolTip="Clears everything (Esc).">
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="/Assets/clear.png" Height="18" Margin="0 0 5 0" />
-                    <TextBlock Text="Clear" VerticalAlignment="Center" />
+                    <!--<Image Source="/Assets/clear.png" Height="18" Margin="0 0 5 0" />-->
+                    <TextBlock Foreground="{DynamicResource ButtonTextBrush}" Text="Clear" VerticalAlignment="Center" />
                 </StackPanel>
             </Button>
         </StackPanel>
