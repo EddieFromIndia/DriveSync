@@ -2,14 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:properties="clr-namespace:DriveSync.Properties">
 
-    <Style x:Key="HeaderStyle" TargetType="{x:Type StackPanel}">
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
-                <Setter Property="Background" Value="{DynamicResource PrimaryThemeBrush}" />
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-
+    <!--Main Body-->
     <Style x:Key="MainBodyStyle" TargetType="{x:Type Grid}">
         <Style.Triggers>
             <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
@@ -18,44 +11,49 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="UserAreaStyle" TargetType="{x:Type Border}">
+    <!--Header-->
+    <Style x:Key="HeaderStyle" TargetType="{x:Type StackPanel}">
         <Style.Triggers>
             <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
-                <Setter Property="Background" Value="{DynamicResource UserAreaBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource UserAreaBrush}" />
-                <Setter Property="BorderThickness" Value="0" />
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-    
-    <Style x:Key="SidebarStyle" TargetType="{x:Type Border}">
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
-                <Setter Property="Background" Value="{DynamicResource SidebarBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource MainWindowBorderBrush}" />
-                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Background" Value="{DynamicResource LightSectionBackgroundBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="PopupBorderStyle" TargetType="{x:Type Border}">
+    <!--Line Separator in Header-->
+    <Style x:Key="LineSeparatorStyle" TargetType="{x:Type Line}">
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="X1" Value="0" />
+        <Setter Property="X2" Value="0" />
+        <Setter Property="Y1" Value="10" />
+        <Setter Property="Y2" Value="65" />
         <Style.Triggers>
             <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
-                <Setter Property="Background" Value="{DynamicResource PopupBackgroundBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryThemeBrush}" />
-                <Setter Property="BorderThickness" Value="1" />
-                <Setter Property="Margin" Value="10" />
-                <Setter Property="CornerRadius" Value="6" />
+                <Setter Property="Stroke" Value="{DynamicResource LightLineStrokeBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="GroupTreeStyle" TargetType="{x:Type TreeView}">
+    <!--Address Display Area-->
+    <Style x:Key="AddressAreaStyle" TargetType="{x:Type Border}">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="6 6 0 0" />
         <Style.Triggers>
             <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
-                <Setter Property="Background" Value="{DynamicResource SidebarBrush}" />
-                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryThemeBrush}" />
-                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Background" Value="{DynamicResource LightAddressAreaBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Main Display Area-->
+    <Style x:Key="MainDisplayAreaStyle" TargetType="{x:Type Border}">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="CornerRadius" Value="0 0 6 6" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
+                <Setter Property="Background" Value="{DynamicResource LightSectionBackgroundBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
