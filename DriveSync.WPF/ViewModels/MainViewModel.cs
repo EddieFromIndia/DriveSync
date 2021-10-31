@@ -283,6 +283,13 @@ namespace DriveSync.ViewModels
 
                                 File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath), true);
                             }
+                            else
+                            {
+                                ProgressPercentage = 100;
+                                ProgressString = "Done";
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
                         }
                     }
                     else
@@ -305,6 +312,13 @@ namespace DriveSync.ViewModels
 
                                 Directory.Delete(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath), true);
                                 Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath));
+                            }
+                            else
+                            {
+                                ProgressPercentage = 100;
+                                ProgressString = "Done";
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
                             }
                         }
                     }
@@ -774,7 +788,7 @@ namespace DriveSync.ViewModels
             //return results[0] == results[1];
             if (File.Exists(entry1))
             {
-                if (FileExtensions.DeepSearchable.Contains(FileExtensions.GetFileType(new DirectoryInfo(entry1).Extension)))
+                if (FileExtensions.ShouldHashSearch(new DirectoryInfo(entry1).Extension))
                 {
                     if (!await Task.Run(() => CompareFileHashes(entry1, entry2)))
                     {
@@ -796,7 +810,7 @@ namespace DriveSync.ViewModels
                 {
                     if (File.Exists(file.Replace(entry1, entry2)))
                     {
-                        if (FileExtensions.DeepSearchable.Contains(FileExtensions.GetFileType(new DirectoryInfo(file).Extension)))
+                        if (FileExtensions.ShouldHashSearch(new DirectoryInfo(file).Extension))
                         {
                             if (!await Task.Run(() => CompareFileHashes(file, file.Replace(entry1, entry2))))
                             {

@@ -17,15 +17,15 @@ namespace DriveSync
                 "mp2", "mp3", "mpc", "msv", "nmf", "oga", "ogg", "opus", "ra", "rf64", "tta", "wav", "wma" };
 
         public static List<string> Code =
-            new List<string> { "abap", "ada", "c", "cbl", "cls", "cob", "cpp", "cs", "css", "dart", "f", "f90", "for", "go", "groovy",
+            new List<string> { "abap", "ada", "c", "cbl", "cls", "cob", "cpp", "cs", "css", "dart", "f", "f90", "for", "go", "gml", "groovy",
                 "java", "jl", "js", "json", "jsp", "jspx", "kt", "kts", "lua", "m", "mat", "pas", "php", "php3", "pl", "pp", "py", "r",
-                "rb", "rs", "sc", "scala", "swift", "ts" };
+                "rb", "rs", "sc", "scala", "swift", "ts", "yaml" };
 
         public static List<string> DiskImage =
             new List<string> { "dmg", "iso", "smi" };
 
         public static List<string> Executable =
-            new List<string> { "bat", "cmd", "com", "command", "exe", "msi" };
+            new List<string> { "exe", "msi" };
 
         public static List<string> Font =
             new List<string> { "afm", "cff", "dfont", "eot", "fon", "ntf", "otf", "pfa", "pfb", "pfm", "ps", "pt3", "suit", "t11", "t42",
@@ -34,7 +34,10 @@ namespace DriveSync
         public static List<string> Image =
             new List<string> { "3fr", "arw", "bmp", "cr2", "dc3", "dcm", "dib", "dic", "dng", "eps", "gif", "icb", "ico", "j2c", "j2k", "jp2",
                 "jpe", "jpeg", "jpc", "jpf", "jpg", "jps", "jpx", "mpo", "nef", "orf", "pam", "pbm", "pcx", "pdd", "pef", "pfm", "pgm", "png",
-                "pnm", "ppm", "psb", "psd", "psdt", "pxr", "raf", "raw", "rle", "rw2", "sct", "sr2", "svg", "tga", "tif", "tiff", "vda", "vst" };
+                "pnm", "ppm", "psb", "psd", "psdt", "pxr", "raf", "raw", "rle", "rw2", "sct", "sr2", "svg", "tga", "tif", "tiff", "vda", "vst", "xbm", "xpm" };
+
+        public static List<string> MarkupLanguage =
+            new List<string> { "asp", "aspx", "dhtml", "htm", "html", "htmls", "rhtml", "sgml", "xaml", "xhtml", "xml" };
 
         public static List<string> PDF =
             new List<string> { "pdf" };
@@ -46,7 +49,7 @@ namespace DriveSync
             new List<string> { "xlr", "xls", "xlsb", "xlsm", "xlsx", "xlt", "xltm", "xltx", "xlw" };
 
         public static List<string> System =
-            new List<string> { "dll" };
+            new List<string> { "bat", "btm", "cmd", "com", "command", "dll" };
 
         public static List<string> Text =
             new List<string> { "doc", "docm", "docx", "dotm", "dotx", "ini", "odt", "rtf", "txt", "xps" };
@@ -55,20 +58,38 @@ namespace DriveSync
             new List<string> { "3g2", "3gp", "amv", "asf", "avi", "drc", "f4v", "flv", "gifv", "m4v", "mkv", "m2ts", "m2v", "m4p", "m4v",
                 "mov", "mp4", "mpe", "mpeg", "mpg", "mpv", "mts", "mxf", "nsv", "ogv", "rm", "rmvb", "ts", "viv", "vob", "webm", "wmv" };
 
-        public static List<string> Webpage =
-            new List<string> { "asp", "aspx", "dhtml", "htm", "html", "htmls", "rhtml", "xaml", "xhtml", "xml" };
+        private static List<string> HashSearchableExtensions =
+            new List<string> { "abap", "ada", "c", "cbl", "cls", "cob", "cpp", "cs", "css", "dart", "f", "f90", "for", "go", "gml", "groovy",
+                "java", "jl", "js", "json", "jsp", "jspx", "kt", "kts", "lua", "m", "mat", "pas", "php", "php3", "pl", "pp", "py", "r",
+                "rb", "rs", "sc", "scala", "swift", "ts", "yaml", "bmp", "pam", "pbm", "ppm", "xbm", "xpm", "asp", "aspx", "dhtml", "htm",
+                "html", "htmls", "rhtml", "sgml", "xaml", "xhtml", "xml", "pdf", "xlr", "xls", "xlsb", "xlsm", "xlsx", "xlt", "xltm", "xltx",
+                "xlw", "bat", "btm", "cmd", "com", "command", "dll", "doc", "docm", "docx", "dotm", "dotx", "ini", "odt", "rtf", "txt", "xps" };
 
-        public static List<ItemType> DeepSearchable = new List<ItemType>
+        /// <summary>
+        /// Checks if the file extension should be searched with hash.
+        /// </summary>
+        /// <param name="extension"></param>
+        /// <returns>True if the extension should be hash searched</returns>
+        public static bool ShouldHashSearch(string extension)
         {
-            ItemType.Code,
-            ItemType.File,
-            ItemType.Image,
-            ItemType.Presentation,
-            ItemType.Spreadsheet,
-            ItemType.System,
-            ItemType.Text,
-            ItemType.Webpage
-        };
+            if (extension.Length > 0)
+            {
+                extension = extension[1..];
+
+                if (HashSearchableExtensions.Contains(extension))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
 
         public static ItemType GetFileType(string extension)
         {
@@ -115,6 +136,10 @@ namespace DriveSync
             {
                 return ItemType.Image;
             }
+            else if (MarkupLanguage.Contains(extension.ToLower()))
+            {
+                return ItemType.MarkupLanguage;
+            }
             else if (PDF.Contains(extension.ToLower()))
             {
                 return ItemType.PDF;
@@ -138,10 +163,6 @@ namespace DriveSync
             else if (Video.Contains(extension.ToLower()))
             {
                 return ItemType.Video;
-            }
-            else if (Webpage.Contains(extension.ToLower()))
-            {
-                return ItemType.Webpage;
             }
             else
             {

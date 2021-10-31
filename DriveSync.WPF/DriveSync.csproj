@@ -24,13 +24,13 @@
     <None Remove="Assets\file-executable.png" />
     <None Remove="Assets\file-font.png" />
     <None Remove="Assets\file-image.png" />
+    <None Remove="Assets\file-markup.png" />
     <None Remove="Assets\file-pdf.png" />
     <None Remove="Assets\file-presentation.png" />
     <None Remove="Assets\file-spreadsheet.png" />
     <None Remove="Assets\file-system.png" />
     <None Remove="Assets\file-text.png" />
     <None Remove="Assets\file-video.png" />
-    <None Remove="Assets\file-webpage.png" />
     <None Remove="Assets\file.png" />
     <None Remove="Assets\folder-empty-disabled.png" />
     <None Remove="Assets\folder-empty.png" />
@@ -116,7 +116,7 @@
     <Resource Include="Assets\file-video.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\file-webpage.png">
+    <Resource Include="Assets\file-markup.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\file.png">

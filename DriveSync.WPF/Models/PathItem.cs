@@ -25,13 +25,13 @@ namespace DriveSync.Models
         Executable,
         Font,
         Image,
+        MarkupLanguage,
         PDF,
         Presentation,
         Spreadsheet,
         System,
         Text,
-        Video,
-        Webpage
+        Video
     }
 
     public class PathItem

@@ -43,6 +43,9 @@ namespace DriveSync
                 case ItemType.Image:
                     image = "file-image";
                     break;
+                case ItemType.MarkupLanguage:
+                    image = "file-markup";
+                    break;
                 case ItemType.PDF:
                     image = "file-pdf";
                     break;
@@ -60,9 +63,6 @@ namespace DriveSync
                     break;
                 case ItemType.Video:
                     image = "file-video";
-                    break;
-                case ItemType.Webpage:
-                    image = "file-webpage";
                     break;
                 default:
                     image = "file";
