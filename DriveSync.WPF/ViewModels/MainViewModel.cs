@@ -460,8 +460,17 @@ namespace DriveSync.ViewModels
 
         private async void Delete(object sender)
         {
-            SourceDisplayText = "Deleting. Please wait!";
-            TargetDisplayText = string.Empty;
+            if (Equals(((PathItem)sender).Item.Parent.ToString(), LastSourcePath))
+            {
+                SourceDisplayText = "Deleting. Please wait!";
+                TargetDisplayText = string.Empty;
+            }
+            else
+            {
+                SourceDisplayText = string.Empty;
+                TargetDisplayText = "Deleting. Please wait!";
+            }
+
             ProgressVisibility = Visibility.Visible;
             ProgressString = "Awaiting authentication";
             ProgressPercentage = 0;
@@ -487,12 +496,14 @@ namespace DriveSync.ViewModels
 
                 ProgressString = "Done";
                 ProgressPercentage = 100;
-                SourceDisplayText = string.Empty;
-                TargetDisplayText = string.Empty;
+                
                 _ = MessageBox.Show("Deleted successfully.", "Complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             ProgressString = string.Empty;
             ProgressVisibility = Visibility.Hidden;
+
+            SourceDisplayText = string.Empty;
+            TargetDisplayText = string.Empty;
         }
 
         private async void ExpandSource(object sender)
@@ -1043,59 +1054,8 @@ namespace DriveSync.ViewModels
         /// <item>Empty folder visibility</item>
         /// </list>
         /// </remarks>
-        /// <param name="sourcePath"></param>
-        /// <param name="targetPath"></param>
         private void UpdateDataVisibility()
         {
-            //if (ShowEqualEntries && ShowEmptyFolder)
-            //{
-            //    SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories);
-            //    TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories);
-            //}
-            //else
-            //{
-            //    SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories);
-            //    TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories);
-
-            //    if (SourceDirectories.Count > 0)
-            //    {
-            //        foreach (PathItem dir in SourceDirectories)
-            //        {
-            //            if (!ShowEqualEntries && dir.Status == ItemStatus.ExistsAndEqual)
-            //            {
-            //                _ = SourceDirectoriesToDisplay.Remove(dir);
-            //            }
-
-            //            if (!ShowEmptyFolder && !dir.IsFile)
-            //            {
-            //                if (IsDirectoryEmpty(dir.Item.FullName))
-            //                {
-            //                    _ = SourceDirectoriesToDisplay.Remove(dir);
-            //                }
-            //            }
-            //        }
-            //    }
-
-            //    if (TargetDirectories.Count > 0)
-            //    {
-            //        foreach (PathItem dir in TargetDirectories)
-            //        {
-            //            if (!ShowEqualEntries && dir.Status == ItemStatus.ExistsAndEqual)
-            //            {
-            //                _ = TargetDirectoriesToDisplay.Remove(dir);
-            //            }
-
-            //            if (!ShowEmptyFolder && !dir.IsFile)
-            //            {
-            //                if (IsDirectoryEmpty(dir.Item.FullName))
-            //                {
-            //                    _ = TargetDirectoriesToDisplay.Remove(dir);
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
             if (ShowEqualEntries && ShowEmptyFolder)
             {
                 SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));

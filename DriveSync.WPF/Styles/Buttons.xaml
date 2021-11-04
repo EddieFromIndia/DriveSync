@@ -5,22 +5,27 @@
 
     <!-- Image Button -->
     <Style x:Key="ImageButton" TargetType="{x:Type Button}">
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
-                <Setter Property="Background" Value="Transparent" />
-                <Setter Property="BorderThickness" Value="0" />
-                <Setter Property="Padding" Value="0" />
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type ButtonBase}">
-                            <Border x:Name="border" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}" SnapsToDevicePixels="true">
-                                <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                            </Border>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
-            </DataTrigger>
-        </Style.Triggers>
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ButtonBase}">
+                    <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                SnapsToDevicePixels="true">
+                        <ContentPresenter x:Name="contentPresenter"
+                                                Focusable="False"
+                                                Margin="{TemplateBinding Padding}"
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     
     <!-- Header Button -->
@@ -63,17 +68,11 @@
                     </Setter.Value>
                 </Setter>
             </DataTrigger>
-        </Style.Triggers>
-    </Style>
-
-    <!-- Manual Resolve Button -->
-    <Style x:Key="ManualResolveButton" TargetType="{x:Type Button}" BasedOn="{StaticResource ImageButton}">
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
-                <Setter Property="HorizontalAlignment" Value="Right" />
-                <Setter Property="VerticalContentAlignment" Value="Center" />
-                <Setter Property="Visibility" Value="Hidden" />
-                <Setter Property="Opacity" Value="0" />
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Top" />
+                <Setter Property="Height" Value="75" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ButtonBase}">
@@ -83,44 +82,23 @@
                                     BorderBrush="{TemplateBinding BorderBrush}"
                                     SnapsToDevicePixels="true">
                                 <ContentPresenter x:Name="contentPresenter"
-                                       Focusable="False"
-                                       Margin="{TemplateBinding Padding}"
-                                       SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
-                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                  Focusable="False"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                             </Border>
                             <ControlTemplate.Triggers>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}, AncestorLevel=1}}" Value="True" />
-                                        <Condition Binding="{Binding Path=DataContext.Status, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}, AncestorLevel=1}}" Value="{x:Static model:ItemStatus.ExistsButDifferent}" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Setter Property="Opacity" Value="0.5" />
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}, AncestorLevel=1}}" Value="True" />
-                                        <Condition Binding="{Binding Path=DataContext.Status, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}, AncestorLevel=1}}" Value="{x:Static model:ItemStatus.ExistsWithDifferentName}" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Setter Property="Opacity" Value="0.5" />
-                                </MultiDataTrigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}, AncestorLevel=1}}" Value="True" />
-                                        <Condition Binding="{Binding Path=DataContext.Status, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListViewItem}, AncestorLevel=1}}" Value="{x:Static model:ItemStatus.DoesNotExist}" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Setter Property="Opacity" Value="0.5" />
-                                </MultiDataTrigger>
                                 <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Setter Property="Opacity" Value="0.9" />
+                                    <Setter Property="Background" TargetName="border" Value="{DynamicResource MainDarkBackgroundBrush}" />
+                                    <Setter Property="CornerRadius" TargetName="border" Value="6" />
                                 </Trigger>
                                 <Trigger Property="IsPressed" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                    <Setter Property="Opacity" Value="1" />
+                                    <Setter Property="Background" TargetName="border" Value="{DynamicResource DarkHeaderButtonPressedBrush}" />
+                                    <Setter Property="CornerRadius" TargetName="border" Value="6" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Opacity" Value="0.5" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -128,6 +106,90 @@
                 </Setter>
             </DataTrigger>
         </Style.Triggers>
+    </Style>
+
+    <!-- Manual Resolve Button -->
+    <Style x:Key="ManualResolveButton" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="Visibility" Value="Hidden" />
+        <Setter Property="Opacity" Value="0" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ButtonBase}">
+                    <Border x:Name="border"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                SnapsToDevicePixels="true">
+                        <ContentPresenter x:Name="contentPresenter"
+                                    Focusable="False"
+                                    Margin="{TemplateBinding Padding}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsMouseOver,
+                                                     RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                     AncestorType={x:Type ListViewItem},
+                                                                     AncestorLevel=1}}" Value="True" />
+                                <Condition Binding="{Binding Path=DataContext.Status,
+                                                     RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                     AncestorType={x:Type ListViewItem},
+                                                                     AncestorLevel=1}}"
+                                                Value="{x:Static model:ItemStatus.ExistsButDifferent}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="Opacity" Value="0.5" />
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsMouseOver,
+                                                     RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                     AncestorType={x:Type ListViewItem},
+                                                                     AncestorLevel=1}}" Value="True" />
+                                <Condition Binding="{Binding Path=DataContext.Status,
+                                                     RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                     AncestorType={x:Type ListViewItem},
+                                                                     AncestorLevel=1}}"
+                                                Value="{x:Static model:ItemStatus.ExistsWithDifferentName}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="Opacity" Value="0.5" />
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding IsMouseOver,
+                                                     RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                     AncestorType={x:Type ListViewItem},
+                                                                     AncestorLevel=1}}" Value="True" />
+                                <Condition Binding="{Binding Path=DataContext.Status,
+                                                     RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                     AncestorType={x:Type ListViewItem},
+                                                                     AncestorLevel=1}}"
+                                                Value="{x:Static model:ItemStatus.DoesNotExist}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="Opacity" Value="0.5" />
+                        </MultiDataTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="Opacity" Value="0.9" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="Opacity" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
     
     <!-- General Button -->
@@ -163,8 +225,46 @@
                                     <Setter Property="Background" TargetName="border" Value="{DynamicResource MainButtonBrush}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled" Value="false">
-                                    <Setter Property="Background" TargetName="border" Value="{DynamicResource MainButtonDisabledBrush}"/>
-                                    <Setter Property="Foreground" TargetName="content" Value="{DynamicResource DisabledButtonTextBrush}"/>
+                                    <Setter Property="Background" TargetName="border" Value="{DynamicResource MainButtonDisabledLightBrush}"/>
+                                    <Setter Property="Foreground" TargetName="content" Value="{DynamicResource DisabledButtonLightTextBrush}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Background" Value="{DynamicResource MainButtonBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ButtonTextBrush}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ButtonBase}">
+                            <Border x:Name="border"
+                                    CornerRadius="6"
+                                    Background="{TemplateBinding Background}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    SnapsToDevicePixels="true">
+                                <TextBlock x:Name="content"
+                                                  Focusable="False"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                  Text="{TemplateBinding Content}"
+                                                  Foreground="{TemplateBinding Foreground}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Background" TargetName="border" Value="{DynamicResource MainButtonHoverBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="true">
+                                    <Setter Property="Background" TargetName="border" Value="{DynamicResource MainButtonBrush}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Background" TargetName="border" Value="{DynamicResource MainButtonDisabledDarkBrush}"/>
+                                    <Setter Property="Foreground" TargetName="content" Value="{DynamicResource DisabledButtonDarkTextBrush}"/>
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>

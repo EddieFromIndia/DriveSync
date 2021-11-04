@@ -52,7 +52,7 @@ namespace DriveSync
             new List<string> { "bat", "btm", "cmd", "com", "command", "dll" };
 
         public static List<string> Text =
-            new List<string> { "doc", "docm", "docx", "dotm", "dotx", "ini", "odt", "rtf", "txt", "xps" };
+            new List<string> { "doc", "docm", "docx", "dotm", "dotx", "eml", "ini", "odt", "rtf", "txt", "xps" };
 
         public static List<string> Video =
             new List<string> { "3g2", "3gp", "amv", "asf", "avi", "drc", "f4v", "flv", "gifv", "m4v", "mkv", "m2ts", "m2v", "m4p", "m4v",
@@ -104,70 +104,90 @@ namespace DriveSync
                 return ItemType.File;
             }
 
-            if (Android.Contains(extension.ToLower()))
+            return extension switch
             {
-                return ItemType.Android;
-            }
-            else if (Archive.Contains(extension.ToLower()))
-            {
-                return ItemType.Archive;
-            }
-            else if (Audio.Contains(extension.ToLower()))
-            {
-                return ItemType.Audio;
-            }
-            else if (Code.Contains(extension.ToLower()))
-            {
-                return ItemType.Code;
-            }
-            else if (DiskImage.Contains(extension.ToLower()))
-            {
-                return ItemType.DiskImage;
-            }
-            else if (Executable.Contains(extension.ToLower()))
-            {
-                return ItemType.Executable;
-            }
-            else if (Font.Contains(extension.ToLower()))
-            {
-                return ItemType.Font;
-            }
-            else if (Image.Contains(extension.ToLower()))
-            {
-                return ItemType.Image;
-            }
-            else if (MarkupLanguage.Contains(extension.ToLower()))
-            {
-                return ItemType.MarkupLanguage;
-            }
-            else if (PDF.Contains(extension.ToLower()))
-            {
-                return ItemType.PDF;
-            }
-            else if (Presentation.Contains(extension.ToLower()))
-            {
-                return ItemType.Presentation;
-            }
-            else if (Spreadsheet.Contains(extension.ToLower()))
-            {
-                return ItemType.Spreadsheet;
-            }
-            else if (System.Contains(extension.ToLower()))
-            {
-                return ItemType.System;
-            }
-            else if (Text.Contains(extension.ToLower()))
-            {
-                return ItemType.Text;
-            }
-            else if (Video.Contains(extension.ToLower()))
-            {
-                return ItemType.Video;
-            }
-            else
-            {
-                return ItemType.File;
-            }
+                string x when Android.Contains(x.ToLower()) => ItemType.Android,
+                string x when Archive.Contains(x.ToLower()) => ItemType.Archive,
+                string x when Audio.Contains(x.ToLower()) => ItemType.Audio,
+                string x when Code.Contains(x.ToLower()) => ItemType.Code,
+                string x when DiskImage.Contains(x.ToLower()) => ItemType.DiskImage,
+                string x when Executable.Contains(x.ToLower()) => ItemType.Executable,
+                string x when Font.Contains(x.ToLower()) => ItemType.Font,
+                string x when Image.Contains(x.ToLower()) => ItemType.Image,
+                string x when MarkupLanguage.Contains(x.ToLower()) => ItemType.MarkupLanguage,
+                string x when PDF.Contains(x.ToLower()) => ItemType.PDF,
+                string x when Presentation.Contains(x.ToLower()) => ItemType.Presentation,
+                string x when Spreadsheet.Contains(x.ToLower()) => ItemType.Spreadsheet,
+                string x when System.Contains(x.ToLower()) => ItemType.System,
+                string x when Text.Contains(x.ToLower()) => ItemType.Text,
+                string x when Video.Contains(x.ToLower()) => ItemType.Video,
+                _ => ItemType.File
+            };
+
+            //if (Android.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Android;
+            //}
+            //else if (Archive.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Archive;
+            //}
+            //else if (Audio.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Audio;
+            //}
+            //else if (Code.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Code;
+            //}
+            //else if (DiskImage.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.DiskImage;
+            //}
+            //else if (Executable.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Executable;
+            //}
+            //else if (Font.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Font;
+            //}
+            //else if (Image.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Image;
+            //}
+            //else if (MarkupLanguage.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.MarkupLanguage;
+            //}
+            //else if (PDF.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.PDF;
+            //}
+            //else if (Presentation.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Presentation;
+            //}
+            //else if (Spreadsheet.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Spreadsheet;
+            //}
+            //else if (System.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.System;
+            //}
+            //else if (Text.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Text;
+            //}
+            //else if (Video.Contains(extension.ToLower()))
+            //{
+            //    return ItemType.Video;
+            //}
+            //else
+            //{
+            //    return ItemType.File;
+            //}
         }
     }
 }

@@ -8,6 +8,9 @@
             <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
                 <Setter Property="Background" Value="{DynamicResource MainLightBackgroundBrush}" />
             </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Background" Value="{DynamicResource MainDarkBackgroundBrush}" />
+            </DataTrigger>
         </Style.Triggers>
     </Style>
 
@@ -16,6 +19,9 @@
         <Style.Triggers>
             <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
                 <Setter Property="Background" Value="{DynamicResource LightSectionBackgroundBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Background" Value="{DynamicResource DarkSectionBackgroundBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -32,6 +38,9 @@
             <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
                 <Setter Property="Stroke" Value="{DynamicResource LightLineStrokeBrush}" />
             </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Stroke" Value="{DynamicResource DarkLineStrokeBrush}" />
+            </DataTrigger>
         </Style.Triggers>
     </Style>
 
@@ -42,6 +51,9 @@
         <Style.Triggers>
             <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
                 <Setter Property="Background" Value="{DynamicResource LightAddressAreaBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Background" Value="{DynamicResource DarkAddressAreaBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>
@@ -54,6 +66,9 @@
         <Style.Triggers>
             <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
                 <Setter Property="Background" Value="{DynamicResource LightSectionBackgroundBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Background" Value="{DynamicResource DarkSectionBackgroundBrush}" />
             </DataTrigger>
         </Style.Triggers>
     </Style>

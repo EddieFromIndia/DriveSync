@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DriveSync.Properties;
+using System;
 using System.Globalization;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -12,9 +13,18 @@ namespace DriveSync
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return string.IsNullOrEmpty(value.ToString()) ?
-                new SolidColorBrush() { Color = Color.FromArgb(0, 255, 255, 255) } :
-                new SolidColorBrush() { Color = Color.FromArgb(255, 255, 255, 255) };
+            return Settings.Default.Theme switch
+            {
+                "Light" => string.IsNullOrEmpty(value.ToString()) ?
+                            new SolidColorBrush() { Color = Color.FromArgb(0, 255, 255, 255) } :
+                            new SolidColorBrush() { Color = Color.FromArgb(255, 255, 255, 255) },
+                "Dark" => string.IsNullOrEmpty(value.ToString()) ?
+                            new SolidColorBrush() { Color = Color.FromArgb(0, 32, 32, 32) } :
+                            new SolidColorBrush() { Color = Color.FromArgb(255, 32, 32, 32) },
+                _ => string.IsNullOrEmpty(value.ToString()) ?
+                            new SolidColorBrush() { Color = Color.FromArgb(0, 255, 255, 255) } :
+                            new SolidColorBrush() { Color = Color.FromArgb(255, 255, 255, 255) },
+            };
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
