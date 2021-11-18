@@ -28,7 +28,7 @@
                                     CornerRadius="{Binding WindowCornerRadius, FallbackValue=6}">
                                 <Border.Effect>
                                     <DropShadowEffect BlurRadius="15"
-                                                      Color="{DynamicResource PrimaryColor}"
+                                                      Color="{DynamicResource DefaultShadowColor}"
                                                       ShadowDepth="0"
                                                       Opacity="0.3" />
                                 </Border.Effect>
