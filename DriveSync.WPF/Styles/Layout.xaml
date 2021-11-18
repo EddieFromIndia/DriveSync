@@ -2,6 +2,45 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:properties="clr-namespace:DriveSync.Properties">
 
+    <!--Title Bar Style-->
+    <Style x:Key="TitleBarStyle" TargetType="{x:Type StackPanel}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
+                <Setter Property="Background" Value="{DynamicResource LightAddressAreaBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Background" Value="{DynamicResource DarkAddressAreaBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Main Window Border Style-->
+    <Style x:Key="MainWindowBorderStyle" TargetType="{x:Type Border}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
+                <Setter Property="BorderBrush" Value="{DynamicResource MainWindowLightBorderBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="BorderBrush" Value="{DynamicResource MainWindowDarkBorderBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Inner Window Border Style-->
+    <Style x:Key="InnerWindowBorderStyle" TargetType="{x:Type Border}">
+        <Setter Property="BorderThickness" Value="1" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
+                <Setter Property="Background" Value="{DynamicResource MainLightBackgroundBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Background" Value="{DynamicResource MainDarkBackgroundBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <!--Main Body-->
     <Style x:Key="MainBodyStyle" TargetType="{x:Type Grid}">
         <Style.Triggers>

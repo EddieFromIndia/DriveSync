@@ -3,12 +3,13 @@
                     xmlns:properties="clr-namespace:DriveSync.Properties">
     
     <!--#region Light Mode-->
-    <Color x:Key="PrimaryColor">#FF46624B</Color>
+    <Color x:Key="PrimaryColor">#FF005FB8</Color>
+    <Color x:Key="DefaultShadowColor">#FF404040</Color>
     <SolidColorBrush x:Key="PrimaryThemeBrush" Color="{DynamicResource PrimaryColor}" />
 
     <SolidColorBrush x:Key="MainLightBackgroundBrush" Color="#FFE7EFF5" />
     <SolidColorBrush x:Key="LightHeaderButtonPressedBrush" Color="#FFD5E3EE" />
-    <SolidColorBrush x:Key="MainWindowLightBorderBrush" Color="#FFE3E3E3" />
+    <SolidColorBrush x:Key="MainWindowLightBorderBrush" Color="#FFBBBAB6" />
 
     <SolidColorBrush x:Key="LightSectionBackgroundBrush" Color="White" />
     <SolidColorBrush x:Key="LightAddressAreaBrush" Color="#FFF0F5F7" />
@@ -17,10 +18,15 @@
     <SolidColorBrush x:Key="MainButtonHoverBrush" Color="#FF006ACE" />
     <SolidColorBrush x:Key="MainButtonDisabledLightBrush" Color="#FF9AA9B8" />
 
+    <SolidColorBrush x:Key="HeaderButtonMouseOverBrush" Color="#FF393939" />
+    <SolidColorBrush x:Key="HeaderButtonPressedBrush" Color="#FF525252" />
+
     <SolidColorBrush x:Key="PrimaryLightTextBrush" Color="Black" />
     <SolidColorBrush x:Key="SecondaryLightTextBrush" Color="#FF555555" />
-    <SolidColorBrush x:Key="ButtonTextBrush" Color="White" />
+    <SolidColorBrush x:Key="ButtonLightTextBrush" Color="White" />
     <SolidColorBrush x:Key="DisabledButtonLightTextBrush" Color="#FFE8EBEE" />
+    
+    <SolidColorBrush x:Key="TooltipTextBrush" Color="#FF404040" />
 
     <SolidColorBrush x:Key="LightLineStrokeBrush" Color="#FFBBBAB6" />
     <!--#endRegion-->
@@ -31,17 +37,18 @@
 
     <SolidColorBrush x:Key="MainDarkBackgroundBrush" Color="#FF191919" />
     <SolidColorBrush x:Key="DarkHeaderButtonPressedBrush" Color="#FF202020" />
-    <SolidColorBrush x:Key="MainWindowDarkBorderBrush" Color="#FFE3E3E3" />
+    <SolidColorBrush x:Key="MainWindowDarkBorderBrush" Color="#FF000000" />
 
     <SolidColorBrush x:Key="DarkSectionBackgroundBrush" Color="#FF202020" />
     <SolidColorBrush x:Key="DarkAddressAreaBrush" Color="#FF2C2C2C" />
 
-    <SolidColorBrush x:Key="MainButtonDisabledDarkBrush" Color="#FF383838" />
+    <SolidColorBrush x:Key="MainButtonDisabledDarkBrush" Color="#FF3C3C3C" />
 
     <SolidColorBrush x:Key="PrimaryDarkTextBrush" Color="White" />
     <SolidColorBrush x:Key="SecondaryDarkTextBrush" Color="#FFAAAAAA" />
-    <SolidColorBrush x:Key="DisabledButtonDarkTextBrush" Color="#FF171717" />
+    <SolidColorBrush x:Key="ButtonDarkTextBrush" Color="White" />
+    <SolidColorBrush x:Key="DisabledButtonDarkTextBrush" Color="#FF777777" />
 
-    <SolidColorBrush x:Key="DarkLineStrokeBrush" Color="#FF2B2B2B" />
+    <SolidColorBrush x:Key="DarkLineStrokeBrush" Color="#FF636363" />
     <!--#endRegion-->
 </ResourceDictionary>

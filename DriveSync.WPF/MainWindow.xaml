@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:local="clr-namespace:DriveSync"
         mc:Ignorable="d"
@@ -11,9 +10,156 @@
         Title="Drive Sync"
         Height="600" MinHeight="480"
         Width="880" MinWidth="880"
-        WindowStartupLocation="CenterScreen">
-
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True">
+    
     <Window.Resources>
+        <!--#region Main Window Styling-->
+        <Style TargetType="{x:Type local:MainWindow}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Window}">
+                        <!--Outer border with the dropshadow margin-->
+                        <Border Padding="{Binding OuterMarginThickness, FallbackValue=10}">
+
+                            <!--Window border and dropshadow-->
+                            <Border Style="{DynamicResource MainWindowBorderStyle}"
+                                    CornerRadius="{Binding WindowCornerRadius, FallbackValue=6}">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="15"
+                                                      Color="{DynamicResource PrimaryColor}"
+                                                      ShadowDepth="0"
+                                                      Opacity="0.3" />
+                                </Border.Effect>
+
+                                <!--Main window outline-->
+                                <Grid>
+
+                                    <!--Opacity mask for corners on grid-->
+                                    <Border x:Name="Container"
+                                        Style="{DynamicResource InnerWindowBorderStyle}"
+                                        CornerRadius="{Binding WindowCornerRadius}" />
+
+                                    <!--The main window content-->
+                                    <Grid Margin="0">
+
+                                        <!--Corner clipping-->
+                                        <Grid.OpacityMask>
+                                            <VisualBrush Visual="{Binding ElementName=Container}" />
+                                        </Grid.OpacityMask>
+
+                                        <Grid.RowDefinitions>
+
+                                            <!--Title Bar-->
+                                            <RowDefinition Height="42" />
+                                            <!--Window Content-->
+                                            <RowDefinition Height="*" />
+
+                                        </Grid.RowDefinitions>
+
+                                        <!--Title Bar-->
+                                        <StackPanel Grid.Row="0"
+                                                    Style="{DynamicResource TitleBarStyle}"
+                                                    Panel.ZIndex="1">
+                                            <StackPanel.InputBindings>
+                                                <MouseBinding Gesture="LeftDoubleClick"
+                                                              Command="{Binding Header_DoubleClick}"
+                                                              CommandParameter="{Binding RelativeSource={RelativeSource
+                                                                                                         Mode=FindAncestor,
+                                                                                                         AncestorType={x:Type Window}}}" />
+                                                <MouseBinding Gesture="LeftClick"
+                                                              Command="{Binding Header_Click}"
+                                                              CommandParameter="{Binding RelativeSource={RelativeSource
+                                                                                                         Mode=FindAncestor,
+                                                                                                         AncestorType={x:Type Window}}}" />
+                                                <MouseBinding Gesture="RightClick"
+                                                              Command="{Binding Header_RightClick}"
+                                                              CommandParameter="{Binding RelativeSource={RelativeSource
+                                                                                                         Mode=FindAncestor,
+                                                                                                         AncestorType={x:Type Window}}}" />
+                                            </StackPanel.InputBindings>
+                                            <Grid Opacity="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                    AncestorType={x:Type Window}},
+                                                            Converter={x:Static local:WindowActiveStateToOpacityConverter.Instance},
+                                                            Path=IsActive,
+                                                            Mode=OneWay}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="38" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="48" />
+                                                    <ColumnDefinition Width="48" />
+                                                    <ColumnDefinition Width="48" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <Image Grid.Column="0"
+                                                       Source="{TemplateBinding Icon}"
+                                                       Margin="12 0 6 0" />
+                                                <TextBlock Grid.Column="1"
+                                                           VerticalAlignment="Center"
+                                                           FontSize="12"
+                                                           FontWeight="Normal"
+                                                           TextAlignment="Left"
+                                                           Text="{TemplateBinding Title}" />
+                                                <Button Grid.Column="2"
+                                                        Style="{DynamicResource TitleBarButton}"
+                                                        HorizontalAlignment="Right"
+                                                        ToolTipService.InitialShowDelay="500"
+                                                        ToolTipService.BetweenShowDelay="500"
+                                                        ToolTip="Minimize"
+                                                        Command="{Binding MinimizeButton_Click}"
+                                                        CommandParameter="{Binding RelativeSource={RelativeSource
+                                                                                                   Mode=FindAncestor,
+                                                                                                   AncestorType={x:Type Window}}}">
+                                                    <Image Source="Assets\minimize.png" Height="16" />
+                                                </Button>
+                                                <Button Grid.Column="3"
+                                                        Style="{DynamicResource TitleBarButton}"
+                                                        ToolTipService.InitialShowDelay="500"
+                                                        ToolTipService.BetweenShowDelay="500"
+                                                        ToolTip="Maximize/Restore"
+                                                        Command="{Binding MaximizeButton_Click}"
+                                                        CommandParameter="{Binding RelativeSource={RelativeSource
+                                                                                                   Mode=FindAncestor,
+                                                                                                   AncestorType={x:Type Window}}}">
+                                                    <Image Source="{Binding RelativeSource={RelativeSource
+                                                                                            Mode=FindAncestor,
+                                                                                            AncestorType={x:Type Window}},
+                                                                    Converter={x:Static local:WindowStateToImageConverter.Instance},
+                                                                    Path=WindowState,
+                                                                    Mode=OneWay}"
+                                                           Height="16" />
+                                                </Button>
+                                                <Button Grid.Column="4"
+                                                        Style="{DynamicResource TitleBarButton}"
+                                                        HorizontalAlignment="Right"
+                                                        ToolTipService.InitialShowDelay="500"
+                                                        ToolTipService.BetweenShowDelay="500"
+                                                        ToolTip="Close"
+                                                        Command="{Binding CloseButton_Click}"
+                                                        CommandParameter="{Binding RelativeSource={RelativeSource
+                                                                                                   Mode=FindAncestor,
+                                                                                                   AncestorType={x:Type Window}}}">
+                                                    <Image Source="Assets\close.png" Height="16" />
+                                                </Button>
+                                            </Grid>
+                                        </StackPanel>
+
+                                         <!--Page Content-->
+                                        <Border Grid.Row="1">
+                                            <ContentPresenter Content="{TemplateBinding Content}" />
+                                        </Border>
+
+                                    </Grid>
+
+                                </Grid>
+                            </Border>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!--Scroll Bar Begin-->
         <SolidColorBrush x:Key="StandardBorderBrush" Color="#888" />
         <SolidColorBrush x:Key="StandardBackgroundBrush" Color="Black" />
@@ -193,24 +339,11 @@
             </Setter>
         </Style>
         <!--Scroll Bar End-->
-
-        <!-- Style to hide tool tips that have an empty content. -->
-        <Style TargetType="ToolTip">
-            <Setter Property="Foreground" Value="{DynamicResource PrimaryLightTextBrush}" />
-            <Style.Triggers>
-                <Trigger Property="Content"
-                 Value="{x:Static sys:String.Empty}">
-                    <Setter Property="Visibility"
-                    Value="Collapsed" />
-                </Trigger>
-                <Trigger Property="Content"
-                 Value="{x:Null}">
-                    <Setter Property="Visibility"
-                    Value="Collapsed" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </Window.Resources>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome ResizeBorderThickness="10" CornerRadius="0" CaptionHeight="0" GlassFrameThickness="0" />
+    </WindowChrome.WindowChrome>
 
     <Grid Style="{DynamicResource MainBodyStyle}">
         <Grid.ColumnDefinitions>

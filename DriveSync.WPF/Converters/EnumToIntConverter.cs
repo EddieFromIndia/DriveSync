@@ -2,23 +2,21 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using System.Windows.Media.Imaging;
 
-namespace DriveSync
+namespace DriveSync;
+
+[ValueConversion(typeof(ResolveMethods), typeof(int))]
+public class EnumToIntConverter : IValueConverter
 {
-    [ValueConversion(typeof(ResolveMethods), typeof(int))]
-    public class EnumToIntConverter : IValueConverter
+    public static EnumToIntConverter Instance = new EnumToIntConverter();
+
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        public static EnumToIntConverter Instance = new EnumToIntConverter();
+        return (int)(ResolveMethods)value;
+    }
 
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (int)(ResolveMethods)value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return (ResolveMethods)(int)value;
-        }
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        return (ResolveMethods)(int)value;
     }
 }

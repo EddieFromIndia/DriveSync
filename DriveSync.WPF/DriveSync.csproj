@@ -1,11 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
     <UseWPF>true</UseWPF>
 	<UseWindowsForms>true</UseWindowsForms>
 	<Platforms>AnyCPU;x86</Platforms>
+	<EnablePreviewFeatures>True</EnablePreviewFeatures>
+	<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +15,7 @@
     <None Remove="Assets\arrow-up.png" />
     <None Remove="Assets\back.png" />
     <None Remove="Assets\clear.png" />
+    <None Remove="Assets\close.png" />
     <None Remove="Assets\copy-left.png" />
     <None Remove="Assets\copy-right.png" />
     <None Remove="Assets\delete.png" />
@@ -39,11 +42,14 @@
     <None Remove="Assets\invisible.png" />
     <None Remove="Assets\link.png" />
     <None Remove="Assets\logo.png" />
+    <None Remove="Assets\maximize.png" />
     <None Remove="Assets\merge-left.png" />
     <None Remove="Assets\merge-right.png" />
+    <None Remove="Assets\minimize.png" />
     <None Remove="Assets\refresh.png" />
     <None Remove="Assets\rename.png" />
     <None Remove="Assets\resolve.png" />
+    <None Remove="Assets\restore.png" />
     <None Remove="Assets\scan.png" />
     <None Remove="Assets\settings.png" />
     <None Remove="Assets\tutorial.png" />
@@ -63,6 +69,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\clear.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\close.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\copy-left.png">
@@ -143,10 +152,16 @@
     <Resource Include="Assets\logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\maximize.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\merge-left.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\merge-right.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\minimize.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\refresh.png">
@@ -156,6 +171,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\resolve.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\restore.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\scan.png">
@@ -179,7 +197,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	  <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.31" />
+	  <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
     <PackageReference Include="PropertyChanged.Fody" Version="3.4.0" PrivateAssets="All" />
   </ItemGroup>
 

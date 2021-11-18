@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace DriveSync;
 
-[ValueConversion(typeof(string), typeof(Visibility))]
-public class StringToVisibilityConverter : IValueConverter
+[ValueConversion(typeof(bool), typeof(double))]
+public class WindowActiveStateToOpacityConverter : IValueConverter
 {
-    public static StringToVisibilityConverter Instance = new StringToVisibilityConverter();
+    public static WindowActiveStateToOpacityConverter Instance = new WindowActiveStateToOpacityConverter();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return string.IsNullOrEmpty(value.ToString()) ? Visibility.Hidden : Visibility.Visible;
+        return (bool)value ? 1 : 0.7;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -28,18 +28,6 @@
         </Style.Triggers>
     </Style>
 
-    <!--ToolTip Text-->
-    <Style TargetType="{x:Type ToolTip}">
-        <Style.Triggers>
-            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryLightTextBrush}" />
-            </DataTrigger>
-            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
-                <Setter Property="Foreground" Value="{DynamicResource PrimaryLightTextBrush}" />
-            </DataTrigger>
-        </Style.Triggers>
-    </Style>
-
     <!--Default Text Box-->
     <Style x:Key="DefaultTextBoxStyle" TargetType="{x:Type TextBox}">
         <Style.Triggers>
