@@ -1,54 +1,32 @@
-﻿using DriveSync.Models;
-using System;
-using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Media.Imaging;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 [ValueConversion(typeof(ItemStatus), typeof(BitmapImage))]
 public class ItemStatusToImageConverter : IValueConverter
 {
-    public static ItemStatusToImageConverter Instance = new ItemStatusToImageConverter();
+    public static ItemStatusToImageConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         string image = string.Empty;
         switch (parameter.ToString())
         {
-            case "source":
-                switch ((ItemStatus)value)
+            case "original":
+                image = (ItemStatus)value switch
                 {
-                    case ItemStatus.ExistsButDifferent:
-                        image = "merge-right";
-                        break;
-                    case ItemStatus.ExistsWithDifferentName:
-                        image = "rename";
-                        break;
-                    case ItemStatus.DoesNotExist:
-                        image = "copy-right";
-                        break;
-                    default:
-                        image = "merge-right";
-                        break;
-                }
+                    ItemStatus.ExistsButDifferent => "merge-right",
+                    ItemStatus.ExistsWithDifferentName => "rename",
+                    ItemStatus.DoesNotExist => "copy-right",
+                    _ => "merge-right",
+                };
                 break;
-            case "target":
-                switch ((ItemStatus)value)
+            case "backup":
+                image = (ItemStatus)value switch
                 {
-                    case ItemStatus.ExistsButDifferent:
-                        image = "merge-left";
-                        break;
-                    case ItemStatus.ExistsWithDifferentName:
-                        image = "rename";
-                        break;
-                    case ItemStatus.DoesNotExist:
-                        image = "copy-left";
-                        break;
-                    default:
-                        image = "merge-left";
-                        break;
-                }
+                    ItemStatus.ExistsButDifferent => "merge-left",
+                    ItemStatus.ExistsWithDifferentName => "rename",
+                    ItemStatus.DoesNotExist => "copy-left",
+                    _ => "merge-left",
+                };
                 break;
         }
 

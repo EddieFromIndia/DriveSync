@@ -15,6 +15,7 @@
     <None Remove="Assets\arrow-up.png" />
     <None Remove="Assets\back.png" />
     <None Remove="Assets\clear.png" />
+    <None Remove="Assets\close-black.png" />
     <None Remove="Assets\close.png" />
     <None Remove="Assets\copy-left.png" />
     <None Remove="Assets\copy-right.png" />
@@ -42,13 +43,16 @@
     <None Remove="Assets\invisible.png" />
     <None Remove="Assets\link.png" />
     <None Remove="Assets\logo.png" />
+    <None Remove="Assets\maximize-black.png" />
     <None Remove="Assets\maximize.png" />
     <None Remove="Assets\merge-left.png" />
     <None Remove="Assets\merge-right.png" />
+    <None Remove="Assets\minimize-black.png" />
     <None Remove="Assets\minimize.png" />
     <None Remove="Assets\refresh.png" />
     <None Remove="Assets\rename.png" />
     <None Remove="Assets\resolve.png" />
+    <None Remove="Assets\restore-black.png" />
     <None Remove="Assets\restore.png" />
     <None Remove="Assets\scan.png" />
     <None Remove="Assets\settings.png" />
@@ -69,6 +73,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\clear.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\close-black.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\close.png">
@@ -152,6 +159,9 @@
     <Resource Include="Assets\logo.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\maximize-black.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\maximize.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -159,6 +169,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\merge-right.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\minimize-black.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\minimize.png">
@@ -171,6 +184,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\resolve.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\restore-black.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\restore.png">

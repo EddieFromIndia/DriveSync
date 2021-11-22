@@ -1,74 +1,32 @@
-﻿using DriveSync.Models;
-using System;
-using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Media.Imaging;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 [ValueConversion(typeof(ItemType), typeof(BitmapImage))]
 public class ItemTypeToImageConverter : IValueConverter
 {
-    public static ItemTypeToImageConverter Instance = new ItemTypeToImageConverter();
+    public static ItemTypeToImageConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        string image;
-        switch ((ItemType)value)
+        string image = (ItemType)value switch
         {
-            case ItemType.Folder:
-                image = "folder";
-                break;
-            case ItemType.Android:
-                image = "file-android";
-                break;
-            case ItemType.Archive:
-                image = "file-archive";
-                break;
-            case ItemType.Audio:
-                image = "file-audio";
-                break;
-            case ItemType.Code:
-                image = "file-code";
-                break;
-            case ItemType.DiskImage:
-                image = "file-disk-image";
-                break;
-            case ItemType.Executable:
-                image = "file-executable";
-                break;
-            case ItemType.Font:
-                image = "file-font";
-                break;
-            case ItemType.Image:
-                image = "file-image";
-                break;
-            case ItemType.MarkupLanguage:
-                image = "file-markup";
-                break;
-            case ItemType.PDF:
-                image = "file-pdf";
-                break;
-            case ItemType.Presentation:
-                image = "file-presentation";
-                break;
-            case ItemType.Spreadsheet:
-                image = "file-spreadsheet";
-                break;
-            case ItemType.System:
-                image = "file-system";
-                break;
-            case ItemType.Text:
-                image = "file-text";
-                break;
-            case ItemType.Video:
-                image = "file-video";
-                break;
-            default:
-                image = "file";
-                break;
-        }
-
+            ItemType.Folder => "folder",
+            ItemType.Android => "file-android",
+            ItemType.Archive => "file-archive",
+            ItemType.Audio => "file-audio",
+            ItemType.Code => "file-code",
+            ItemType.DiskImage => "file-disk-image",
+            ItemType.Executable => "file-executable",
+            ItemType.Font => "file-font",
+            ItemType.Image => "file-image",
+            ItemType.MarkupLanguage => "file-markup",
+            ItemType.PDF => "file-pdf",
+            ItemType.Presentation => "file-presentation",
+            ItemType.Spreadsheet => "file-spreadsheet",
+            ItemType.System => "file-system",
+            ItemType.Text => "file-text",
+            ItemType.Video => "file-video",
+            _ => "file",
+        };
         return new BitmapImage(new Uri($"pack://application:,,,/Assets/{image}.png"));
     }
 

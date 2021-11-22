@@ -1,13 +1,4 @@
-﻿using DriveSync.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
+﻿using System;
 
 namespace DriveSync.ViewModels;
 
@@ -18,9 +9,9 @@ public class MainViewModel : BaseViewModel
     private int outerMargin = 10;
     private int windowRadius = 8;
 
-    private static readonly string textIntroMessage = "Choose Source and Target directories...";
-    private ObservableCollection<PathItem> SourceDirectories = new();
-    private ObservableCollection<PathItem> TargetDirectories = new();
+    private static readonly string textIntroMessage = "Choose Original and Backup directories...";
+    private ObservableCollection<PathItem> OriginalDirectories = new();
+    private ObservableCollection<PathItem> BackupDirectories = new();
     #endregion
 
     #region Public Properties
@@ -35,14 +26,14 @@ public class MainViewModel : BaseViewModel
     }
     public CornerRadius WindowCornerRadius => new(WindowRadius);
 
-    public ObservableCollection<PathItem> SourceDirectoriesToDisplay { get; set; } = new();
-    public ObservableCollection<PathItem> TargetDirectoriesToDisplay { get; set; } = new();
-    public string SourceDisplayText { get; set; } = textIntroMessage;
-    public string TargetDisplayText { get; set; } = string.Empty;
-    public string SourcePath { get; set; }
-    public string TargetPath { get; set; }
-    public string LastSourcePath { get; set; } = string.Empty;
-    public string LastTargetPath { get; set; } = string.Empty;
+    public ObservableCollection<PathItem> OriginalDirectoriesToDisplay { get; set; } = new();
+    public ObservableCollection<PathItem> BackupDirectoriesToDisplay { get; set; } = new();
+    public string OriginalDisplayText { get; set; } = textIntroMessage;
+    public string BackupDisplayText { get; set; } = string.Empty;
+    public string OriginalPath { get; set; }
+    public string BackupPath { get; set; }
+    public string LastOriginalPath { get; set; } = string.Empty;
+    public string LastBackupPath { get; set; } = string.Empty;
     public ResolveMethods ResolveMethod { get; set; } = 0;
     public bool ShowEqualEntries { get; set; } = true;
     public bool ShowEmptyFolder { get; set; } = true;
@@ -63,11 +54,11 @@ public class MainViewModel : BaseViewModel
     public ICommand BrowseButton_Click { get; set; }
     public ICommand ScanButton_Click { get; set; }
     public ICommand AutoResolveButton_Click { get; set; }
-    public ICommand MergeSource_Click { get; set; }
-    public ICommand MergeTarget_Click { get; set; }
+    public ICommand MergeOriginal_Click { get; set; }
+    public ICommand MergeBackup_Click { get; set; }
     public ICommand DeleteButton_Click { get; set; }
-    public ICommand ExpandSourceDirectory { get; set; }
-    public ICommand ExpandTargetDirectory { get; set; }
+    public ICommand ExpandOriginalDirectory { get; set; }
+    public ICommand ExpandBackupDirectory { get; set; }
     public ICommand ClearButton_Click { get; set; }
     public ICommand BackButton_Click { get; set; }
     public ICommand RefreshButton_Click { get; set; }
@@ -96,11 +87,11 @@ public class MainViewModel : BaseViewModel
         BrowseButton_Click = new Command(Browse);
         ScanButton_Click = new Command(Scan, CanScanOrResolve);
         AutoResolveButton_Click = new Command(AutoResolve, CanScanOrResolve);
-        MergeSource_Click = new Command(MergeSourceAsync);
-        MergeTarget_Click = new Command(MergeTargetAsync);
+        MergeOriginal_Click = new Command(MergeOriginalAsync);
+        MergeBackup_Click = new Command(MergeBackupAsync);
         DeleteButton_Click = new Command(Delete);
-        ExpandSourceDirectory = new Command(ExpandSource);
-        ExpandTargetDirectory = new Command(ExpandTarget);
+        ExpandOriginalDirectory = new Command(ExpandOriginal);
+        ExpandBackupDirectory = new Command(ExpandBackup);
         ClearButton_Click = new Command(Clear, CanClear);
         BackButton_Click = new Command(Back, CanBack);
         RefreshButton_Click = new Command(Refresh, CanRefresh);
@@ -127,15 +118,15 @@ public class MainViewModel : BaseViewModel
         string TempPath = string.Empty;
         switch (sender.ToString())
         {
-            case "Source":
-                TempPath = SourcePath;
+            case "Original":
+                TempPath = OriginalPath;
                 break;
-            case "Target":
-                TempPath = TargetPath;
+            case "Backup":
+                TempPath = BackupPath;
                 break;
         }
 
-        using System.Windows.Forms.FolderBrowserDialog dialog = new System.Windows.Forms.FolderBrowserDialog() { ShowNewFolderButton = true, SelectedPath = TempPath };
+        using System.Windows.Forms.FolderBrowserDialog dialog = new() { ShowNewFolderButton = true, SelectedPath = TempPath };
         System.Windows.Forms.DialogResult result = dialog.ShowDialog();
 
         if (dialog.SelectedPath != string.Empty)
@@ -144,11 +135,11 @@ public class MainViewModel : BaseViewModel
             {
                 switch (sender.ToString())
                 {
-                    case "Source":
-                        SourcePath = dialog.SelectedPath;
+                    case "Original":
+                        OriginalPath = dialog.SelectedPath;
                         break;
-                    case "Target":
-                        TargetPath = dialog.SelectedPath;
+                    case "Backup":
+                        BackupPath = dialog.SelectedPath;
                         break;
                 }
             }
@@ -164,9 +155,9 @@ public class MainViewModel : BaseViewModel
 
     private bool CanScanOrResolve(object sender)
     {
-        if (!string.IsNullOrWhiteSpace(SourcePath) && !string.IsNullOrWhiteSpace(TargetPath))
+        if (!string.IsNullOrWhiteSpace(OriginalPath) && !string.IsNullOrWhiteSpace(BackupPath))
         {
-            if (Directory.Exists(SourcePath) && Directory.Exists(TargetPath) && SourcePath != TargetPath)
+            if (Directory.Exists(OriginalPath) && Directory.Exists(BackupPath) && OriginalPath != BackupPath)
             {
                 return true;
             }
@@ -177,16 +168,16 @@ public class MainViewModel : BaseViewModel
 
     private async void Scan(object sender)
     {
-        LastSourcePath = SourcePath;
-        LastTargetPath = TargetPath;
+        LastOriginalPath = OriginalPath;
+        LastBackupPath = BackupPath;
 
-        await ScanAsync(SourcePath, TargetPath);
+        await ScanAsync(OriginalPath, BackupPath);
     }
 
     private async void AutoResolve(object sender)
     {
-        SourceDisplayText = "Resolving. Please wait!";
-        TargetDisplayText = "Resolving. Please wait!";
+        OriginalDisplayText = "Resolving. Please wait!";
+        BackupDisplayText = "Resolving. Please wait!";
         ProgressVisibility = Visibility.Visible;
         ProgressString = "Modifying files";
         ProgressPercentage = 10;
@@ -194,15 +185,15 @@ public class MainViewModel : BaseViewModel
         switch (ResolveMethod)
         {
             case ResolveMethods.LeftToRight:
-                await MergeAsync(SourcePath, TargetPath);
+                await MergeAsync(OriginalPath, BackupPath);
                 break;
 
             case ResolveMethods.RightToLeft:
-                await MergeAsync(TargetPath, SourcePath);
+                await MergeAsync(BackupPath, OriginalPath);
                 break;
         }
 
-        //await ScanAsync(SourcePath, TargetPath);
+        //await ScanAsync(OriginalPath, BackupPath);
         //ProgressString = "Calculating";
         //ProgressPercentage = 20;
 
@@ -211,26 +202,26 @@ public class MainViewModel : BaseViewModel
         //{
         //    case ResolveMethods.LeftToRightDestructive:
         //    case ResolveMethods.LeftToRightNonDestructive:
-        //        foreach (PathItem item in TargetDirectories)
+        //        foreach (PathItem item in BackupDirectories)
         //        {
 
         //        }
 
-        //        foreach (PathItem item in SourceDirectories)
+        //        foreach (PathItem item in OriginalDirectories)
         //        {
         //            if (item.IsFile)
         //            {
-        //                tasks.Add(Task.Run(() => File.Copy(item.Item.FullName, item.Item.FullName.Replace(SourcePath, TargetPath))));
+        //                tasks.Add(Task.Run(() => File.Copy(item.Item.FullName, item.Item.FullName.Replace(OriginalPath, BackupPath))));
         //            }
         //            else
         //            {
         //                switch (item.Status)
         //                {
         //                    case ItemStatus.ExistsButDifferent:
-        //                            tasks.Add(Task.Run(() => MergeAsync(item.Item.FullName, item.Item.FullName.Replace(SourcePath, TargetPath))));
+        //                            tasks.Add(Task.Run(() => MergeAsync(item.Item.FullName, item.Item.FullName.Replace(OriginalPath, BackupPath))));
         //                        break;
         //                    case ItemStatus.DoesNotExist:
-        //                        tasks.Add(Task.Run(() => CopyFilesRecursively(item.Item.FullName, TargetPath)));
+        //                        tasks.Add(Task.Run(() => CopyFilesRecursively(item.Item.FullName, BackupPath)));
         //                        break;
         //                }
         //            }
@@ -239,21 +230,21 @@ public class MainViewModel : BaseViewModel
 
         //    case ResolveMethods.RightToLeftDestructive:
         //    case ResolveMethods.RightToLeftNonDestructive:
-        //        foreach (PathItem item in TargetDirectories)
+        //        foreach (PathItem item in BackupDirectories)
         //        {
         //            if (item.IsFile)
         //            {
-        //                tasks.Add(Task.Run(() => File.Copy(item.Item.FullName, item.Item.FullName.Replace(TargetPath, SourcePath))));
+        //                tasks.Add(Task.Run(() => File.Copy(item.Item.FullName, item.Item.FullName.Replace(BackupPath, OriginalPath))));
         //            }
         //            else
         //            {
         //                switch (item.Status)
         //                {
         //                    case ItemStatus.ExistsButDifferent:
-        //                        tasks.Add(Task.Run(() => MergeAsync(item.Item.FullName, item.Item.FullName.Replace(TargetPath, SourcePath))));
+        //                        tasks.Add(Task.Run(() => MergeAsync(item.Item.FullName, item.Item.FullName.Replace(BackupPath, OriginalPath))));
         //                        break;
         //                    case ItemStatus.DoesNotExist:
-        //                        tasks.Add(Task.Run(() => CopyFilesRecursively(item.Item.FullName, SourcePath)));
+        //                        tasks.Add(Task.Run(() => CopyFilesRecursively(item.Item.FullName, OriginalPath)));
         //                        break;
         //                }
         //            }
@@ -267,22 +258,22 @@ public class MainViewModel : BaseViewModel
         ProgressString = "Verifying";
         ProgressPercentage = 80;
 
-        LastSourcePath = SourcePath;
-        LastTargetPath = TargetPath;
-        await ScanAsync(SourcePath, TargetPath);
+        LastOriginalPath = OriginalPath;
+        LastBackupPath = BackupPath;
+        await ScanAsync(OriginalPath, BackupPath);
 
         ProgressString = "Done";
         ProgressPercentage = 100;
         _ = MessageBox.Show("Resolve Complete.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         ProgressString = string.Empty;
         ProgressVisibility = Visibility.Hidden;
-        SourceDisplayText = string.Empty;
-        TargetDisplayText = string.Empty;
+        OriginalDisplayText = string.Empty;
+        BackupDisplayText = string.Empty;
     }
 
-    private async void MergeSourceAsync(object sender)
+    private async void MergeOriginalAsync(object sender)
     {
-        TargetDisplayText = string.Empty;
+        BackupDisplayText = string.Empty;
         ProgressVisibility = Visibility.Visible;
         ProgressString = "Awaiting authentication";
         ProgressPercentage = 0;
@@ -291,13 +282,19 @@ public class MainViewModel : BaseViewModel
             case ItemStatus.ExistsButDifferent:
                 if (((PathItem)sender).IsFile)
                 {
-                    SourceDisplayText = "Copying file. Please wait!";
-                    File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(SourcePath, TargetPath), true);
+                    OriginalDisplayText = "Copying file. Please wait!";
+                    ProgressString = "Copying";
+                    ProgressPercentage = 10;
+
+                    File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath), true);
                 }
                 else
                 {
-                    SourceDisplayText = "Merging folders. Please wait!";
-                    await MergeAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(SourcePath, TargetPath));
+                    OriginalDisplayText = "Merging folders. Please wait!";
+                    ProgressString = "Merging";
+                    ProgressPercentage = 10;
+
+                    await MergeAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath));
                 }
 
                 break;
@@ -305,23 +302,27 @@ public class MainViewModel : BaseViewModel
             case ItemStatus.ExistsWithDifferentName:
                 if (((PathItem)sender).IsFile)
                 {
-                    if (!File.Exists(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath)))
+                    if (!File.Exists(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)))
                     {
                         if (File.Exists(((PathItem)sender).DifferentPath))
                         {
-                            SourceDisplayText = "Renaming file. Please wait!";
+                            OriginalDisplayText = "Renaming file. Please wait!";
+                            ProgressString = "Renaming";
+                            ProgressPercentage = 10;
 
-                            File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath));
+                            File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
                         }
                     }
                     else
                     {
-                        if (MessageBox.Show($"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath)).Parent.Name} already exists. Do you want to overwrite it?",
+                        if (MessageBox.Show($"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)).Parent.Name} already exists. Do you want to overwrite it?",
                             "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
                         {
-                            SourceDisplayText = "Renaming file. Please wait!";
+                            OriginalDisplayText = "Renaming file. Please wait!";
+                            ProgressString = "Renaming";
+                            ProgressPercentage = 10;
 
-                            File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath), true);
+                            File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath), true);
                         }
                         else
                         {
@@ -334,24 +335,28 @@ public class MainViewModel : BaseViewModel
                 }
                 else
                 {
-                    if (!Directory.Exists(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath)))
+                    if (!Directory.Exists(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)))
                     {
                         if (File.Exists(((PathItem)sender).DifferentPath))
                         {
-                            SourceDisplayText = "Renaming file. Please wait!";
+                            OriginalDisplayText = "Renaming file. Please wait!";
+                            ProgressString = "Renaming";
+                            ProgressPercentage = 10;
 
-                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath));
+                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
                         }
                     }
                     else
                     {
-                        if (MessageBox.Show($"The folder {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath)).Parent.Name} already exists. Do you want to overwrite it?",
+                        if (MessageBox.Show($"The folder {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)).Parent.Name} already exists. Do you want to overwrite it?",
                             "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
                         {
-                            SourceDisplayText = "Renaming folder. Please wait!";
+                            OriginalDisplayText = "Renaming folder. Please wait!";
+                            ProgressString = "Renaming";
+                            ProgressPercentage = 10;
 
-                            Directory.Delete(((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath), true);
-                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(TargetPath, SourcePath));
+                            Directory.Delete(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath), true);
+                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
                         }
                         else
                         {
@@ -367,19 +372,24 @@ public class MainViewModel : BaseViewModel
             case ItemStatus.DoesNotExist:
                 if (((PathItem)sender).IsFile)
                 {
-                    SourceDisplayText = "Copying file. Please wait!";
+                    OriginalDisplayText = "Copying file. Please wait!";
+                    ProgressString = "Copying";
+                    ProgressPercentage = 10;
 
-                    if (!Directory.Exists(((PathItem)sender).Item.Parent.ToString().Replace(SourcePath, TargetPath)))
+                    if (!Directory.Exists(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath)))
                     {
-                        _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(SourcePath, TargetPath));
+                        _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
                     }
 
-                    File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(SourcePath, TargetPath), true);
+                    File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath), true);
                 }
                 else
                 {
-                    SourceDisplayText = "Copying. Please wait!";
-                    CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(SourcePath, TargetPath));
+                    OriginalDisplayText = "Copying. Please wait!";
+                    ProgressString = "Copying";
+                    ProgressPercentage = 10;
+
+                    CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
                 }
                 break;
         }
@@ -387,9 +397,9 @@ public class MainViewModel : BaseViewModel
         ProgressVisibility = Visibility.Visible;
         ProgressPercentage = 80;
         ProgressString = "Verifying";
-        SourceDisplayText = string.Empty;
+        OriginalDisplayText = string.Empty;
 
-        await ScanAsync(LastSourcePath, LastTargetPath);
+        await ScanAsync(LastOriginalPath, LastBackupPath);
 
         ProgressPercentage = 100;
         ProgressString = "Done";
@@ -397,9 +407,9 @@ public class MainViewModel : BaseViewModel
         ProgressVisibility = Visibility.Hidden;
     }
 
-    private async void MergeTargetAsync(object sender)
+    private async void MergeBackupAsync(object sender)
     {
-        SourceDisplayText = string.Empty;
+        OriginalDisplayText = string.Empty;
         ProgressVisibility = Visibility.Visible;
         ProgressString = "Awaiting authentication";
         ProgressPercentage = 0;
@@ -408,59 +418,116 @@ public class MainViewModel : BaseViewModel
             case ItemStatus.ExistsButDifferent:
                 if (((PathItem)sender).IsFile)
                 {
-                    TargetDisplayText = "Copying file. Please wait!";
-                    File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(TargetPath, SourcePath), true);
+                    BackupDisplayText = "Copying file. Please wait!";
+                    try
+                    {
+                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath), true);
+                    }
+                    catch(UnauthorizedAccessException)
+                    {
+                        //Display(You do not have the required permission)
+                    }
+                    catch (PathTooLongException)
+                    {
+                        //Display(The path is too long)
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        //Display(The backup folder is missing)
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        //Display(The original file is missing)
+                    }
                 }
                 else
                 {
-                    TargetDisplayText = "Merging folders. Please wait!";
-                    await MergeAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(TargetPath, SourcePath));
+                    BackupDisplayText = "Merging folders. Please wait!";
+                    await MergeAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath));
                 }
 
                 break;
             case ItemStatus.ExistsWithDifferentName:
                 if (((PathItem)sender).IsFile)
                 {
-                    if (!File.Exists(((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath)))
+                    if (!File.Exists(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)))
                     {
                         if (File.Exists(((PathItem)sender).DifferentPath))
                         {
-                            SourceDisplayText = "Renaming file. Please wait!";
+                            OriginalDisplayText = "Renaming file. Please wait!";
 
-                            File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath));
+                            try
+                            {
+                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath));
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //Display(You do not have the required permission)
+                            }
+                            catch (PathTooLongException)
+                            {
+                                //Display(The path is too long)
+                            }
+                            catch (DirectoryNotFoundException)
+                            {
+                                //Display(The backup folder is missing)
+                            }
+                            catch (FileNotFoundException)
+                            {
+                                //Display(The original file is missing)
+                            }
                         }
                     }
                     else
                     {
-                        if (MessageBox.Show($"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath)).Parent.Name} already exists. Do you want to overwrite it?",
+                        if (MessageBox.Show($"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)).Parent.Name} already exists. Do you want to overwrite it?",
                             "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
                         {
-                            SourceDisplayText = "Renaming file. Please wait!";
+                            OriginalDisplayText = "Renaming file. Please wait!";
 
-                            File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath), true);
+                            try
+                            {
+                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath), true);
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //Display(You do not have the required permission)
+                            }
+                            catch (PathTooLongException)
+                            {
+                                //Display(The path is too long)
+                            }
+                            catch (DirectoryNotFoundException)
+                            {
+                                //Display(The backup folder is missing)
+                            }
+                            catch (FileNotFoundException)
+                            {
+                                //Display(The original file is missing)
+                            }
                         }
                     }
                 }
                 else
                 {
-                    if (!Directory.Exists(((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath)))
+                    if (!Directory.Exists(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)))
                     {
-                        if (File.Exists(((PathItem)sender).DifferentPath))
+                        if (Directory.Exists(((PathItem)sender).DifferentPath))
                         {
-                            SourceDisplayText = "Renaming file. Please wait!";
+                            OriginalDisplayText = "Renaming file. Please wait!";
 
-                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath));
+                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath));
                         }
                     }
                     else
                     {
-                        if (MessageBox.Show($"The folder {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath)).Parent.Name} already exists. Do you want to overwrite it?",
+                        if (MessageBox.Show($"The folder {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)).Parent.Name} already exists. Do you want to overwrite it?",
                             "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
                         {
-                            SourceDisplayText = "Renaming folder. Please wait!";
+                            OriginalDisplayText = "Renaming folder. Please wait!";
 
-                            Directory.Delete(((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath), true);
-                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(SourcePath, TargetPath));
+                            Directory.Delete(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath), true);
+                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath));
                         }
                     }
                 }
@@ -468,19 +535,19 @@ public class MainViewModel : BaseViewModel
             case ItemStatus.DoesNotExist:
                 if (((PathItem)sender).IsFile)
                 {
-                    TargetDisplayText = "Copying file. Please wait!";
+                    BackupDisplayText = "Copying file. Please wait!";
 
-                    if (!Directory.Exists(((PathItem)sender).Item.Parent.ToString().Replace(SourcePath, TargetPath)))
+                    if (!Directory.Exists(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath)))
                     {
-                        _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(SourcePath, TargetPath));
+                        _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
                     }
 
-                    File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(TargetPath, SourcePath), true);
+                    File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath), true);
                 }
                 else
                 {
-                    TargetDisplayText = "Copying. Please wait!";
-                    CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(TargetPath, SourcePath));
+                    BackupDisplayText = "Copying. Please wait!";
+                    CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(BackupPath, OriginalPath));
                 }
                 break;
         }
@@ -488,9 +555,9 @@ public class MainViewModel : BaseViewModel
         ProgressVisibility = Visibility.Visible;
         ProgressPercentage = 80;
         ProgressString = "Verifying";
-        TargetDisplayText = string.Empty;
+        BackupDisplayText = string.Empty;
 
-        await ScanAsync(LastSourcePath, LastTargetPath);
+        await ScanAsync(LastOriginalPath, LastBackupPath);
 
         ProgressPercentage = 100;
         ProgressString = "Done";
@@ -500,15 +567,15 @@ public class MainViewModel : BaseViewModel
 
     private async void Delete(object sender)
     {
-        if (Equals(((PathItem)sender).Item.Parent.ToString(), LastSourcePath))
+        if (Equals(((PathItem)sender).Item.Parent.ToString(), LastOriginalPath))
         {
-            SourceDisplayText = "Deleting. Please wait!";
-            TargetDisplayText = string.Empty;
+            OriginalDisplayText = "Deleting. Please wait!";
+            BackupDisplayText = string.Empty;
         }
         else
         {
-            SourceDisplayText = string.Empty;
-            TargetDisplayText = "Deleting. Please wait!";
+            OriginalDisplayText = string.Empty;
+            BackupDisplayText = "Deleting. Please wait!";
         }
 
         ProgressVisibility = Visibility.Visible;
@@ -532,7 +599,7 @@ public class MainViewModel : BaseViewModel
             ProgressString = "Verifying";
             ProgressPercentage = 80;
 
-            await ScanAsync(LastSourcePath, LastTargetPath);
+            await ScanAsync(LastOriginalPath, LastBackupPath);
 
             ProgressString = "Done";
             ProgressPercentage = 100;
@@ -542,11 +609,11 @@ public class MainViewModel : BaseViewModel
         ProgressString = string.Empty;
         ProgressVisibility = Visibility.Hidden;
 
-        SourceDisplayText = string.Empty;
-        TargetDisplayText = string.Empty;
+        OriginalDisplayText = string.Empty;
+        BackupDisplayText = string.Empty;
     }
 
-    private async void ExpandSource(object sender)
+    private async void ExpandOriginal(object sender)
     {
         if (sender == null)
         {
@@ -555,21 +622,21 @@ public class MainViewModel : BaseViewModel
 
         if (!((PathItem)sender).IsFile)
         {
-            if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastTargetPath)))
+            if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastBackupPath)))
             {
-                await ScanAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastTargetPath));
+                await ScanAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastBackupPath));
             }
             else
             {
                 await ScanAsync(((PathItem)sender).Item.FullName, string.Empty);
             }
 
-            LastSourcePath = ((PathItem)sender).Item.FullName;
-            LastTargetPath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(LastSourcePath).Parent.ToString(), LastTargetPath);
+            LastOriginalPath = ((PathItem)sender).Item.FullName;
+            LastBackupPath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(LastOriginalPath).Parent.ToString(), LastBackupPath);
         }
     }
 
-    private async void ExpandTarget(object sender)
+    private async void ExpandBackup(object sender)
     {
         if (sender == null)
         {
@@ -578,28 +645,28 @@ public class MainViewModel : BaseViewModel
 
         if (!((PathItem)sender).IsFile)
         {
-            if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath)))
+            if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastOriginalPath)))
             {
-                await ScanAsync(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath), ((PathItem)sender).Item.FullName);
+                await ScanAsync(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastOriginalPath), ((PathItem)sender).Item.FullName);
             }
             else
             {
                 await ScanAsync(string.Empty, ((PathItem)sender).Item.FullName);
             }
 
-            LastSourcePath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastSourcePath);
-            LastTargetPath = ((PathItem)sender).Item.FullName;
+            LastOriginalPath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastOriginalPath);
+            LastBackupPath = ((PathItem)sender).Item.FullName;
         }
     }
 
     private bool CanClear(object sender)
     {
-        if (SourceDisplayText == textIntroMessage
-            && string.IsNullOrWhiteSpace(TargetDisplayText)
-            && string.IsNullOrWhiteSpace(SourcePath)
-            && string.IsNullOrWhiteSpace(TargetPath)
-            && LastSourcePath == string.Empty
-            && LastTargetPath == string.Empty)
+        if (OriginalDisplayText == textIntroMessage
+            && string.IsNullOrWhiteSpace(BackupDisplayText)
+            && string.IsNullOrWhiteSpace(OriginalPath)
+            && string.IsNullOrWhiteSpace(BackupPath)
+            && LastOriginalPath == string.Empty
+            && LastBackupPath == string.Empty)
         {
             return false;
         }
@@ -609,20 +676,20 @@ public class MainViewModel : BaseViewModel
 
     private void Clear(object sender)
     {
-        SourceDisplayText = textIntroMessage;
-        TargetDisplayText = string.Empty;
+        OriginalDisplayText = textIntroMessage;
+        BackupDisplayText = string.Empty;
 
-        SourceDirectories = new ObservableCollection<PathItem>();
-        TargetDirectories = new ObservableCollection<PathItem>();
+        OriginalDirectories = new ObservableCollection<PathItem>();
+        BackupDirectories = new ObservableCollection<PathItem>();
 
-        SourceDirectoriesToDisplay = new ObservableCollection<PathItem>();
-        TargetDirectoriesToDisplay = new ObservableCollection<PathItem>();
+        OriginalDirectoriesToDisplay = new ObservableCollection<PathItem>();
+        BackupDirectoriesToDisplay = new ObservableCollection<PathItem>();
 
-        SourcePath = string.Empty;
-        TargetPath = string.Empty;
+        OriginalPath = string.Empty;
+        BackupPath = string.Empty;
 
-        LastSourcePath = string.Empty;
-        LastTargetPath = string.Empty;
+        LastOriginalPath = string.Empty;
+        LastBackupPath = string.Empty;
     }
 
     private void ToggleVisibility(object sender)
@@ -646,27 +713,27 @@ public class MainViewModel : BaseViewModel
 
     private bool CanBack(object sender)
     {
-        return (!string.IsNullOrEmpty(LastSourcePath) || !string.IsNullOrEmpty(LastTargetPath))
-            && LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(LastSourcePath).Root.ToString() &&
-            LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\")) + "\\" != new DirectoryInfo(LastTargetPath).Root.ToString();
+        return (!string.IsNullOrEmpty(LastOriginalPath) || !string.IsNullOrEmpty(LastBackupPath))
+            && string.Concat(LastOriginalPath.AsSpan(0, LastOriginalPath.LastIndexOf("\\")), "\\") != new DirectoryInfo(LastOriginalPath).Root.ToString() &&
+            string.Concat(LastBackupPath.AsSpan(0, LastBackupPath.LastIndexOf("\\")), "\\") != new DirectoryInfo(LastBackupPath).Root.ToString();
     }
 
     private async void Back(object sender)
     {
-        LastSourcePath = LastSourcePath.Substring(0, LastSourcePath.LastIndexOf("\\"));
-        LastTargetPath = LastTargetPath.Substring(0, LastTargetPath.LastIndexOf("\\"));
+        LastOriginalPath = LastOriginalPath[..LastOriginalPath.LastIndexOf("\\")];
+        LastBackupPath = LastBackupPath[..LastBackupPath.LastIndexOf("\\")];
 
-        await ScanAsync(LastSourcePath, LastTargetPath);
+        await ScanAsync(LastOriginalPath, LastBackupPath);
     }
 
     private bool CanRefresh(object sender)
     {
-        return !string.IsNullOrEmpty(LastSourcePath) && !string.IsNullOrEmpty(LastTargetPath);
+        return !string.IsNullOrEmpty(LastOriginalPath) && !string.IsNullOrEmpty(LastBackupPath);
     }
 
     private async void Refresh(object sender)
     {
-        await ScanAsync(LastSourcePath, LastTargetPath);
+        await ScanAsync(LastOriginalPath, LastBackupPath);
     }
 
     private void Settings(object sender)
@@ -743,91 +810,91 @@ public class MainViewModel : BaseViewModel
     /// <summary>
     /// Scans two paths given for discrepancies.
     /// </summary>
-    /// <param name="sourcePath"></param>
-    /// <param name="targetPath"></param>
+    /// <param name="originalPath"></param>
+    /// <param name="backupPath"></param>
     /// <returns></returns>
-    private async Task ScanAsync(string sourcePath, string targetPath)
+    private async Task ScanAsync(string originalPath, string backupPath)
     {
-        SourceDirectories.Clear();
-        TargetDirectories.Clear();
+        OriginalDirectories.Clear();
+        BackupDirectories.Clear();
 
-        SourceDisplayText = "Scanning...";
-        TargetDisplayText = "Scanning...";
+        OriginalDisplayText = "Scanning...";
+        BackupDisplayText = "Scanning...";
 
-        if (!string.IsNullOrEmpty(sourcePath) && Directory.Exists(sourcePath) && !string.IsNullOrEmpty(targetPath) && Directory.Exists(targetPath))
+        if (!string.IsNullOrEmpty(originalPath) && Directory.Exists(originalPath) && !string.IsNullOrEmpty(backupPath) && Directory.Exists(backupPath))
         {
-            // Initializing SourceDirectories
-            foreach (string dir in Directory.GetDirectories(sourcePath))
+            // Initializing OriginalDirectories
+            foreach (string dir in Directory.GetDirectories(originalPath))
             {
-                SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
+                OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
             }
 
-            foreach (string file in Directory.GetFiles(sourcePath))
+            foreach (string file in Directory.GetFiles(originalPath))
             {
-                SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
+                OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
             }
 
-            // Initializing TargetDirectories
-            foreach (string dir in Directory.GetDirectories(targetPath))
+            // Initializing BackupDirectories
+            foreach (string dir in Directory.GetDirectories(backupPath))
             {
-                TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
+                BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
             }
 
-            foreach (string file in Directory.GetFiles(targetPath))
+            foreach (string file in Directory.GetFiles(backupPath))
             {
-                TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
+                BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
             }
 
-            foreach (PathItem sourceDir in SourceDirectories)
+            foreach (PathItem originalDir in OriginalDirectories)
             {
-                // Checks if the source folder or file exists in target
-                if ((!sourceDir.IsFile && Directory.Exists(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath))) || (sourceDir.IsFile && File.Exists(sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath))))
+                // Checks if the original folder or file exists in backup
+                if ((!originalDir.IsFile && Directory.Exists(originalDir.Item.FullName.Replace(originalDir.Item.Parent.ToString(), backupPath))) || (originalDir.IsFile && File.Exists(originalDir.Item.FullName.Replace(originalDir.Item.Parent.ToString(), backupPath))))
                 {
-                    // Checks if source and target folders or files are equal
-                    if (await CompareFileSystemEntriesAsync(sourceDir.Item.FullName, sourceDir.Item.FullName.Replace(sourceDir.Item.Parent.ToString(), targetPath)))
+                    // Checks if original and backup folders or files are equal
+                    if (await CompareFileSystemEntriesAsync(originalDir.Item.FullName, originalDir.Item.FullName.Replace(originalDir.Item.Parent.ToString(), backupPath)))
                     {
-                        SourceDirectories[SourceDirectories.IndexOf(sourceDir)].Status = ItemStatus.ExistsAndEqual;
+                        OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].Status = ItemStatus.ExistsAndEqual;
 
-                        foreach (PathItem targetDir in TargetDirectories)
+                        foreach (PathItem backupDir in BackupDirectories)
                         {
-                            if (targetDir.Item.Name == sourceDir.Item.Name)
+                            if (backupDir.Item.Name == originalDir.Item.Name)
                             {
-                                TargetDirectories[TargetDirectories.IndexOf(targetDir)].Status = ItemStatus.ExistsAndEqual;
+                                BackupDirectories[BackupDirectories.IndexOf(backupDir)].Status = ItemStatus.ExistsAndEqual;
                             }
                         }
                     }
                     else
                     {
-                        SourceDirectories[SourceDirectories.IndexOf(sourceDir)].Status = ItemStatus.ExistsButDifferent;
+                        OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].Status = ItemStatus.ExistsButDifferent;
 
-                        foreach (PathItem targetDir in TargetDirectories)
+                        foreach (PathItem backupDir in BackupDirectories)
                         {
-                            if (targetDir.Item.Name == sourceDir.Item.Name && targetDir.Status != ItemStatus.ExistsWithDifferentName)
+                            if (backupDir.Item.Name == originalDir.Item.Name && backupDir.Status != ItemStatus.ExistsWithDifferentName)
                             {
-                                TargetDirectories[TargetDirectories.IndexOf(targetDir)].Status = ItemStatus.ExistsButDifferent;
+                                BackupDirectories[BackupDirectories.IndexOf(backupDir)].Status = ItemStatus.ExistsButDifferent;
                             }
                         }
                     }
                 }
                 else
                 {
-                    if (!sourceDir.IsFile)
+                    if (!originalDir.IsFile)
                     {
-                        if (IsDirectoryEmpty(sourceDir.Item.FullName))
+                        if (IsDirectoryEmpty(originalDir.Item.FullName))
                         {
                             continue;
                         }
                     }
 
-                    foreach (PathItem targetDir in TargetDirectories.Where(item => item.IsFile == sourceDir.IsFile))
+                    foreach (PathItem backupDir in BackupDirectories.Where(item => item.IsFile == originalDir.IsFile))
                     {
-                        if (await CompareFileSystemEntriesAsync(sourceDir.Item.FullName, targetDir.Item.FullName))
+                        if (await CompareFileSystemEntriesAsync(originalDir.Item.FullName, backupDir.Item.FullName))
                         {
-                            SourceDirectories[SourceDirectories.IndexOf(sourceDir)].Status = ItemStatus.ExistsWithDifferentName;
-                            TargetDirectories[TargetDirectories.IndexOf(targetDir)].Status = ItemStatus.ExistsWithDifferentName;
+                            OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].Status = ItemStatus.ExistsWithDifferentName;
+                            BackupDirectories[BackupDirectories.IndexOf(backupDir)].Status = ItemStatus.ExistsWithDifferentName;
 
-                            SourceDirectories[SourceDirectories.IndexOf(sourceDir)].DifferentPath = targetDir.Item.FullName;
-                            TargetDirectories[TargetDirectories.IndexOf(targetDir)].DifferentPath = sourceDir.Item.FullName;
+                            OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].DifferentPath = backupDir.Item.FullName;
+                            BackupDirectories[BackupDirectories.IndexOf(backupDir)].DifferentPath = originalDir.Item.FullName;
                         }
                     }
                 }
@@ -835,42 +902,42 @@ public class MainViewModel : BaseViewModel
 
             UpdateDataVisibility();
 
-            SourceDisplayText = SourceDirectoriesToDisplay.Count == 0 ? "No folders or files..." : string.Empty;
-            TargetDisplayText = TargetDirectoriesToDisplay.Count == 0 ? "No folders or files..." : string.Empty;
+            OriginalDisplayText = OriginalDirectoriesToDisplay.Count == 0 ? "No folders or files..." : string.Empty;
+            BackupDisplayText = BackupDirectoriesToDisplay.Count == 0 ? "No folders or files..." : string.Empty;
         }
-        else if ((!string.IsNullOrEmpty(sourcePath) || Directory.Exists(sourcePath)) && (string.IsNullOrEmpty(targetPath) || !Directory.Exists(targetPath)))
+        else if ((!string.IsNullOrEmpty(originalPath) || Directory.Exists(originalPath)) && (string.IsNullOrEmpty(backupPath) || !Directory.Exists(backupPath)))
         {
-            foreach (string dir in Directory.GetDirectories(sourcePath))
+            foreach (string dir in Directory.GetDirectories(originalPath))
             {
-                SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
+                OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
             }
 
-            foreach (string file in Directory.GetFiles(sourcePath))
+            foreach (string file in Directory.GetFiles(originalPath))
             {
-                SourceDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
+                OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
             }
 
             UpdateDataVisibility();
 
-            SourceDisplayText = SourceDirectories.Count == 0 ? "No folders or files..." : string.Empty;
-            TargetDisplayText = "Does not exist...";
+            OriginalDisplayText = OriginalDirectories.Count == 0 ? "No folders or files..." : string.Empty;
+            BackupDisplayText = "Does not exist...";
         }
-        else if ((string.IsNullOrEmpty(sourcePath) || !Directory.Exists(sourcePath)) && (!string.IsNullOrEmpty(targetPath) || Directory.Exists(targetPath)))
+        else if ((string.IsNullOrEmpty(originalPath) || !Directory.Exists(originalPath)) && (!string.IsNullOrEmpty(backupPath) || Directory.Exists(backupPath)))
         {
-            foreach (string dir in Directory.GetDirectories(targetPath))
+            foreach (string dir in Directory.GetDirectories(backupPath))
             {
-                TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
+                BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
             }
 
-            foreach (string file in Directory.GetFiles(targetPath))
+            foreach (string file in Directory.GetFiles(backupPath))
             {
-                TargetDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
+                BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
             }
 
             UpdateDataVisibility();
 
-            SourceDisplayText = "Does not exist...";
-            TargetDisplayText = TargetDirectories.Count == 0 ? "No folders or files..." : string.Empty;
+            OriginalDisplayText = "Does not exist...";
+            BackupDisplayText = BackupDirectories.Count == 0 ? "No folders or files..." : string.Empty;
         }
     }
 
@@ -1020,7 +1087,7 @@ public class MainViewModel : BaseViewModel
     /// <param name="file1"></param>
     /// <param name="file2"></param>
     /// <returns></returns>
-    private bool CompareFileHashes(string file1, string file2)
+    private static bool CompareFileHashes(string file1, string file2)
     {
         using FileStream fs1 = new FileInfo(file1).OpenRead();
         using FileStream fs2 = new FileInfo(file2).OpenRead();
@@ -1039,55 +1106,55 @@ public class MainViewModel : BaseViewModel
     }
 
     /// <summary>
-    /// Copies the directory source path to the target path.
-    /// It replaces any contents present in the target path.
+    /// Copies the directory original path to the backup path.
+    /// It replaces any contents present in the backup path.
     /// </summary>
-    /// <param name="sourcePath"></param>
-    /// <param name="targetPath"></param>
-    private void CopyFilesRecursively(string sourcePath, string targetPath)
+    /// <param name="originalPath"></param>
+    /// <param name="backupPath"></param>
+    private static void CopyFilesRecursively(string originalPath, string backupPath)
     {
         // Creates all of the directories
-        if (Directory.Exists(sourcePath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath)))
+        if (Directory.Exists(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath)))
         {
-            Directory.Delete(sourcePath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath), true);
+            Directory.Delete(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath), true);
         }
 
-        _ = Directory.CreateDirectory(sourcePath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath));
-        foreach (string dirPath in Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories))
+        _ = Directory.CreateDirectory(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath));
+        foreach (string dirPath in Directory.GetDirectories(originalPath, "*", SearchOption.AllDirectories))
         {
-            _ = Directory.CreateDirectory(dirPath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath));
+            _ = Directory.CreateDirectory(dirPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath));
         }
 
         // Copies all the files & Replaces any files with the same name
-        foreach (string newPath in Directory.GetFiles(sourcePath, "*.*", SearchOption.AllDirectories))
+        foreach (string newPath in Directory.GetFiles(originalPath, "*.*", SearchOption.AllDirectories))
         {
-            File.Copy(newPath, newPath.Replace(new DirectoryInfo(sourcePath).Parent.ToString(), targetPath), true);
+            File.Copy(newPath, newPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath), true);
         }
     }
 
     /// <summary>
-    /// Merges the directory source path to the target path.
-    /// It replaces any contents present in the target path.
+    /// Merges the directory original path to the backup path.
+    /// It replaces any contents present in the backup path.
     /// </summary>
-    /// <param name="sourcePath"></param>
-    /// <param name="targetPath"></param>
-    private async Task MergeAsync(string sourcePath, string targetPath)
+    /// <param name="originalPath"></param>
+    /// <param name="backupPath"></param>
+    private async Task MergeAsync(string originalPath, string backupPath)
     {
         List<Task> tasks = new();
 
-        // Deletes folders in target that are not in source
-        foreach (string tDir in Directory.GetDirectories(targetPath))
+        // Deletes folders in backup that are not in original
+        foreach (string tDir in Directory.GetDirectories(backupPath))
         {
-            if (Directory.GetDirectories(sourcePath, new DirectoryInfo(tDir).Name).Length == 0)
+            if (Directory.GetDirectories(originalPath, new DirectoryInfo(tDir).Name).Length == 0)
             {
                 tasks.Add(Task.Run(() => Directory.Delete(tDir, true)));
             }
         }
 
-        // Deletes files in target that are not in source
-        foreach (string tFile in Directory.GetFiles(targetPath))
+        // Deletes files in backup that are not in original
+        foreach (string tFile in Directory.GetFiles(backupPath))
         {
-            if (Directory.GetFiles(sourcePath, new DirectoryInfo(tFile).Name).Length == 0)
+            if (Directory.GetFiles(originalPath, new DirectoryInfo(tFile).Name).Length == 0)
             {
                 tasks.Add(Task.Run(() => File.Delete(tFile)));
             }
@@ -1096,32 +1163,32 @@ public class MainViewModel : BaseViewModel
         await Task.WhenAll(tasks);
         tasks.Clear();
 
-        // For every File in source, if file exists in target but aren't equal,
-        // or if it doesn't exist, copy it to target
-        foreach (string sFile in Directory.GetFiles(sourcePath))
+        // For every File in original, if file exists in backup but aren't equal,
+        // or if it doesn't exist, copy it to backup
+        foreach (string sFile in Directory.GetFiles(originalPath))
         {
-            string[] tFiles = Directory.GetFiles(targetPath, new DirectoryInfo(sFile).Name);
+            string[] tFiles = Directory.GetFiles(backupPath, new DirectoryInfo(sFile).Name);
 
             if (tFiles.Length > 0)
             {
                 if (!await CompareFileSystemEntriesAsync(sFile, tFiles[0]))
                 {
-                    tasks.Add(Task.Run(() => File.Copy(sFile, sFile.Replace(sourcePath, targetPath), true)));
+                    tasks.Add(Task.Run(() => File.Copy(sFile, sFile.Replace(originalPath, backupPath), true)));
                 }
             }
             else
             {
-                tasks.Add(Task.Run(() => File.Copy(sFile, sFile.Replace(sourcePath, targetPath), true)));
+                tasks.Add(Task.Run(() => File.Copy(sFile, sFile.Replace(originalPath, backupPath), true)));
             }
         }
 
         await Task.WhenAll(tasks);
 
-        // For every Folder in source, if folder exists in target but aren't equal,
-        // merge it to target, or if it doesn't exist, copy it to target
-        foreach (string sDir in Directory.GetDirectories(sourcePath))
+        // For every Folder in original, if folder exists in backup but aren't equal,
+        // merge it to backup, or if it doesn't exist, copy it to backup
+        foreach (string sDir in Directory.GetDirectories(originalPath))
         {
-            string[] tDirs = Directory.GetDirectories(targetPath, new DirectoryInfo(sDir).Name);
+            string[] tDirs = Directory.GetDirectories(backupPath, new DirectoryInfo(sDir).Name);
 
             if (tDirs.Length > 0)
             {
@@ -1132,7 +1199,7 @@ public class MainViewModel : BaseViewModel
             }
             else
             {
-                await Task.Run(() => CopyFilesRecursively(sDir, targetPath));
+                await Task.Run(() => CopyFilesRecursively(sDir, backupPath));
             }
         }
     }
@@ -1152,31 +1219,31 @@ public class MainViewModel : BaseViewModel
     {
         if (ShowEqualEntries && ShowEmptyFolder)
         {
-            SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
-            TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            OriginalDirectoriesToDisplay = new ObservableCollection<PathItem>(OriginalDirectories.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            BackupDirectoriesToDisplay = new ObservableCollection<PathItem>(BackupDirectories.OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
         }
         else if (ShowEqualEntries && !ShowEmptyFolder)
         {
-            SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories.Where(entry => (!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
-            TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories.Where(entry => (!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            OriginalDirectoriesToDisplay = new ObservableCollection<PathItem>(OriginalDirectories.Where(entry => (!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            BackupDirectoriesToDisplay = new ObservableCollection<PathItem>(BackupDirectories.Where(entry => (!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
         }
         else if (!ShowEqualEntries && ShowEmptyFolder)
         {
-            SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
-            TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            OriginalDirectoriesToDisplay = new ObservableCollection<PathItem>(OriginalDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            BackupDirectoriesToDisplay = new ObservableCollection<PathItem>(BackupDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
         }
         else
         {
-            SourceDirectoriesToDisplay = new ObservableCollection<PathItem>(SourceDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual && ((!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile)).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
-            TargetDirectoriesToDisplay = new ObservableCollection<PathItem>(TargetDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual && ((!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile)).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            OriginalDirectoriesToDisplay = new ObservableCollection<PathItem>(OriginalDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual && ((!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile)).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
+            BackupDirectoriesToDisplay = new ObservableCollection<PathItem>(BackupDirectories.Where(entry => entry.Status != ItemStatus.ExistsAndEqual && ((!entry.IsFile && !IsDirectoryEmpty(entry.Item.FullName)) || entry.IsFile)).OrderBy(i => i.IsFile).ThenBy(i => i.Item.Name));
         }
 
-        SourceDisplayText = SourceDirectoriesToDisplay.Count == 0
-            ? string.IsNullOrEmpty(SourceDisplayText) ? "No folders or files..." : SourceDisplayText
+        OriginalDisplayText = OriginalDirectoriesToDisplay.Count == 0
+            ? string.IsNullOrEmpty(OriginalDisplayText) ? "No folders or files..." : OriginalDisplayText
             : string.Empty;
 
-        TargetDisplayText = TargetDirectoriesToDisplay.Count == 0
-            ? string.IsNullOrEmpty(TargetDisplayText) ? "No folders or files..." : TargetDisplayText
+        BackupDisplayText = BackupDirectoriesToDisplay.Count == 0
+            ? string.IsNullOrEmpty(BackupDisplayText) ? "No folders or files..." : BackupDisplayText
             : string.Empty;
     }
 
@@ -1186,7 +1253,7 @@ public class MainViewModel : BaseViewModel
     /// </summary>
     /// <param name="path"></param>
     /// <returns>true if empty, false if not.</returns>
-    private bool IsDirectoryEmpty(string path)
+    private static bool IsDirectoryEmpty(string path)
     {
         return !Directory.EnumerateFileSystemEntries(path).Any();
     }
@@ -1196,7 +1263,7 @@ public class MainViewModel : BaseViewModel
     /// </summary>
     /// <param name="window"></param>
     /// <returns>the mouse position.</returns>
-    private Point GetMousePosition(Window window)
+    private static Point GetMousePosition(Window window)
     {
         Point position = Mouse.GetPosition(window);
 

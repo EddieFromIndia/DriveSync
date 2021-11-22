@@ -1,12 +1,9 @@
-﻿using System;
-using System.Windows.Input;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 public class Command : ICommand
 {
-    Action<object> executeMethod;
-    Func<object, bool> canExecuteMethod;
+    private readonly Action<object> executeMethod;
+    private readonly Func<object, bool> canExecuteMethod;
 
     /// <summary>
     /// A Constructor with two parameters.

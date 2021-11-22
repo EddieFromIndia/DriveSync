@@ -1,13 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.Windows.Data;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 [ValueConversion(typeof(bool), typeof(double))]
 public class WindowActiveStateToOpacityConverter : IValueConverter
 {
-    public static WindowActiveStateToOpacityConverter Instance = new WindowActiveStateToOpacityConverter();
+    public static WindowActiveStateToOpacityConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

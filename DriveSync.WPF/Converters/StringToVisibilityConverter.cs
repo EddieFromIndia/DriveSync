@@ -1,15 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
-using System.Windows.Media;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 [ValueConversion(typeof(string), typeof(Visibility))]
 public class StringToVisibilityConverter : IValueConverter
 {
-    public static StringToVisibilityConverter Instance = new StringToVisibilityConverter();
+    public static StringToVisibilityConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
