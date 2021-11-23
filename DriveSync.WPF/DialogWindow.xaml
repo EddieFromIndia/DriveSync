@@ -1,0 +1,119 @@
+﻿<Window x:Class="DriveSync.DialogWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DriveSync"
+        mc:Ignorable="d"
+        SizeToContent="WidthAndHeight"
+        MinWidth="300"
+        MaxWidth="500"
+        MinHeight="150"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="NoResize">
+
+    <Window.Resources>
+        <!--#region Main Window Styling-->
+        <Style TargetType="{x:Type local:DialogWindow}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Window}">
+                        <!--Window border and dropshadow-->
+                        <Border BorderThickness="0"
+                                CornerRadius="6" Padding="10">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="15"
+                                                  Color="{DynamicResource DefaultShadowColor}"
+                                                  ShadowDepth="2"
+                                                  Opacity="0.5" />
+                            </Border.Effect>
+                            <!--Main window outline-->
+                            <Grid>
+                                <!--Opacity mask for corners on grid-->
+                                <Border x:Name="Container"
+                                        Style="{DynamicResource InnerDialogWindowBorderStyle}"
+                                        CornerRadius="6">
+                                </Border>
+
+                                <!--The main window content-->
+                                <Grid x:Name="MainContent" Margin="0">
+                                    <Grid.OpacityMask>
+                                        <VisualBrush Visual="{Binding ElementName=Container}" />
+                                    </Grid.OpacityMask>
+                                    <ContentPresenter Content="{TemplateBinding Content}" />
+                                </Grid>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CornerRadius="0" GlassFrameThickness="0" />
+    </WindowChrome.WindowChrome>
+    
+    <Grid Background="Transparent">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="20" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="40" />
+        </Grid.ColumnDefinitions>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="34" />
+            <RowDefinition Height="24" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="34" />
+            <RowDefinition Height="20" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Column="0"
+                    Grid.ColumnSpan="3"
+                    Grid.Row="0"
+                    Style="{DynamicResource DialogTitleStyle}"
+                    Opacity="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                      AncestorType={x:Type Window}},
+                              Converter={x:Static local:WindowActiveStateToOpacityConverter.Instance},
+                              Path=IsActive,
+                              Mode=OneWay}">
+            <StackPanel.InputBindings>
+                <MouseBinding Gesture="LeftClick"
+                              Command="{Binding Header_Click, RelativeSource={RelativeSource
+                                                                              Mode=FindAncestor,
+                                                                              AncestorType={x:Type Window}}}"
+                              CommandParameter="{Binding RelativeSource={RelativeSource
+                                                                         Mode=FindAncestor,
+                                                                         AncestorType={x:Type Window}}}" />
+                <MouseBinding Gesture="RightClick"
+                              Command="{Binding Header_RightClick}"
+                              CommandParameter="{Binding RelativeSource={RelativeSource
+                                                                         Mode=FindAncestor,
+                                                                         AncestorType={x:Type Window}}}" />
+            </StackPanel.InputBindings>
+            <TextBlock Grid.Column="1"
+                       Style="{DynamicResource DialogHeadingTextBlockStyle}"
+                       Text="{Binding Header, RelativeSource={RelativeSource
+                                                              Mode=FindAncestor,
+                                                              AncestorType={x:Type Window}}}" />
+        </StackPanel>
+
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="10" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Image x:Name="DialogImage" Grid.Column="0" Margin="10 0 10 10" />
+            <TextBlock Grid.Column="2" Margin="0, 10, 0, 30" TextWrapping="Wrap" Text="{Binding Body, RelativeSource={RelativeSource
+                                                                                                 Mode=FindAncestor,
+                                                                                                 AncestorType={x:Type Window}}}" />
+        </Grid>
+        <StackPanel Grid.Column="1" Grid.Row="3" x:Name="ButtonArea" Orientation="Horizontal" HorizontalAlignment="Right" />
+
+    </Grid>
+</Window>

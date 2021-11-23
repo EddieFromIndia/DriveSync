@@ -20,6 +20,14 @@
     <None Remove="Assets\copy-left.png" />
     <None Remove="Assets\copy-right.png" />
     <None Remove="Assets\delete.png" />
+    <None Remove="Assets\dialog-complete.png" />
+    <None Remove="Assets\dialog-delete.png" />
+    <None Remove="Assets\dialog-error.png" />
+    <None Remove="Assets\dialog-file.png" />
+    <None Remove="Assets\dialog-folder.png" />
+    <None Remove="Assets\dialog-forbidden.png" />
+    <None Remove="Assets\dialog-info.png" />
+    <None Remove="Assets\dialog-locked.png" />
     <None Remove="Assets\file-android.png" />
     <None Remove="Assets\file-archive.png" />
     <None Remove="Assets\file-audio.png" />
@@ -88,6 +96,30 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\delete.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dialog-complete.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dialog-delete.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dialog-error.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dialog-file.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dialog-folder.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dialog-forbidden.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dialog-info.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dialog-locked.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\file-android.png">

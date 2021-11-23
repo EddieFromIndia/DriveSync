@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace DriveSync.ViewModels;
+﻿namespace DriveSync.ViewModels;
 
 public class MainViewModel : BaseViewModel
 {
@@ -145,7 +143,7 @@ public class MainViewModel : BaseViewModel
             }
             else
             {
-                if (MessageBox.Show("You are not authorized to access the root drive. Choose another folder.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error) == MessageBoxResult.OK)
+                if (DialogService.ShowDialog("Access Denied", "You are not authorized to access the root drive. Choose another folder.", DialogButtonGroup.OK, DialogImage.Forbidden) == DialogResult.OK)
                 {
                     Browse(sender);
                 }
@@ -182,15 +180,58 @@ public class MainViewModel : BaseViewModel
         ProgressString = "Modifying files";
         ProgressPercentage = 10;
 
-        switch (ResolveMethod)
+        try
         {
-            case ResolveMethods.LeftToRight:
-                await MergeAsync(OriginalPath, BackupPath);
-                break;
+            switch (ResolveMethod)
+            {
+                case ResolveMethods.LeftToRight:
+                    await MergeAsync(OriginalPath, BackupPath);
+                    break;
 
-            case ResolveMethods.RightToLeft:
-                await MergeAsync(BackupPath, OriginalPath);
-                break;
+                case ResolveMethods.RightToLeft:
+                    await MergeAsync(BackupPath, OriginalPath);
+                    break;
+            }
+        }
+        catch (UnauthorizedAccessException)
+        {
+            _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+            OriginalDisplayText = string.Empty;
+            BackupDisplayText = string.Empty;
+            ProgressVisibility = Visibility.Hidden;
+            return;
+        }
+        catch (PathTooLongException)
+        {
+            _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the folder names.", DialogButtonGroup.OK, DialogImage.Error);
+            OriginalDisplayText = string.Empty;
+            BackupDisplayText = string.Empty;
+            ProgressVisibility = Visibility.Hidden;
+            return;
+        }
+        catch (DirectoryNotFoundException)
+        {
+            _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+            OriginalDisplayText = string.Empty;
+            BackupDisplayText = string.Empty;
+            ProgressVisibility = Visibility.Hidden;
+            return;
+        }
+        catch (FileNotFoundException)
+        {
+            _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+            OriginalDisplayText = string.Empty;
+            BackupDisplayText = string.Empty;
+            ProgressVisibility = Visibility.Hidden;
+            return;
+        }
+        catch (NullReferenceException)
+        {
+            _ = DialogService.ShowDialog("Folder Missing", "A folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+            OriginalDisplayText = string.Empty;
+            BackupDisplayText = string.Empty;
+            ProgressVisibility = Visibility.Hidden;
+            return;
         }
 
         //await ScanAsync(OriginalPath, BackupPath);
@@ -264,7 +305,7 @@ public class MainViewModel : BaseViewModel
 
         ProgressString = "Done";
         ProgressPercentage = 100;
-        _ = MessageBox.Show("Resolve Complete.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        _ = DialogService.ShowDialog("Success", "Resolve Complete.", DialogButtonGroup.OK, DialogImage.Complete);
         ProgressString = string.Empty;
         ProgressVisibility = Visibility.Hidden;
         OriginalDisplayText = string.Empty;
@@ -286,7 +327,38 @@ public class MainViewModel : BaseViewModel
                     ProgressString = "Copying";
                     ProgressPercentage = 10;
 
-                    File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath), true);
+                    try
+                    {
+                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath), true);
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (PathTooLongException)
+                    {
+                        _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the file name or folder names.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The backup folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("File Missing", "The file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
                 }
                 else
                 {
@@ -294,7 +366,45 @@ public class MainViewModel : BaseViewModel
                     ProgressString = "Merging";
                     ProgressPercentage = 10;
 
-                    await MergeAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath));
+                    try
+                    {
+                        await MergeAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath));
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (PathTooLongException)
+                    {
+                        _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the folder names.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (NullReferenceException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "A folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
                 }
 
                 break;
@@ -310,26 +420,87 @@ public class MainViewModel : BaseViewModel
                             ProgressString = "Renaming";
                             ProgressPercentage = 10;
 
-                            File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
+                            try
+                            {
+                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                                OriginalDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
+                            catch (PathTooLongException)
+                            {
+                                _ = DialogService.ShowDialog("Name Too Long", "The name is too long. This also happens when the file is very deep in the folder structure.", DialogButtonGroup.OK, DialogImage.Error);
+                                OriginalDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
+                            catch (DirectoryNotFoundException)
+                            {
+                                _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                                OriginalDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
+                            catch (FileNotFoundException)
+                            {
+                                _ = DialogService.ShowDialog("File Missing", "The file you're trying to rename is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                                OriginalDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
                         }
                     }
                     else
                     {
-                        if (MessageBox.Show($"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)).Parent.Name} already exists. Do you want to overwrite it?",
-                            "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                        try
                         {
-                            OriginalDisplayText = "Renaming file. Please wait!";
-                            ProgressString = "Renaming";
-                            ProgressPercentage = 10;
-
-                            File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath), true);
+                            if (DialogService.ShowDialog("File Exists", $"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)).Parent.Name} already exists. Do you want to overwrite it?",
+                                                     DialogButtonGroup.YesNoCancel, DialogImage.File) == DialogResult.Yes)
+                            {
+                                OriginalDisplayText = "Renaming file. Please wait!";
+                                ProgressString = "Renaming";
+                                ProgressPercentage = 10;
+                                
+                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath), true);
+                            }
                         }
-                        else
+                        catch (UnauthorizedAccessException)
                         {
-                            ProgressPercentage = 100;
-                            ProgressString = "Done";
+                            _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                            OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             return;
+                        }
+                        catch (PathTooLongException)
+                        {
+                            _ = DialogService.ShowDialog("Name Too Long", "The name is too long. This also happens when the file is very deep in the folder structure.", DialogButtonGroup.OK, DialogImage.Error);
+                            OriginalDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            return;
+                        }
+                        catch (DirectoryNotFoundException)
+                        {
+                            _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                            OriginalDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            return;
+                        }
+                        catch (FileNotFoundException)
+                        {
+                            _ = DialogService.ShowDialog("File Missing", "The file you're trying to rename is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                            OriginalDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            return;
+                        }
+                        catch (NullReferenceException)
+                        {
+                            _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                            OriginalDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
                         }
                     }
                 }
@@ -343,25 +514,73 @@ public class MainViewModel : BaseViewModel
                             ProgressString = "Renaming";
                             ProgressPercentage = 10;
 
-                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
+                            try
+                            {
+                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                                OriginalDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
+                            catch (PathTooLongException)
+                            {
+                                _ = DialogService.ShowDialog("Path Too Long", "The destination path is too long.", DialogButtonGroup.OK, DialogImage.Error);
+                                OriginalDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
+                            catch (DirectoryNotFoundException)
+                            {
+                                _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                                OriginalDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
                         }
                     }
                     else
                     {
-                        if (MessageBox.Show($"The folder {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)).Parent.Name} already exists. Do you want to overwrite it?",
-                            "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                        try
                         {
-                            OriginalDisplayText = "Renaming folder. Please wait!";
-                            ProgressString = "Renaming";
-                            ProgressPercentage = 10;
+                            if (DialogService.ShowDialog("Folder Exists", $"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)).Parent.Name} already exists. Do you want to overwrite it?",
+                                                         DialogButtonGroup.YesNoCancel, DialogImage.Folder) == DialogResult.Yes)
+                            {
+                                OriginalDisplayText = "Renaming folder. Please wait!";
+                                ProgressString = "Renaming";
+                                ProgressPercentage = 10;
 
-                            Directory.Delete(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath), true);
-                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
+                                Directory.Delete(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath), true);
+                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
+                            }
                         }
-                        else
+                        catch (UnauthorizedAccessException)
                         {
-                            ProgressPercentage = 100;
-                            ProgressString = "Done";
+                            _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                            OriginalDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            return;
+                        }
+                        catch (PathTooLongException)
+                        {
+                            _ = DialogService.ShowDialog("Path Too Long", "The destination path is too long.", DialogButtonGroup.OK, DialogImage.Error);
+                            OriginalDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            return;
+                        }
+                        catch (DirectoryNotFoundException)
+                        {
+                            _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                            OriginalDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            return;
+                        }
+                        catch (NullReferenceException)
+                        {
+                            _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                            OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             return;
                         }
@@ -376,12 +595,50 @@ public class MainViewModel : BaseViewModel
                     ProgressString = "Copying";
                     ProgressPercentage = 10;
 
-                    if (!Directory.Exists(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath)))
+                    try
                     {
-                        _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
-                    }
+                        if (!Directory.Exists(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath)))
+                        {
+                            _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
+                        }
 
-                    File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath), true);
+                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath), true);
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (PathTooLongException)
+                    {
+                        _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the file name or folder names.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("File Missing", "The file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (NullReferenceException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
                 }
                 else
                 {
@@ -389,7 +646,45 @@ public class MainViewModel : BaseViewModel
                     ProgressString = "Copying";
                     ProgressPercentage = 10;
 
-                    CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
+                    try
+                    {
+                        CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (PathTooLongException)
+                    {
+                        _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the folder names.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (NullReferenceException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
                 }
                 break;
         }
@@ -403,7 +698,7 @@ public class MainViewModel : BaseViewModel
 
         ProgressPercentage = 100;
         ProgressString = "Done";
-        _ = MessageBox.Show("Done.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        _ = DialogService.ShowDialog("Success", "Done.", DialogButtonGroup.OK, DialogImage.Complete);
         ProgressVisibility = Visibility.Hidden;
     }
 
@@ -425,25 +720,78 @@ public class MainViewModel : BaseViewModel
                     }
                     catch(UnauthorizedAccessException)
                     {
-                        //Display(You do not have the required permission)
+                        _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
                     }
                     catch (PathTooLongException)
                     {
-                        //Display(The path is too long)
+                        _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the file name or folder names.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
                     }
                     catch (DirectoryNotFoundException)
                     {
-                        //Display(The backup folder is missing)
+                        _ = DialogService.ShowDialog("Folder Missing", "The backup folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
                     }
                     catch (FileNotFoundException)
                     {
-                        //Display(The original file is missing)
+                        _ = DialogService.ShowDialog("File Missing", "The file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
                     }
                 }
                 else
                 {
                     BackupDisplayText = "Merging folders. Please wait!";
-                    await MergeAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath));
+                    ProgressString = "Merging";
+                    ProgressPercentage = 10;
+
+                    try
+                    {
+                        await MergeAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath));
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (PathTooLongException)
+                    {
+                        _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the folder names.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (NullReferenceException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "A folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
                 }
 
                 break;
@@ -462,26 +810,38 @@ public class MainViewModel : BaseViewModel
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //Display(You do not have the required permission)
+                                _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
                             }
                             catch (PathTooLongException)
                             {
-                                //Display(The path is too long)
+                                _ = DialogService.ShowDialog("Name Too Long", "The name is too long. This also happens when the file is very deep in the folder structure.", DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
                             }
                             catch (DirectoryNotFoundException)
                             {
-                                //Display(The backup folder is missing)
+                                _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
                             }
                             catch (FileNotFoundException)
                             {
-                                //Display(The original file is missing)
+                                _ = DialogService.ShowDialog("File Missing", "The file you're trying to rename is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
                             }
                         }
                     }
                     else
                     {
-                        if (MessageBox.Show($"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)).Parent.Name} already exists. Do you want to overwrite it?",
-                            "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                        if (DialogService.ShowDialog("File Exists", $"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)).Parent.Name} already exists. Do you want to overwrite it?",
+                                                     DialogButtonGroup.YesNoCancel, DialogImage.File) == DialogResult.Yes)
                         {
                             OriginalDisplayText = "Renaming file. Please wait!";
 
@@ -491,19 +851,31 @@ public class MainViewModel : BaseViewModel
                             }
                             catch (UnauthorizedAccessException)
                             {
-                                //Display(You do not have the required permission)
+                                _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
                             }
                             catch (PathTooLongException)
                             {
-                                //Display(The path is too long)
+                                _ = DialogService.ShowDialog("Name Too Long", "The name is too long. This also happens when the file is very deep in the folder structure.", DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
                             }
                             catch (DirectoryNotFoundException)
                             {
-                                //Display(The backup folder is missing)
+                                _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
                             }
                             catch (FileNotFoundException)
                             {
-                                //Display(The original file is missing)
+                                _ = DialogService.ShowDialog("File Missing", "The file you're trying to rename is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
                             }
                         }
                     }
@@ -516,18 +888,73 @@ public class MainViewModel : BaseViewModel
                         {
                             OriginalDisplayText = "Renaming file. Please wait!";
 
-                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath));
+                            try
+                            {
+                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath));
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
+                            catch (PathTooLongException)
+                            {
+                                _ = DialogService.ShowDialog("Path Too Long", "The destination path is too long.", DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
+                            catch (DirectoryNotFoundException)
+                            {
+                                _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                return;
+                            }
                         }
                     }
                     else
                     {
-                        if (MessageBox.Show($"The folder {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)).Parent.Name} already exists. Do you want to overwrite it?",
-                            "File Exists", MessageBoxButton.YesNoCancel, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                        try
                         {
-                            OriginalDisplayText = "Renaming folder. Please wait!";
+                            if (DialogService.ShowDialog("Folder Exists", $"The file {new DirectoryInfo(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)).Parent.Name} already exists. Do you want to overwrite it?",
+                                                         DialogButtonGroup.YesNoCancel, DialogImage.Folder) == DialogResult.Yes)
+                            {
+                                OriginalDisplayText = "Renaming folder. Please wait!";
 
-                            Directory.Delete(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath), true);
-                            Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath));
+                                Directory.Delete(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath), true);
+                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath));
+                            }
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                            BackupDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            return;
+                        }
+                        catch (PathTooLongException)
+                        {
+                            _ = DialogService.ShowDialog("Path Too Long", "The destination path is too long.", DialogButtonGroup.OK, DialogImage.Error);
+                            BackupDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            return;
+                        }
+                        catch (DirectoryNotFoundException)
+                        {
+                            _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                            BackupDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            return;
+                        }
+                        catch (NullReferenceException)
+                        {
+                            _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                            BackupDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            return;
                         }
                     }
                 }
@@ -537,17 +964,86 @@ public class MainViewModel : BaseViewModel
                 {
                     BackupDisplayText = "Copying file. Please wait!";
 
-                    if (!Directory.Exists(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath)))
+                    try
                     {
-                        _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
-                    }
+                        if (!Directory.Exists(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath)))
+                        {
+                            _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
+                        }
 
-                    File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath), true);
+                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath), true);
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (PathTooLongException)
+                    {
+                        _ = DialogService.ShowDialog("Path Too Long", "The destination path is too long.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (NullReferenceException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
                 }
                 else
                 {
                     BackupDisplayText = "Copying. Please wait!";
-                    CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(BackupPath, OriginalPath));
+                    try
+                    {
+                        CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(BackupPath, OriginalPath));
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (PathTooLongException)
+                    {
+                        _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the folder names.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
+                    catch (NullReferenceException)
+                    {
+                        _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        return;
+                    }
                 }
                 break;
         }
@@ -561,7 +1057,7 @@ public class MainViewModel : BaseViewModel
 
         ProgressPercentage = 100;
         ProgressString = "Done";
-        _ = MessageBox.Show("Done.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        _ = DialogService.ShowDialog("Success", "Done.", DialogButtonGroup.OK, DialogImage.Complete);
         ProgressVisibility = Visibility.Hidden;
     }
 
@@ -582,7 +1078,7 @@ public class MainViewModel : BaseViewModel
         ProgressString = "Awaiting authentication";
         ProgressPercentage = 0;
 
-        if (MessageBox.Show($"This will delete {((PathItem)sender).Item.Name}! Are you sure?", "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+        if (DialogService.ShowDialog("Delete Confirmation", $"This will delete {((PathItem)sender).Item.Name}! Are you sure?", DialogButtonGroup.YesNo, DialogImage.Delete) == DialogResult.Yes)
         {
             ProgressString = $"Deleting {((PathItem)sender).Item.FullName}";
             ProgressPercentage = 20;
@@ -604,7 +1100,7 @@ public class MainViewModel : BaseViewModel
             ProgressString = "Done";
             ProgressPercentage = 100;
 
-            _ = MessageBox.Show("Deleted successfully.", "Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+            _ = DialogService.ShowDialog("Complete", "Deleted successfully.", DialogButtonGroup.OK, DialogImage.Complete);
         }
         ProgressString = string.Empty;
         ProgressVisibility = Visibility.Hidden;
@@ -622,17 +1118,24 @@ public class MainViewModel : BaseViewModel
 
         if (!((PathItem)sender).IsFile)
         {
-            if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastBackupPath)))
+            try
             {
-                await ScanAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastBackupPath));
-            }
-            else
-            {
-                await ScanAsync(((PathItem)sender).Item.FullName, string.Empty);
-            }
+                if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastBackupPath)))
+                {
+                    await ScanAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastBackupPath));
+                }
+                else
+                {
+                    await ScanAsync(((PathItem)sender).Item.FullName, string.Empty);
+                }
 
-            LastOriginalPath = ((PathItem)sender).Item.FullName;
-            LastBackupPath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(LastOriginalPath).Parent.ToString(), LastBackupPath);
+                LastOriginalPath = ((PathItem)sender).Item.FullName;
+                LastBackupPath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(LastOriginalPath).Parent.ToString(), LastBackupPath);
+            }
+            catch (NullReferenceException)
+            {
+                _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+            }
         }
     }
 
@@ -645,17 +1148,24 @@ public class MainViewModel : BaseViewModel
 
         if (!((PathItem)sender).IsFile)
         {
-            if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastOriginalPath)))
+            try
             {
-                await ScanAsync(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastOriginalPath), ((PathItem)sender).Item.FullName);
-            }
-            else
-            {
-                await ScanAsync(string.Empty, ((PathItem)sender).Item.FullName);
-            }
+                if (Directory.Exists(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastOriginalPath)))
+                {
+                    await ScanAsync(((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastOriginalPath), ((PathItem)sender).Item.FullName);
+                }
+                else
+                {
+                    await ScanAsync(string.Empty, ((PathItem)sender).Item.FullName);
+                }
 
-            LastOriginalPath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastOriginalPath);
-            LastBackupPath = ((PathItem)sender).Item.FullName;
+                LastOriginalPath = ((PathItem)sender).Item.FullName.Replace(new DirectoryInfo(((PathItem)sender).Item.FullName).Parent.ToString(), LastOriginalPath);
+                LastBackupPath = ((PathItem)sender).Item.FullName;
+            }
+            catch (NullReferenceException)
+            {
+                _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+            }
         }
     }
 
@@ -818,126 +1328,139 @@ public class MainViewModel : BaseViewModel
         OriginalDirectories.Clear();
         BackupDirectories.Clear();
 
+        string previousOriginalMessage = OriginalDisplayText;
+        string previousBackupMessage = BackupDisplayText;
         OriginalDisplayText = "Scanning...";
         BackupDisplayText = "Scanning...";
 
-        if (!string.IsNullOrEmpty(originalPath) && Directory.Exists(originalPath) && !string.IsNullOrEmpty(backupPath) && Directory.Exists(backupPath))
+        try
         {
-            // Initializing OriginalDirectories
-            foreach (string dir in Directory.GetDirectories(originalPath))
+            if (!string.IsNullOrEmpty(originalPath) && Directory.Exists(originalPath) && !string.IsNullOrEmpty(backupPath) && Directory.Exists(backupPath))
             {
-                OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
-            }
-
-            foreach (string file in Directory.GetFiles(originalPath))
-            {
-                OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
-            }
-
-            // Initializing BackupDirectories
-            foreach (string dir in Directory.GetDirectories(backupPath))
-            {
-                BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
-            }
-
-            foreach (string file in Directory.GetFiles(backupPath))
-            {
-                BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
-            }
-
-            foreach (PathItem originalDir in OriginalDirectories)
-            {
-                // Checks if the original folder or file exists in backup
-                if ((!originalDir.IsFile && Directory.Exists(originalDir.Item.FullName.Replace(originalDir.Item.Parent.ToString(), backupPath))) || (originalDir.IsFile && File.Exists(originalDir.Item.FullName.Replace(originalDir.Item.Parent.ToString(), backupPath))))
+                // Initializing OriginalDirectories
+                foreach (string dir in Directory.GetDirectories(originalPath))
                 {
-                    // Checks if original and backup folders or files are equal
-                    if (await CompareFileSystemEntriesAsync(originalDir.Item.FullName, originalDir.Item.FullName.Replace(originalDir.Item.Parent.ToString(), backupPath)))
-                    {
-                        OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].Status = ItemStatus.ExistsAndEqual;
+                    OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
+                }
 
-                        foreach (PathItem backupDir in BackupDirectories)
+                foreach (string file in Directory.GetFiles(originalPath))
+                {
+                    OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
+                }
+
+                // Initializing BackupDirectories
+                foreach (string dir in Directory.GetDirectories(backupPath))
+                {
+                    BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
+                }
+
+                foreach (string file in Directory.GetFiles(backupPath))
+                {
+                    BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
+                }
+
+                foreach (PathItem originalDir in OriginalDirectories)
+                {
+                    // Checks if the original folder or file exists in backup
+                    if ((!originalDir.IsFile && Directory.Exists(originalDir.Item.FullName.Replace(originalDir.Item.Parent.ToString(), backupPath))) || (originalDir.IsFile && File.Exists(originalDir.Item.FullName.Replace(originalDir.Item.Parent.ToString(), backupPath))))
+                    {
+                        // Checks if original and backup folders or files are equal
+                        if (await CompareFileSystemEntriesAsync(originalDir.Item.FullName, originalDir.Item.FullName.Replace(originalDir.Item.Parent.ToString(), backupPath)))
                         {
-                            if (backupDir.Item.Name == originalDir.Item.Name)
+                            OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].Status = ItemStatus.ExistsAndEqual;
+
+                            foreach (PathItem backupDir in BackupDirectories)
                             {
-                                BackupDirectories[BackupDirectories.IndexOf(backupDir)].Status = ItemStatus.ExistsAndEqual;
+                                if (backupDir.Item.Name == originalDir.Item.Name)
+                                {
+                                    BackupDirectories[BackupDirectories.IndexOf(backupDir)].Status = ItemStatus.ExistsAndEqual;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].Status = ItemStatus.ExistsButDifferent;
+
+                            foreach (PathItem backupDir in BackupDirectories)
+                            {
+                                if (backupDir.Item.Name == originalDir.Item.Name && backupDir.Status != ItemStatus.ExistsWithDifferentName)
+                                {
+                                    BackupDirectories[BackupDirectories.IndexOf(backupDir)].Status = ItemStatus.ExistsButDifferent;
+                                }
                             }
                         }
                     }
                     else
                     {
-                        OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].Status = ItemStatus.ExistsButDifferent;
-
-                        foreach (PathItem backupDir in BackupDirectories)
+                        if (!originalDir.IsFile)
                         {
-                            if (backupDir.Item.Name == originalDir.Item.Name && backupDir.Status != ItemStatus.ExistsWithDifferentName)
+                            if (IsDirectoryEmpty(originalDir.Item.FullName))
                             {
-                                BackupDirectories[BackupDirectories.IndexOf(backupDir)].Status = ItemStatus.ExistsButDifferent;
+                                continue;
+                            }
+                        }
+
+                        foreach (PathItem backupDir in BackupDirectories.Where(item => item.IsFile == originalDir.IsFile))
+                        {
+                            if (await CompareFileSystemEntriesAsync(originalDir.Item.FullName, backupDir.Item.FullName))
+                            {
+                                OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].Status = ItemStatus.ExistsWithDifferentName;
+                                BackupDirectories[BackupDirectories.IndexOf(backupDir)].Status = ItemStatus.ExistsWithDifferentName;
+
+                                OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].DifferentPath = backupDir.Item.FullName;
+                                BackupDirectories[BackupDirectories.IndexOf(backupDir)].DifferentPath = originalDir.Item.FullName;
                             }
                         }
                     }
                 }
-                else
+
+                UpdateDataVisibility();
+
+                OriginalDisplayText = OriginalDirectoriesToDisplay.Count == 0 ? "No folders or files..." : string.Empty;
+                BackupDisplayText = BackupDirectoriesToDisplay.Count == 0 ? "No folders or files..." : string.Empty;
+            }
+            else if ((!string.IsNullOrEmpty(originalPath) || Directory.Exists(originalPath)) && (string.IsNullOrEmpty(backupPath) || !Directory.Exists(backupPath)))
+            {
+                foreach (string dir in Directory.GetDirectories(originalPath))
                 {
-                    if (!originalDir.IsFile)
-                    {
-                        if (IsDirectoryEmpty(originalDir.Item.FullName))
-                        {
-                            continue;
-                        }
-                    }
-
-                    foreach (PathItem backupDir in BackupDirectories.Where(item => item.IsFile == originalDir.IsFile))
-                    {
-                        if (await CompareFileSystemEntriesAsync(originalDir.Item.FullName, backupDir.Item.FullName))
-                        {
-                            OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].Status = ItemStatus.ExistsWithDifferentName;
-                            BackupDirectories[BackupDirectories.IndexOf(backupDir)].Status = ItemStatus.ExistsWithDifferentName;
-
-                            OriginalDirectories[OriginalDirectories.IndexOf(originalDir)].DifferentPath = backupDir.Item.FullName;
-                            BackupDirectories[BackupDirectories.IndexOf(backupDir)].DifferentPath = originalDir.Item.FullName;
-                        }
-                    }
+                    OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
                 }
+
+                foreach (string file in Directory.GetFiles(originalPath))
+                {
+                    OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
+                }
+
+                UpdateDataVisibility();
+
+                OriginalDisplayText = OriginalDirectories.Count == 0 ? "No folders or files..." : string.Empty;
+                BackupDisplayText = "Does not exist...";
             }
+            else if ((string.IsNullOrEmpty(originalPath) || !Directory.Exists(originalPath)) && (!string.IsNullOrEmpty(backupPath) || Directory.Exists(backupPath)))
+            {
+                foreach (string dir in Directory.GetDirectories(backupPath))
+                {
+                    BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
+                }
 
-            UpdateDataVisibility();
+                foreach (string file in Directory.GetFiles(backupPath))
+                {
+                    BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
+                }
 
-            OriginalDisplayText = OriginalDirectoriesToDisplay.Count == 0 ? "No folders or files..." : string.Empty;
-            BackupDisplayText = BackupDirectoriesToDisplay.Count == 0 ? "No folders or files..." : string.Empty;
+                UpdateDataVisibility();
+
+                OriginalDisplayText = "Does not exist...";
+                BackupDisplayText = BackupDirectories.Count == 0 ? "No folders or files..." : string.Empty;
+            }
         }
-        else if ((!string.IsNullOrEmpty(originalPath) || Directory.Exists(originalPath)) && (string.IsNullOrEmpty(backupPath) || !Directory.Exists(backupPath)))
+        catch (Exception)
         {
-            foreach (string dir in Directory.GetDirectories(originalPath))
-            {
-                OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
-            }
-
-            foreach (string file in Directory.GetFiles(originalPath))
-            {
-                OriginalDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
-            }
-
-            UpdateDataVisibility();
-
-            OriginalDisplayText = OriginalDirectories.Count == 0 ? "No folders or files..." : string.Empty;
-            BackupDisplayText = "Does not exist...";
+            _ = DialogService.ShowDialog("Error", "Scanning failed. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
         }
-        else if ((string.IsNullOrEmpty(originalPath) || !Directory.Exists(originalPath)) && (!string.IsNullOrEmpty(backupPath) || Directory.Exists(backupPath)))
+        finally
         {
-            foreach (string dir in Directory.GetDirectories(backupPath))
-            {
-                BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(dir), IsFile = false, Status = ItemStatus.DoesNotExist, Type = ItemType.Folder, DifferentPath = null });
-            }
-
-            foreach (string file in Directory.GetFiles(backupPath))
-            {
-                BackupDirectories.Add(new PathItem { Item = new DirectoryInfo(file), IsFile = true, Status = ItemStatus.DoesNotExist, Type = FileExtensions.GetFileType(new DirectoryInfo(file).Extension), DifferentPath = null });
-            }
-
-            UpdateDataVisibility();
-
-            OriginalDisplayText = "Does not exist...";
-            BackupDisplayText = BackupDirectories.Count == 0 ? "No folders or files..." : string.Empty;
+            Clear(null);
         }
     }
 
@@ -1064,7 +1587,7 @@ public class MainViewModel : BaseViewModel
                 }
                 catch (NotSupportedException)
                 {
-                    if (MessageBox.Show("Unable to calculate folder size.", "Error", MessageBoxButton.OK, MessageBoxImage.Error) == MessageBoxResult.OK)
+                    if (DialogService.ShowDialog("Error", "Unable to calculate folder size.", DialogButtonGroup.OK, DialogImage.Error) == DialogResult.OK)
                     {
                         return size;
                     }
@@ -1073,7 +1596,7 @@ public class MainViewModel : BaseViewModel
         }
         catch (UnauthorizedAccessException)
         {
-            if (MessageBox.Show("You are not authorized to access this folder.", "Access Denied", MessageBoxButton.OK, MessageBoxImage.Error) == MessageBoxResult.OK)
+            if (DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden) == DialogResult.OK)
             {
                 return size;
             }
@@ -1108,6 +1631,7 @@ public class MainViewModel : BaseViewModel
     /// <summary>
     /// Copies the directory original path to the backup path.
     /// It replaces any contents present in the backup path.
+    /// It is called when the folder is not present in the backup.
     /// </summary>
     /// <param name="originalPath"></param>
     /// <param name="backupPath"></param>
@@ -1135,6 +1659,7 @@ public class MainViewModel : BaseViewModel
     /// <summary>
     /// Merges the directory original path to the backup path.
     /// It replaces any contents present in the backup path.
+    /// It is called when the folder is present in the backup, but has different contents.
     /// </summary>
     /// <param name="originalPath"></param>
     /// <param name="backupPath"></param>

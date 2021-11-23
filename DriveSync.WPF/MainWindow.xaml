@@ -25,10 +25,10 @@
 
                             <!--Window border and dropshadow-->
                             <Border Style="{DynamicResource MainWindowBorderStyle}"
-                                    CornerRadius="{Binding WindowCornerRadius, FallbackValue=6}">
+                                    CornerRadius="{Binding WindowCornerRadius, FallbackValue=8}">
                                 <Border.Effect>
                                     <DropShadowEffect BlurRadius="15"
-                                                      Color="{DynamicResource PrimaryColor}"
+                                                      Color="{DynamicResource DefaultShadowColor}"
                                                       ShadowDepth="0"
                                                       Opacity="0.3" />
                                 </Border.Effect>

@@ -317,4 +317,18 @@
         </Style.Triggers>
     </Style>
 
+    <!--Dialog Heading Text Block-->
+    <Style x:Key="DialogHeadingTextBlockStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="Margin" Value="20 15 0 0" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryLightTextBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryDarkTextBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
 </ResourceDictionary>

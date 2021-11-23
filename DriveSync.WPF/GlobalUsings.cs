@@ -1,5 +1,7 @@
-﻿global using DriveSync.Models;
+﻿global using DriveSync.Enums;
+global using DriveSync.Models;
 global using DriveSync.Properties;
+global using DriveSync.Services;
 global using DriveSync.ViewModels;
 global using System;
 global using System.Collections.Generic;
