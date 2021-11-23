@@ -1,14 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Media.Imaging;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 [ValueConversion(typeof(bool), typeof(BitmapImage))]
 public class BooleanToImageConverter : IValueConverter
 {
-    public static BooleanToImageConverter Instance = new BooleanToImageConverter();
+    public static BooleanToImageConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

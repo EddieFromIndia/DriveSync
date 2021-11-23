@@ -1,45 +1,40 @@
-﻿using DriveSync.Models;
-using System;
-using System.Globalization;
-using System.Windows.Data;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 [ValueConversion(typeof(ItemStatus), typeof(string))]
 public class ItemStatusToStringConverter : IValueConverter
 {
-    public static ItemStatusToStringConverter Instance = new ItemStatusToStringConverter();
+    public static ItemStatusToStringConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         string message = "Resolve";
         switch (parameter.ToString())
         {
-            case "source":
+            case "original":
                 switch ((ItemStatus)value)
                 {
                     case ItemStatus.ExistsButDifferent:
-                        message = "Merge with Target";
+                        message = "Merge with Backup";
                         break;
                     case ItemStatus.ExistsWithDifferentName:
-                        message = "Rename to match Target";
+                        message = "Rename to match Backup";
                         break;
                     case ItemStatus.DoesNotExist:
-                        message = "Copy to Target";
+                        message = "Copy to Backup folder";
                         break;
                 }
                 break;
-            case "target":
+            case "backup":
                 switch ((ItemStatus)value)
                 {
                     case ItemStatus.ExistsButDifferent:
-                        message = "Merge with Source";
+                        message = "Merge with Original";
                         break;
                     case ItemStatus.ExistsWithDifferentName:
-                        message = "Rename to match Source";
+                        message = "Rename to match Original";
                         break;
                     case ItemStatus.DoesNotExist:
-                        message = "Copy to Source";
+                        message = "Copy to Original folder";
                         break;
                 }
                 break;

@@ -1,19 +1,13 @@
-﻿using DriveSync.Models;
-using System;
-using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Media;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 [ValueConversion(typeof(ItemStatus), typeof(SolidColorBrush))]
 public class ItemStatusToColorBrushConverter : IValueConverter
 {
-    public static ItemStatusToColorBrushConverter Instance = new ItemStatusToColorBrushConverter();
+    public static ItemStatusToColorBrushConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        SolidColorBrush brush = new SolidColorBrush();
+        SolidColorBrush brush = new();
         switch ((ItemStatus)value)
         {
             case ItemStatus.ExistsAndEqual:

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using System.Windows;
-using System.Windows.Interop;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 /// <summary>
 /// Fixes the issue with Windows of Style <see cref="WindowStyle.None"/> covering the taskbar
@@ -15,7 +10,7 @@ public class WindowResizer
     /// <summary>
     /// The window to handle the resizing for
     /// </summary>
-    private Window mWindow;
+    private readonly Window mWindow;
 
     #endregion
 
@@ -23,13 +18,13 @@ public class WindowResizer
 
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
-    static extern bool GetCursorPos(out POINT lpPoint);
+    private static extern bool GetCursorPos(out POINT lpPoint);
 
     [DllImport("user32.dll")]
-    static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
+    private static extern bool GetMonitorInfo(IntPtr hMonitor, MONITORINFO lpmi);
 
     [DllImport("user32.dll", SetLastError = true)]
-    static extern IntPtr MonitorFromPoint(POINT pt, MonitorOptions dwFlags);
+    private static extern IntPtr MonitorFromPoint(POINT pt, MonitorOptions dwFlags);
 
     #endregion
 
@@ -60,12 +55,14 @@ public class WindowResizer
     private void Window_SourceInitialized(object sender, EventArgs e)
     {
         // Get the handle of this window
-        var handle = new WindowInteropHelper(mWindow).Handle;
-        var handleSource = HwndSource.FromHwnd(handle);
+        IntPtr handle = new WindowInteropHelper(mWindow).Handle;
+        HwndSource handleSource = HwndSource.FromHwnd(handle);
 
         // If not found, end
         if (handleSource == null)
+        {
             return;
+        }
 
         // Hook into it's Windows messages
         handleSource.AddHook(WindowProc);
@@ -90,7 +87,7 @@ public class WindowResizer
         {
             // Handle the GetMinMaxInfo of the Window
             case 0x0024:/* WM_GETMINMAXINFO */
-                WmGetMinMaxInfo(hwnd, lParam);
+                WmGetMinMaxInfo(lParam);
                 handled = true;
                 break;
         }
@@ -104,15 +101,14 @@ public class WindowResizer
     /// Get the min/max window size for this window
     /// Correctly accounting for the taskbar size and position
     /// </summary>
-    /// <param name="hwnd"></param>
     /// <param name="lParam"></param>
-    private void WmGetMinMaxInfo(IntPtr hwnd, IntPtr lParam)
+    private static void WmGetMinMaxInfo(IntPtr lParam)
     {
         POINT lMousePosition;
         GetCursorPos(out lMousePosition);
 
         IntPtr lPrimaryScreen = MonitorFromPoint(new POINT(0, 0), MonitorOptions.MONITOR_DEFAULTTOPRIMARY);
-        MONITORINFO lPrimaryScreenInfo = new MONITORINFO();
+        MONITORINFO lPrimaryScreenInfo = new();
         if (GetMonitorInfo(lPrimaryScreen, lPrimaryScreenInfo) == false)
         {
             return;
@@ -144,7 +140,7 @@ public class WindowResizer
 
 #region Dll Helper Structures
 
-enum MonitorOptions : uint
+internal enum MonitorOptions : uint
 {
     MONITOR_DEFAULTTONULL = 0x00000000,
     MONITOR_DEFAULTTOPRIMARY = 0x00000001,
@@ -156,8 +152,8 @@ enum MonitorOptions : uint
 public class MONITORINFO
 {
     public int cbSize = Marshal.SizeOf(typeof(MONITORINFO));
-    public Rectangle rcMonitor = new Rectangle();
-    public Rectangle rcWork = new Rectangle();
+    public Rectangle rcMonitor = new();
+    public Rectangle rcWork = new();
     public int dwFlags = 0;
 }
 

@@ -25,7 +25,7 @@
 
                             <!--Window border and dropshadow-->
                             <Border Style="{DynamicResource MainWindowBorderStyle}"
-                                    CornerRadius="{Binding WindowCornerRadius, FallbackValue=6}">
+                                    CornerRadius="{Binding WindowCornerRadius, FallbackValue=8}">
                                 <Border.Effect>
                                     <DropShadowEffect BlurRadius="15"
                                                       Color="{DynamicResource DefaultShadowColor}"
@@ -52,7 +52,7 @@
                                         <Grid.RowDefinitions>
 
                                             <!--Title Bar-->
-                                            <RowDefinition Height="42" />
+                                            <RowDefinition Height="34" />
                                             <!--Window Content-->
                                             <RowDefinition Height="*" />
 
@@ -111,7 +111,14 @@
                                                         CommandParameter="{Binding RelativeSource={RelativeSource
                                                                                                    Mode=FindAncestor,
                                                                                                    AncestorType={x:Type Window}}}">
-                                                    <Image Source="Assets\minimize.png" Height="16" />
+                                                    <Image Source="{Binding RelativeSource={RelativeSource
+                                                                                            Mode=FindAncestor,
+                                                                                            AncestorType={x:Type Window}},
+                                                                    Converter={x:Static local:WindowStateToImageConverter.Instance},
+                                                                    ConverterParameter='minimize',
+                                                                    Path=WindowState,
+                                                                    Mode=OneWay}"
+                                                           Height="16" />
                                                 </Button>
                                                 <Button Grid.Column="3"
                                                         Style="{DynamicResource TitleBarButton}"
@@ -126,6 +133,7 @@
                                                                                             Mode=FindAncestor,
                                                                                             AncestorType={x:Type Window}},
                                                                     Converter={x:Static local:WindowStateToImageConverter.Instance},
+                                                                    ConverterParameter='maximize',
                                                                     Path=WindowState,
                                                                     Mode=OneWay}"
                                                            Height="16" />
@@ -140,7 +148,14 @@
                                                         CommandParameter="{Binding RelativeSource={RelativeSource
                                                                                                    Mode=FindAncestor,
                                                                                                    AncestorType={x:Type Window}}}">
-                                                    <Image Source="Assets\close.png" Height="16" />
+                                                    <Image Source="{Binding RelativeSource={RelativeSource
+                                                                                            Mode=FindAncestor,
+                                                                                            AncestorType={x:Type Window}},
+                                                                    Converter={x:Static local:WindowStateToImageConverter.Instance},
+                                                                    ConverterParameter='close',
+                                                                    Path=WindowState,
+                                                                    Mode=OneWay}"
+                                                           Height="16" />
                                                 </Button>
                                             </Grid>
                                         </StackPanel>
@@ -159,201 +174,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <!--Scroll Bar Begin-->
-        <SolidColorBrush x:Key="StandardBorderBrush" Color="#888" />
-        <SolidColorBrush x:Key="StandardBackgroundBrush" Color="Black" />
-        <SolidColorBrush x:Key="HoverBorderBrush" Color="#DDD" />
-        <SolidColorBrush x:Key="SelectedBackgroundBrush" Color="Gray" />
-        <SolidColorBrush x:Key="SelectedForegroundBrush" Color="White" />
-        <SolidColorBrush x:Key="DisabledForegroundBrush" Color="#888" />
-        <SolidColorBrush x:Key="GlyphBrush" Color="#404" />
-        <SolidColorBrush x:Key="NormalBrush" Color="#FFDCE3E9" />
-        <SolidColorBrush x:Key="NormalBorderBrush" Color="#888" />
-        <SolidColorBrush x:Key="HorizontalNormalBrush" Color="#FFDCE3E9" />
-        <SolidColorBrush x:Key="HorizontalNormalBorderBrush" Color="#888" />
-
-        <LinearGradientBrush x:Key="ListBoxBackgroundBrush" StartPoint="0,0" EndPoint="1,0.001">
-            <GradientBrush.GradientStops>
-                <GradientStopCollection>
-                    <GradientStop Color="White" Offset="0.0" />
-                    <GradientStop Color="White" Offset="0.6" />
-                    <GradientStop Color="#DDDDDD" Offset="1.2"/>
-                </GradientStopCollection>
-            </GradientBrush.GradientStops>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="StandardBrush" StartPoint="0,0" EndPoint="0,1">
-            <GradientBrush.GradientStops>
-                <GradientStopCollection>
-                    <GradientStop Color="#FFF" Offset="0.0"/>
-                    <GradientStop Color="#CCC" Offset="1.0"/>
-                </GradientStopCollection>
-            </GradientBrush.GradientStops>
-        </LinearGradientBrush>
-        <LinearGradientBrush x:Key="PressedBrush" StartPoint="0,0" EndPoint="0,1">
-            <GradientBrush.GradientStops>
-                <GradientStopCollection>
-                    <GradientStop Color="#BBB" Offset="0.0"/>
-                    <GradientStop Color="#EEE" Offset="0.1"/>
-                    <GradientStop Color="#EEE" Offset="0.9"/>
-                    <GradientStop Color="#FFF" Offset="1.0"/>
-                </GradientStopCollection>
-            </GradientBrush.GradientStops>
-        </LinearGradientBrush>
-
-        <Style x:Key="ScrollBarLineButton" TargetType="{x:Type RepeatButton}">
-            <Setter Property="Visibility" Value="Hidden"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="OverridesDefaultStyle" Value="true"/>
-            <Setter Property="Focusable" Value="false"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type RepeatButton}">
-                        <Border Name="Border" Margin="1" CornerRadius="2" Background="{StaticResource NormalBrush}" BorderBrush="{StaticResource NormalBorderBrush}" BorderThickness="1">
-                            <Path HorizontalAlignment="Center" VerticalAlignment="Center" Fill="{StaticResource GlyphBrush}" Data="{Binding Path=Content, RelativeSource={RelativeSource TemplatedParent}}" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsPressed" Value="true">
-                                <Setter TargetName="Border" Property="Background" Value="{StaticResource PressedBrush}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="ScrollBarPageButton" TargetType="{x:Type RepeatButton}">
-            <Setter Property="Visibility" Value="Hidden"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="OverridesDefaultStyle" Value="true"/>
-            <Setter Property="IsTabStop" Value="false"/>
-            <Setter Property="Focusable" Value="false"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type RepeatButton}">
-                        <Border Background="Black" />
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="VerticalScrollBarThumb" TargetType="{x:Type Thumb}">
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="OverridesDefaultStyle" Value="true"/>
-            <Setter Property="IsTabStop" Value="false"/>
-            <Setter Property="Focusable" Value="false"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Thumb}">
-                        <Border CornerRadius="4" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0"  Width="8" Margin="8,0,-2,0"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="HorizontalScrollBarThumb" TargetType="{x:Type Thumb}">
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="OverridesDefaultStyle" Value="true"/>
-            <Setter Property="IsTabStop" Value="false"/>
-            <Setter Property="Focusable" Value="false"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Thumb}">
-                        <Border CornerRadius="4" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0"  Height="8" Margin="0,8,0,-2"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition MaxHeight="0"/>
-                    <RowDefinition Height="0.00001*"/>
-                    <RowDefinition MaxHeight="0"/>
-                </Grid.RowDefinitions>
-                <Border Grid.RowSpan="3" CornerRadius="2" Background="Transparent" />
-                <RepeatButton Grid.Row="0" Style="{StaticResource ScrollBarLineButton}" Height="18" Command="ScrollBar.LineUpCommand" Content="M 0 4 L 8 4 L 4 0 Z" />
-                <Track Name="PART_Track" Grid.Row="1" IsDirectionReversed="true">
-                    <Track.DecreaseRepeatButton>
-                        <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageUpCommand" />
-                    </Track.DecreaseRepeatButton>
-                    <Track.Thumb>
-                        <Thumb Style="{StaticResource VerticalScrollBarThumb}" Margin="1,0,1,0" Background="{StaticResource HorizontalNormalBrush}" BorderBrush="{StaticResource HorizontalNormalBorderBrush}" />
-                    </Track.Thumb>
-                    <Track.IncreaseRepeatButton>
-                        <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageDownCommand" />
-                    </Track.IncreaseRepeatButton>
-                </Track>
-                <RepeatButton Grid.Row="3" Style="{StaticResource ScrollBarLineButton}" Height="18" Command="ScrollBar.LineDownCommand" Content="M 0 0 L 4 4 L 8 0 Z"/>
-            </Grid>
-        </ControlTemplate>
-        
-        <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition MaxWidth="18"/>
-                    <ColumnDefinition Width="0.00001*"/>
-                    <ColumnDefinition MaxWidth="18"/>
-                </Grid.ColumnDefinitions>
-                <Border Grid.ColumnSpan="3" CornerRadius="2" Background="Transparent" />
-                <RepeatButton Grid.Column="0"  Style="{StaticResource ScrollBarLineButton}" Width="18" Command="ScrollBar.LineLeftCommand" Content="M 4 0 L 4 8 L 0 4 Z" />
-                <Track Name="PART_Track" Grid.Column="1" IsDirectionReversed="False">
-                    <Track.DecreaseRepeatButton>
-                        <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageLeftCommand" />
-                    </Track.DecreaseRepeatButton>
-                    <Track.Thumb>
-                        <Thumb Style="{StaticResource HorizontalScrollBarThumb}" Margin="0,1,0,1" Background="{StaticResource NormalBrush}" BorderBrush="{StaticResource NormalBorderBrush}" />
-                    </Track.Thumb>
-                    <Track.IncreaseRepeatButton>
-                        <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageRightCommand" />
-                    </Track.IncreaseRepeatButton>
-                </Track>
-                <RepeatButton Grid.Column="3" Style="{StaticResource ScrollBarLineButton}" Width="18" Command="ScrollBar.LineRightCommand" Content="M 0 0 L 4 4 L 0 8 Z"/>
-            </Grid>
-        </ControlTemplate>
-        <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="OverridesDefaultStyle" Value="true"/>
-            <Style.Triggers>
-                <Trigger Property="Orientation" Value="Horizontal">
-                    <Setter Property="Width" Value="Auto"/>
-                    <Setter Property="Height" Value="18" />
-                    <Setter Property="Template" Value="{StaticResource HorizontalScrollBar}" />
-                </Trigger>
-                <Trigger Property="Orientation" Value="Vertical">
-                    <Setter Property="Width" Value="18"/>
-                    <Setter Property="Height" Value="Auto" />
-                    <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-
-        <Style x:Key="FavsScrollViewer" TargetType="{x:Type ScrollViewer}">
-            <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <ScrollContentPresenter Grid.Column="1"/>
-                            <ScrollBar Name="PART_VerticalScrollBar" Value="{TemplateBinding VerticalOffset}" Maximum="{TemplateBinding ScrollableHeight}" ViewportSize="{TemplateBinding ViewportHeight}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"/>
-                            <ScrollBar Name="PART_HorizontalScrollBar" Orientation="Horizontal" Grid.Row="1" Grid.Column="1" Value="{TemplateBinding HorizontalOffset}" Maximum="{TemplateBinding ScrollableWidth}" ViewportSize="{TemplateBinding ViewportWidth}" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <!--Scroll Bar End-->
     </Window.Resources>
 
     <WindowChrome.WindowChrome>
@@ -371,8 +191,8 @@
 
         <Grid.RowDefinitions>
             <RowDefinition Height="75" /> <!--Menu-->
-            <RowDefinition Height="40" /> <!--Source & Target Label-->
-            <RowDefinition Height="30" /> <!--Source & Target TextBox-->
+            <RowDefinition Height="40" /> <!--Original & Backup Label-->
+            <RowDefinition Height="30" /> <!--Original & Backup TextBox-->
             <RowDefinition Height="15" /> <!--Padding-->
             <RowDefinition Height="30" /> <!--Address Display-->
             <RowDefinition Height="*" /> <!--Description Area-->
@@ -485,11 +305,11 @@
             </Button>
         </StackPanel>
 
-        <!--Source-->
+        <!--Original-->
         <TextBlock Grid.Column="1"
                    Grid.Row="1"
                    Margin="0 10 0 0"
-                   Text="Source:"
+                   Text="Original:"
                    VerticalAlignment="Center" />
         <Grid Grid.Column="1"
               Grid.Row="2"
@@ -503,12 +323,12 @@
             <TextBox Grid.Column="0"
                      Style="{DynamicResource DefaultTextBoxStyle}"
                      VerticalContentAlignment="Center"
-                     Text="{Binding SourcePath}" />
+                     Text="{Binding OriginalPath}" />
             <Button Grid.Column="2"
                     Style="{StaticResource ImageButton}"
                     Width="30"
                     Command="{Binding BrowseButton_Click}"
-                    CommandParameter="Source"
+                    CommandParameter="Original"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
@@ -517,10 +337,10 @@
             </Button>
         </Grid>
         
-        <!--Target-->
+        <!--Backup-->
         <TextBlock Grid.Column="3"
                    Grid.Row="1"
-                   Text="Target:"
+                   Text="Backup:"
                    Margin="0 10 0 0"
                    VerticalAlignment="Center" />
         <Grid Grid.Column="3"
@@ -535,12 +355,12 @@
             <TextBox Grid.Column="0"
                      Style="{DynamicResource DefaultTextBoxStyle}"
                      VerticalContentAlignment="Center"
-                     Text="{Binding TargetPath}" />
+                     Text="{Binding BackupPath}" />
             <Button Grid.Column="2"
                     Style="{StaticResource ImageButton}"
                     Width="30"
                     Command="{Binding BrowseButton_Click}"
-                    CommandParameter="Target"
+                    CommandParameter="Backup"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
@@ -553,7 +373,7 @@
         <Border Grid.Column="1"
                 Grid.Row="4"
                 Style="{DynamicResource AddressAreaStyle}">
-            <Grid Visibility="{Binding LastSourcePath,
+            <Grid Visibility="{Binding LastOriginalPath,
                                Converter={x:Static local:StringToVisibilityConverter.Instance},
                                FallbackValue=Hidden}">
                 <Grid.ColumnDefinitions>
@@ -565,7 +385,7 @@
                         Style="{StaticResource ImageButton}"
                         Margin="5"
                         Command="{Binding BackButton_Click}"
-                        CommandParameter="Target"
+                        CommandParameter="Backup"
                         ToolTipService.InitialShowDelay="500"
                         ToolTipService.BetweenShowDelay="500"
                         ToolTipService.ShowOnDisabled="True"
@@ -579,19 +399,19 @@
                 </Button>
                 <TextBlock Grid.Column="1"
                            Style="{DynamicResource AddressTextBlockStyle}"
-                           Text="{Binding LastSourcePath}"
+                           Text="{Binding LastOriginalPath}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.InitialShowDelay="500"
                            ToolTipService.BetweenShowDelay="500"
                            ToolTipService.ShowOnDisabled="True"
-                           ToolTip="{Binding LastSourcePath}" />
+                           ToolTip="{Binding LastOriginalPath}" />
             </Grid>
         </Border>
 
         <Border Grid.Column="3"
                 Grid.Row="4"
                 Style="{DynamicResource AddressAreaStyle}">
-            <Grid Visibility="{Binding LastSourcePath,
+            <Grid Visibility="{Binding LastOriginalPath,
                                Converter={x:Static local:StringToVisibilityConverter.Instance},
                                FallbackValue=Hidden}">
                 <Grid.ColumnDefinitions>
@@ -603,7 +423,7 @@
                         Style="{StaticResource ImageButton}"
                         Margin="5"
                         Command="{Binding BackButton_Click}"
-                        CommandParameter="Target"
+                        CommandParameter="Backup"
                         ToolTipService.InitialShowDelay="500"
                         ToolTipService.BetweenShowDelay="500"
                         ToolTipService.ShowOnDisabled="True"
@@ -617,20 +437,20 @@
                 </Button>
                 <TextBlock Grid.Column="1"
                            Style="{DynamicResource AddressTextBlockStyle}"
-                           Text="{Binding LastTargetPath}"
+                           Text="{Binding LastBackupPath}"
                            TextTrimming="CharacterEllipsis"
                            ToolTipService.InitialShowDelay="500"
                            ToolTipService.BetweenShowDelay="500"
                            ToolTipService.ShowOnDisabled="True"
-                           ToolTip="{Binding LastTargetPath}" />
+                           ToolTip="{Binding LastBackupPath}" />
             </Grid>
         </Border>
 
-        <!--Source Display Area-->
+        <!--Original Display Area-->
         <Grid Grid.Column="1" Grid.Row="5">
             <Border Style="{DynamicResource MainDisplayAreaStyle}">
-                <ListView x:Name="SourceList"
-                          ItemsSource="{Binding SourceDirectoriesToDisplay}"
+                <ListView x:Name="OriginalList"
+                          ItemsSource="{Binding OriginalDirectoriesToDisplay}"
                           Background="Transparent"
                           BorderThickness="0"
                           ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -639,7 +459,7 @@
                           HorizontalContentAlignment="Stretch">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">
-                            <i:InvokeCommandAction Command="{Binding ExpandSourceDirectory}" CommandParameter="{Binding ElementName=SourceList, Path=SelectedItem}" />
+                            <i:InvokeCommandAction Command="{Binding ExpandOriginalDirectory}" CommandParameter="{Binding ElementName=OriginalList, Path=SelectedItem}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <ListView.ItemTemplate>
@@ -668,7 +488,7 @@
                                            ToolTipService.ShowOnDisabled="True"
                                            ToolTip="{Binding DifferentPath,
                                                      Converter={x:Static local:PathToStringConverter.Instance},
-                                                     ConverterParameter='source'}" />
+                                                     ConverterParameter='original'}" />
                                 <Button Grid.Column="1"
                                         HorizontalAlignment="Right"
                                         Margin="0 0 35 0"
@@ -689,7 +509,7 @@
                                         Margin="0 0 10 0"
                                         Width="20"
                                         Style="{DynamicResource ManualResolveButton}"
-                                        Command="{Binding DataContext.MergeSource_Click,
+                                        Command="{Binding DataContext.MergeOriginal_Click,
                                                   RelativeSource={RelativeSource FindAncestor,
                                                   AncestorType={x:Type Window}}}"
                                         CommandParameter="{Binding}"
@@ -698,26 +518,26 @@
                                         ToolTipService.ShowOnDisabled="True"
                                         ToolTip="{Binding Status,
                                                   Converter={x:Static local:ItemStatusToStringConverter.Instance},
-                                                  ConverterParameter='source'}">
+                                                  ConverterParameter='original'}">
                                     <Image Source="{Binding Status,
                                                     Converter={x:Static local:ItemStatusToImageConverter.Instance},
-                                                    ConverterParameter='source'}" />
+                                                    ConverterParameter='original'}" />
                                 </Button>
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
             </Border>
-            <Border Background="{Binding ElementName=SourceText,
+            <Border Background="{Binding ElementName=OriginalText,
                                  Path=Text,
                                  Converter={x:Static local:StringToColorBrushConverter.Instance}}"
                     CornerRadius="0 0 6 6"
                     IsHitTestVisible="False">
-                <TextBlock x:Name="SourceText"
+                <TextBlock x:Name="OriginalText"
                            Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
                            Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
                            Padding="10"
-                           Text="{Binding SourceDisplayText}"
+                           Text="{Binding OriginalDisplayText}"
                            IsHitTestVisible="False"/>
             </Border>
         </Grid>
@@ -732,18 +552,18 @@
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Scroll source and target together">
+                    ToolTip="Scroll original and backup together">
                 <Image Source="{Binding IsLinked,
                                 Converter={x:Static local:BooleanToImageConverter.Instance},
                                 ConverterParameter='link'}" />
             </Button>
         </StackPanel>
         
-        <!--Target Display Area-->
+        <!--Backup Display Area-->
         <Grid Grid.Column="3" Grid.Row="5">
             <Border Style="{DynamicResource MainDisplayAreaStyle}">
-                <ListView x:Name="TargetList"
-                          ItemsSource="{Binding TargetDirectoriesToDisplay}"
+                <ListView x:Name="BackupList"
+                          ItemsSource="{Binding BackupDirectoriesToDisplay}"
                           Background="Transparent"
                           BorderThickness="0"
                           ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -752,7 +572,7 @@
                           HorizontalContentAlignment="Stretch">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="MouseDoubleClick">
-                            <i:InvokeCommandAction Command="{Binding ExpandTargetDirectory}" CommandParameter="{Binding ElementName=TargetList, Path=SelectedItem}"/>
+                            <i:InvokeCommandAction Command="{Binding ExpandBackupDirectory}" CommandParameter="{Binding ElementName=BackupList, Path=SelectedItem}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
                     <ListView.ItemTemplate>
@@ -781,12 +601,12 @@
                                            ToolTipService.ShowOnDisabled="True"
                                            ToolTip="{Binding DifferentPath,
                                                      Converter={x:Static local:PathToStringConverter.Instance},
-                                                     ConverterParameter='target'}" />
+                                                     ConverterParameter='backup'}" />
                                 <Button Grid.Column="1"
                                         Margin="0 0 35 0"
                                         Width="20"
                                         Style="{DynamicResource ManualResolveButton}"
-                                        Command="{Binding DataContext.MergeTarget_Click,
+                                        Command="{Binding DataContext.MergeBackup_Click,
                                                   RelativeSource={RelativeSource FindAncestor,
                                                   AncestorType={x:Type Window}}}"
                                         CommandParameter="{Binding}"
@@ -795,10 +615,10 @@
                                         ToolTipService.ShowOnDisabled="True"
                                         ToolTip="{Binding Status,
                                                   Converter={x:Static local:ItemStatusToStringConverter.Instance},
-                                                  ConverterParameter='target'}">
+                                                  ConverterParameter='backup'}">
                                     <Image Source="{Binding Status,
                                                     Converter={x:Static local:ItemStatusToImageConverter.Instance},
-                                                    ConverterParameter='target'}" />
+                                                    ConverterParameter='backup'}" />
                                 </Button>
                                 <Button Grid.Column="1"
                                         Margin="0 0 10 0"
@@ -819,16 +639,16 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </Border>
-            <Border Background="{Binding ElementName=TargetText,
+            <Border Background="{Binding ElementName=BackupText,
                                  Path=Text,
                                  Converter={x:Static local:StringToColorBrushConverter.Instance}}"
                     CornerRadius="0 0 6 6"
                     IsHitTestVisible="False">
-                <TextBlock x:Name="TargetText"
+                <TextBlock x:Name="BackupText"
                            Width="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualWidth}"
                            Height="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ActualHeight}"
                            Padding="10"
-                           Text="{Binding TargetDisplayText}"
+                           Text="{Binding BackupDisplayText}"
                            IsHitTestVisible="False"/>
             </Border>
         </Grid>
@@ -870,7 +690,7 @@
                     ToolTipService.ShowOnDisabled="True"
                     ToolTip="{Binding RelativeSource={x:Static RelativeSource.Self},
                             Converter={x:Static local:ButtonEnabledToStringConverter.Instance},
-                            ConverterParameter='Compare the source and target for discrepancies (Enter).',
+                            ConverterParameter='Compare the original and backup for discrepancies (Enter).',
                             Path=IsEnabled, Mode=OneWay}"
                     Content="Scan" />
 

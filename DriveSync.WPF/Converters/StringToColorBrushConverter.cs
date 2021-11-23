@@ -1,15 +1,9 @@
-﻿using DriveSync.Properties;
-using System;
-using System.Globalization;
-using System.Windows.Data;
-using System.Windows.Media;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 [ValueConversion(typeof(string), typeof(SolidColorBrush))]
 public class StringToColorBrushConverter : IValueConverter
 {
-    public static StringToColorBrushConverter Instance = new StringToColorBrushConverter();
+    public static StringToColorBrushConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {

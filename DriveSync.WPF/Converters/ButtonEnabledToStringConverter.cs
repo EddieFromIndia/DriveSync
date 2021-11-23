@@ -1,13 +1,9 @@
-﻿using System;
-using System.Globalization;
-using System.Windows.Data;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 [ValueConversion(typeof(bool), typeof(string))]
 public class ButtonEnabledToStringConverter : IValueConverter
 {
-    public static ButtonEnabledToStringConverter Instance = new ButtonEnabledToStringConverter();
+    public static ButtonEnabledToStringConverter Instance = new();
 
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
@@ -17,7 +13,7 @@ public class ButtonEnabledToStringConverter : IValueConverter
         }
         else
         {
-            return "Source or Target does not exist, or are equal.";
+            return "Original or Backup does not exist, or refers to the same folder.";
         }
     }
 

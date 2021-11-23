@@ -1,65 +1,62 @@
-﻿using DriveSync.Models;
-using System.Collections.Generic;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 public class FileExtensions
 {
-    public static List<string> Android =
-        new List<string> { "apk", "abb" };
+    public static List<string> Android = new()
+        { "apk", "abb" };
 
-    public static List<string> Archive =
-        new List<string> { "7z", "ace", "arj", "bz2", "cab", "gz", "gzi", "gzip", "jar", "lzh", "rar", "tar", "uue", "z", "zip" };
+    public static List<string> Archive = new()
+        { "7z", "ace", "arj", "bz2", "cab", "gz", "gzi", "gzip", "jar", "lzh", "rar", "tar", "uue", "z", "zip" };
 
-    public static List<string> Audio =
-        new List<string> { "3ga", "8svx", "aa", "aac", "aax", "aaxc", "ac3", "act", "aif", "aifc", "aiff", "alac", "amr", "aob",
+    public static List<string> Audio = new()
+        { "3ga", "8svx", "aa", "aac", "aax", "aaxc", "ac3", "act", "aif", "aifc", "aiff", "alac", "amr", "aob",
                 "ape", "at3", "au", "awb", "cda", "dss", "dvf", "f4a", "flac", "gsm", "iklax", "ivs", "m4a", "m4b", "m4p", "mmf", "mogg",
                 "mp2", "mp3", "mpc", "msv", "nmf", "oga", "ogg", "opus", "ra", "rf64", "tta", "wav", "wma" };
 
-    public static List<string> Code =
-        new List<string> { "abap", "ada", "c", "cbl", "cls", "cob", "cpp", "cs", "css", "dart", "f", "f90", "for", "go", "gml", "groovy",
+    public static List<string> Code = new()
+        { "abap", "ada", "c", "cbl", "cls", "cob", "cpp", "cs", "css", "dart", "f", "f90", "for", "go", "gml", "groovy",
                 "ipynb", "java", "jl", "js", "json", "jsp", "jspx", "jsx", "kt", "kts", "lua", "m", "mat", "pas", "php", "php3", "pl", "pp", "py", "r",
                 "rb", "rs", "sc", "scala", "swift", "ts", "tsx", "yaml" };
 
-    public static List<string> DiskImage =
-        new List<string> { "dmg", "iso", "smi" };
+    public static List<string> DiskImage = new()
+        { "dmg", "iso", "smi" };
 
-    public static List<string> Executable =
-        new List<string> { "exe", "msi" };
+    public static List<string> Executable = new()
+        { "exe", "msi" };
 
-    public static List<string> Font =
-        new List<string> { "afm", "cff", "dfont", "eot", "fon", "ntf", "otf", "pfa", "pfb", "pfm", "ps", "pt3", "suit", "t11", "t42",
+    public static List<string> Font = new()
+        { "afm", "cff", "dfont", "eot", "fon", "ntf", "otf", "pfa", "pfb", "pfm", "ps", "pt3", "suit", "t11", "t42",
                 "tfm", "ttc", "ttf", "ufo", "woff", "woff2" };
 
-    public static List<string> Image =
-        new List<string> { "3fr", "arw", "avif", "bmp", "cr2", "dc3", "dcm", "dib", "dic", "dng", "eps", "gif", "icb", "ico", "j2c", "j2k", "jp2",
+    public static List<string> Image = new()
+        { "3fr", "arw", "avif", "bmp", "cr2", "dc3", "dcm", "dib", "dic", "dng", "eps", "gif", "icb", "ico", "j2c", "j2k", "jp2",
                 "jpe", "jpeg", "jpc", "jpf", "jpg", "jps", "jpx", "mpo", "nef", "orf", "pam", "pbm", "pcx", "pdd", "pef", "pfm", "pgm", "png",
                 "pnm", "ppm", "psb", "psd", "psdt", "pxr", "raf", "raw", "rle", "rw2", "sct", "sr2", "svg", "tga", "tif", "tiff", "vda", "vst", "xbm", "xpm" };
 
-    public static List<string> MarkupLanguage =
-        new List<string> { "asp", "aspx", "dhtml", "htm", "html", "htmls", "jsx", "rhtml", "sgml", "xaml", "xhtml", "xml" };
+    public static List<string> MarkupLanguage = new()
+        { "asp", "aspx", "dhtml", "htm", "html", "htmls", "jsx", "rhtml", "sgml", "xaml", "xhtml", "xml" };
 
-    public static List<string> PDF =
-        new List<string> { "pdf" };
+    public static List<string> PDF = new()
+        { "pdf" };
 
-    public static List<string> Presentation =
-        new List<string> { "odp", "otp", "pot", "potm", "potx", "pps", "ppsm", "ppsx", "ppt", "pptx" };
+    public static List<string> Presentation = new()
+        { "odp", "otp", "pot", "potm", "potx", "pps", "ppsm", "ppsx", "ppt", "pptx" };
 
-    public static List<string> Spreadsheet =
-        new List<string> { "xlr", "xls", "xlsb", "xlsm", "xlsx", "xlt", "xltm", "xltx", "xlw" };
+    public static List<string> Spreadsheet = new()
+        { "xlr", "xls", "xlsb", "xlsm", "xlsx", "xlt", "xltm", "xltx", "xlw" };
 
-    public static List<string> System =
-        new List<string> { "bat", "btm", "cmd", "com", "command", "dll" };
+    public static List<string> System = new()
+        { "bat", "btm", "cmd", "com", "command", "dll" };
 
-    public static List<string> Text =
-        new List<string> { "doc", "docm", "docx", "dotm", "dotx", "eml", "ini", "md", "odt", "rtf", "txt", "xps" };
+    public static List<string> Text = new()
+        { "doc", "docm", "docx", "dotm", "dotx", "eml", "ini", "md", "odt", "rtf", "txt", "xps" };
 
-    public static List<string> Video =
-        new List<string> { "3g2", "3gp", "amv", "asf", "avi", "drc", "f4v", "flv", "gifv", "m4v", "mkv", "m2ts", "m2v", "m4p", "m4v",
+    public static List<string> Video = new()
+        { "3g2", "3gp", "amv", "asf", "avi", "drc", "f4v", "flv", "gifv", "m4v", "mkv", "m2ts", "m2v", "m4p", "m4v",
                 "mov", "mp4", "mpe", "mpeg", "mpg", "mpv", "mts", "mxf", "nsv", "ogv", "rm", "rmvb", "ts", "viv", "vob", "webm", "wmv" };
 
-    private static readonly List<string> HashSearchableExtensions =
-        new List<string> { "abap", "ada", "c", "cbl", "cls", "cob", "cpp", "cs", "css", "dart", "f", "f90", "for", "go", "gml", "groovy",
+    private static readonly List<string> HashSearchableExtensions = new()
+        { "abap", "ada", "c", "cbl", "cls", "cob", "cpp", "cs", "css", "dart", "f", "f90", "for", "go", "gml", "groovy",
                 "java", "jl", "js", "json", "jsp", "jspx", "kt", "kts", "lua", "m", "mat", "pas", "php", "php3", "pl", "pp", "py", "r",
                 "rb", "rs", "sc", "scala", "swift", "ts", "yaml", "bmp", "pam", "pbm", "ppm", "xbm", "xpm", "asp", "aspx", "dhtml", "htm",
                 "html", "htmls", "rhtml", "sgml", "xaml", "xhtml", "xml", "pdf", "xlr", "xls", "xlsb", "xlsm", "xlsx", "xlt", "xltm", "xltx",

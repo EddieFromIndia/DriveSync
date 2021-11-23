@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace DriveSync.Models;
+﻿namespace DriveSync.Models;
 
 public enum ItemStatus
 {

@@ -1,9 +1,4 @@
-﻿using DriveSync.ViewModels;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-
-namespace DriveSync;
+﻿namespace DriveSync;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
@@ -26,13 +21,13 @@ public partial class MainWindow : Window
     {
         if (mainViewModel.IsLinked)
         {
-            if (sender == SourceList)
+            if (sender == OriginalList)
             {
-                (GetScrollViewer(TargetList) as ScrollViewer).ScrollToVerticalOffset(e.VerticalOffset);
+                (GetScrollViewer(BackupList) as ScrollViewer).ScrollToVerticalOffset(e.VerticalOffset);
             }
-            else if (sender == TargetList)
+            else if (sender == BackupList)
             {
-                (GetScrollViewer(SourceList) as ScrollViewer).ScrollToVerticalOffset(e.VerticalOffset);
+                (GetScrollViewer(OriginalList) as ScrollViewer).ScrollToVerticalOffset(e.VerticalOffset);
             }
         }
     }

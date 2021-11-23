@@ -123,3 +123,6 @@ csharp_style_namespace_declarations = file_scoped:warning
 
 # IDE0027: Use block body for accessors
 csharp_style_expression_bodied_accessors = false
+
+# CA2211: Non-constant fields should not be visible
+dotnet_diagnostic.CA2211.severity = none
