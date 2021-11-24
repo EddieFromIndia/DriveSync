@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Converters;
 
 [ValueConversion(typeof(bool), typeof(double))]
 public class WindowActiveStateToOpacityConverter : IValueConverter

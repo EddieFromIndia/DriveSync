@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Converters;
 
 [ValueConversion(typeof(ItemStatus), typeof(SolidColorBrush))]
 public class ItemStatusToColorBrushConverter : IValueConverter

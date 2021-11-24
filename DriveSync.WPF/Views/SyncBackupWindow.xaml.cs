@@ -1,17 +1,17 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Views;
 
 /// <summary>
 /// Interaction logic for MainWindow.xaml
 /// </summary>
-public partial class MainWindow : Window
+public partial class SyncBackupWindow : Window
 {
-    private readonly MainViewModel mainViewModel;
-    public MainWindow()
+    private SyncBackupViewModel syncBackupViewModel;
+    public SyncBackupWindow()
     {
         InitializeComponent();
 
-        mainViewModel = new MainViewModel(this);
-        DataContext = mainViewModel;
+        syncBackupViewModel = new SyncBackupViewModel(this);
+        DataContext = syncBackupViewModel;
 
         // Fixes window resize issue
         _ = new WindowResizer(this);
@@ -19,7 +19,7 @@ public partial class MainWindow : Window
 
     private void ScrollChanged(object sender, ScrollChangedEventArgs e)
     {
-        if (mainViewModel.IsLinked)
+        if (syncBackupViewModel.IsLinked)
         {
             if (sender == OriginalList)
             {

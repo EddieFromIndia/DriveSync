@@ -1,12 +1,13 @@
-﻿<Window x:Class="DriveSync.MainWindow"
+﻿<Window x:Class="DriveSync.Views.SyncBackupWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:local="clr-namespace:DriveSync"
+        xmlns:view="clr-namespace:DriveSync.Views"
+        xmlns:converter="clr-namespace:DriveSync.Converters"
         mc:Ignorable="d"
-        Icon="Assets\logo.png"
+        Icon="pack://application:,,,/Assets/logo.png"
         Title="Drive Sync"
         Height="600" MinHeight="480"
         Width="880" MinWidth="880"
@@ -16,7 +17,7 @@
     
     <Window.Resources>
         <!--#region Main Window Styling-->
-        <Style TargetType="{x:Type local:MainWindow}">
+        <Style TargetType="{x:Type view:SyncBackupWindow}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Window}">
@@ -81,7 +82,7 @@
                                             </StackPanel.InputBindings>
                                             <Grid Opacity="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
                                                                                     AncestorType={x:Type Window}},
-                                                            Converter={x:Static local:WindowActiveStateToOpacityConverter.Instance},
+                                                            Converter={x:Static converter:WindowActiveStateToOpacityConverter.Instance},
                                                             Path=IsActive,
                                                             Mode=OneWay}">
                                                 <Grid.ColumnDefinitions>
@@ -114,7 +115,7 @@
                                                     <Image Source="{Binding RelativeSource={RelativeSource
                                                                                             Mode=FindAncestor,
                                                                                             AncestorType={x:Type Window}},
-                                                                    Converter={x:Static local:WindowStateToImageConverter.Instance},
+                                                                    Converter={x:Static converter:WindowStateToImageConverter.Instance},
                                                                     ConverterParameter='minimize',
                                                                     Path=WindowState,
                                                                     Mode=OneWay}"
@@ -132,7 +133,7 @@
                                                     <Image Source="{Binding RelativeSource={RelativeSource
                                                                                             Mode=FindAncestor,
                                                                                             AncestorType={x:Type Window}},
-                                                                    Converter={x:Static local:WindowStateToImageConverter.Instance},
+                                                                    Converter={x:Static converter:WindowStateToImageConverter.Instance},
                                                                     ConverterParameter='maximize',
                                                                     Path=WindowState,
                                                                     Mode=OneWay}"
@@ -151,7 +152,7 @@
                                                     <Image Source="{Binding RelativeSource={RelativeSource
                                                                                             Mode=FindAncestor,
                                                                                             AncestorType={x:Type Window}},
-                                                                    Converter={x:Static local:WindowStateToImageConverter.Instance},
+                                                                    Converter={x:Static converter:WindowStateToImageConverter.Instance},
                                                                     ConverterParameter='close',
                                                                     Path=WindowState,
                                                                     Mode=OneWay}"
@@ -232,10 +233,10 @@
                     ToolTip="Show/hide folders and files that have no discrepancies.">
                 <StackPanel>
                     <Image Width="36" Source="{Binding ShowEqualEntries,
-                                Converter={x:Static local:BooleanToImageConverter.Instance},
+                                Converter={x:Static converter:BooleanToImageConverter.Instance},
                                 ConverterParameter='visibility'}" />
                     <TextBlock Text="{Binding ShowEqualEntries,
-                                Converter={x:Static local:BooleanToTextConverter.Instance},
+                                Converter={x:Static converter:BooleanToTextConverter.Instance},
                                 ConverterParameter='visibility',
                                 FallbackValue='Hide equal files/folders'}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
                 </StackPanel>
@@ -250,10 +251,10 @@
                     ToolTip="Show/hide empty folders">
                 <StackPanel>
                     <Image Width="36" Source="{Binding ShowEmptyFolder,
-                                Converter={x:Static local:BooleanToImageConverter.Instance},
+                                Converter={x:Static converter:BooleanToImageConverter.Instance},
                                 ConverterParameter='folder-empty'}" />
                     <TextBlock Text="{Binding ShowEmptyFolder,
-                                Converter={x:Static local:BooleanToTextConverter.Instance},
+                                Converter={x:Static converter:BooleanToTextConverter.Instance},
                                 ConverterParameter='folder-empty',
                                 FallbackValue='Hide empty folders'}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
                 </StackPanel>
@@ -374,7 +375,7 @@
                 Grid.Row="4"
                 Style="{DynamicResource AddressAreaStyle}">
             <Grid Visibility="{Binding LastOriginalPath,
-                               Converter={x:Static local:StringToVisibilityConverter.Instance},
+                               Converter={x:Static converter:StringToVisibilityConverter.Instance},
                                FallbackValue=Hidden}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />
@@ -394,7 +395,7 @@
                                     RelativeSource={RelativeSource FindAncestor,
                                     AncestorType={x:Type Button},
                                     AncestorLevel=1},
-                                    Converter={x:Static local:BooleanToImageConverter.Instance},
+                                    Converter={x:Static converter:BooleanToImageConverter.Instance},
                                     ConverterParameter='back'}" />
                 </Button>
                 <TextBlock Grid.Column="1"
@@ -412,7 +413,7 @@
                 Grid.Row="4"
                 Style="{DynamicResource AddressAreaStyle}">
             <Grid Visibility="{Binding LastOriginalPath,
-                               Converter={x:Static local:StringToVisibilityConverter.Instance},
+                               Converter={x:Static converter:StringToVisibilityConverter.Instance},
                                FallbackValue=Hidden}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="30" />
@@ -432,7 +433,7 @@
                                     RelativeSource={RelativeSource FindAncestor,
                                     AncestorType={x:Type Button},
                                     AncestorLevel=1},
-                                    Converter={x:Static local:BooleanToImageConverter.Instance},
+                                    Converter={x:Static converter:BooleanToImageConverter.Instance},
                                     ConverterParameter='back'}" />
                 </Button>
                 <TextBlock Grid.Column="1"
@@ -475,19 +476,19 @@
                                        HorizontalAlignment="Center"
                                        Width="20"
                                        Source="{Binding Type,
-                                                Converter={x:Static local:ItemTypeToImageConverter.Instance}}" />
+                                                Converter={x:Static converter:ItemTypeToImageConverter.Instance}}" />
                                 <TextBlock Grid.Column="1"
                                            VerticalAlignment="Center"
                                            TextTrimming="CharacterEllipsis"
                                            Foreground="{Binding Status,
-                                                        Converter={x:Static local:ItemStatusToColorBrushConverter.Instance}}"
+                                                        Converter={x:Static converter:ItemStatusToColorBrushConverter.Instance}}"
                                            FontWeight="SemiBold"
                                            Text="{Binding Item.Name}"
                                            ToolTipService.InitialShowDelay="500"
                                            ToolTipService.BetweenShowDelay="500"
                                            ToolTipService.ShowOnDisabled="True"
                                            ToolTip="{Binding DifferentPath,
-                                                     Converter={x:Static local:PathToStringConverter.Instance},
+                                                     Converter={x:Static converter:PathToStringConverter.Instance},
                                                      ConverterParameter='original'}" />
                                 <Button Grid.Column="1"
                                         HorizontalAlignment="Right"
@@ -517,10 +518,10 @@
                                         ToolTipService.BetweenShowDelay="500"
                                         ToolTipService.ShowOnDisabled="True"
                                         ToolTip="{Binding Status,
-                                                  Converter={x:Static local:ItemStatusToStringConverter.Instance},
+                                                  Converter={x:Static converter:ItemStatusToStringConverter.Instance},
                                                   ConverterParameter='original'}">
                                     <Image Source="{Binding Status,
-                                                    Converter={x:Static local:ItemStatusToImageConverter.Instance},
+                                                    Converter={x:Static converter:ItemStatusToImageConverter.Instance},
                                                     ConverterParameter='original'}" />
                                 </Button>
                             </Grid>
@@ -530,7 +531,7 @@
             </Border>
             <Border Background="{Binding ElementName=OriginalText,
                                  Path=Text,
-                                 Converter={x:Static local:StringToColorBrushConverter.Instance}}"
+                                 Converter={x:Static converter:StringToColorBrushConverter.Instance}}"
                     CornerRadius="0 0 6 6"
                     IsHitTestVisible="False">
                 <TextBlock x:Name="OriginalText"
@@ -554,7 +555,7 @@
                     ToolTipService.ShowOnDisabled="True"
                     ToolTip="Scroll original and backup together">
                 <Image Source="{Binding IsLinked,
-                                Converter={x:Static local:BooleanToImageConverter.Instance},
+                                Converter={x:Static converter:BooleanToImageConverter.Instance},
                                 ConverterParameter='link'}" />
             </Button>
         </StackPanel>
@@ -588,19 +589,19 @@
                                     HorizontalAlignment="Center"
                                     Width="20"
                                     Source="{Binding Type,
-                                             Converter={x:Static local:ItemTypeToImageConverter.Instance}}" />
+                                             Converter={x:Static converter:ItemTypeToImageConverter.Instance}}" />
                                 <TextBlock Grid.Column="1"
                                         VerticalAlignment="Center"
                                         TextTrimming="CharacterEllipsis"
                                         Foreground="{Binding Status,
-                                                    Converter={x:Static local:ItemStatusToColorBrushConverter.Instance}}"
+                                                    Converter={x:Static converter:ItemStatusToColorBrushConverter.Instance}}"
                                         FontWeight="SemiBold"
                                         Text="{Binding Item.Name}"
                                            ToolTipService.InitialShowDelay="500"
                                            ToolTipService.BetweenShowDelay="500"
                                            ToolTipService.ShowOnDisabled="True"
                                            ToolTip="{Binding DifferentPath,
-                                                     Converter={x:Static local:PathToStringConverter.Instance},
+                                                     Converter={x:Static converter:PathToStringConverter.Instance},
                                                      ConverterParameter='backup'}" />
                                 <Button Grid.Column="1"
                                         Margin="0 0 35 0"
@@ -614,10 +615,10 @@
                                         ToolTipService.BetweenShowDelay="500"
                                         ToolTipService.ShowOnDisabled="True"
                                         ToolTip="{Binding Status,
-                                                  Converter={x:Static local:ItemStatusToStringConverter.Instance},
+                                                  Converter={x:Static converter:ItemStatusToStringConverter.Instance},
                                                   ConverterParameter='backup'}">
                                     <Image Source="{Binding Status,
-                                                    Converter={x:Static local:ItemStatusToImageConverter.Instance},
+                                                    Converter={x:Static converter:ItemStatusToImageConverter.Instance},
                                                     ConverterParameter='backup'}" />
                                 </Button>
                                 <Button Grid.Column="1"
@@ -641,7 +642,7 @@
             </Border>
             <Border Background="{Binding ElementName=BackupText,
                                  Path=Text,
-                                 Converter={x:Static local:StringToColorBrushConverter.Instance}}"
+                                 Converter={x:Static converter:StringToColorBrushConverter.Instance}}"
                     CornerRadius="0 0 6 6"
                     IsHitTestVisible="False">
                 <TextBlock x:Name="BackupText"
@@ -689,7 +690,7 @@
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
                     ToolTip="{Binding RelativeSource={x:Static RelativeSource.Self},
-                            Converter={x:Static local:ButtonEnabledToStringConverter.Instance},
+                            Converter={x:Static converter:ButtonEnabledToStringConverter.Instance},
                             ConverterParameter='Compare the original and backup for discrepancies (Enter).',
                             Path=IsEnabled, Mode=OneWay}"
                     Content="Scan" />
@@ -700,7 +701,7 @@
                       Height="30"
                       Margin="0 0 7 0"
                       SelectedIndex="{Binding ResolveMethod,
-                                      Converter={x:Static local:EnumToIntConverter.Instance},
+                                      Converter={x:Static converter:EnumToIntConverter.Instance},
                                       Mode=TwoWay}"
                       VerticalContentAlignment="Center"
                       Padding="10 0 0 0"
@@ -708,7 +709,7 @@
                       ToolTipService.BetweenShowDelay="500"
                       ToolTipService.ShowOnDisabled="True"
                       ToolTip="{Binding RelativeSource={x:Static RelativeSource.Self},
-                              Converter={x:Static local:ButtonEnabledToStringConverter.Instance},
+                              Converter={x:Static converter:ButtonEnabledToStringConverter.Instance},
                               ConverterParameter='Determines how to handle auto-resolve.',
                               Path=IsEnabled, Mode=OneWay}">
                 <ComboBoxItem IsSelected="True" Content="Left To Right" />
@@ -722,7 +723,7 @@
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
                     ToolTip="{Binding RelativeSource={x:Static RelativeSource.Self},
-                            Converter={x:Static local:ButtonEnabledToStringConverter.Instance},
+                            Converter={x:Static converter:ButtonEnabledToStringConverter.Instance},
                             ConverterParameter='Auto-resolve all discrepancies.',
                             Path=IsEnabled, Mode=OneWay}"
                     Content="Auto-Resolve" />

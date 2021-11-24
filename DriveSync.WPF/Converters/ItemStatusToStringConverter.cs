@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Converters;
 
 [ValueConversion(typeof(ItemStatus), typeof(string))]
 public class ItemStatusToStringConverter : IValueConverter

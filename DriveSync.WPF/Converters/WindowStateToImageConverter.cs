@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Converters;
 
 [ValueConversion(typeof(WindowState), typeof(BitmapImage))]
 public class WindowStateToImageConverter : IValueConverter
@@ -8,7 +8,7 @@ public class WindowStateToImageConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         string image = null;
-        if (Properties.Settings.Default.Theme == "Light")
+        if (Settings.Default.Theme == "Light")
         {
             switch (parameter.ToString())
             {

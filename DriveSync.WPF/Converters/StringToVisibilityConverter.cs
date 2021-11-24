@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Converters;
 
 [ValueConversion(typeof(string), typeof(Visibility))]
 public class StringToVisibilityConverter : IValueConverter

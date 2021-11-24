@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Views;
 /// <summary>
 /// Interaction logic for DialogWindow.xaml
 /// </summary>

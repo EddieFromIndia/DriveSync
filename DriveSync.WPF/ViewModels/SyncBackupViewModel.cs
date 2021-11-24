@@ -1,9 +1,9 @@
 ﻿namespace DriveSync.ViewModels;
 
-public class MainViewModel : BaseViewModel
+public class SyncBackupViewModel : BaseViewModel
 {
     #region Private Properties
-    private readonly Window mainWindow;
+    private readonly Window syncBackupWindow;
     private int outerMargin = 10;
     private int windowRadius = 8;
 
@@ -14,12 +14,12 @@ public class MainViewModel : BaseViewModel
 
     #region Public Properties
     public int OuterMargin {
-        get => mainWindow.WindowState == WindowState.Maximized ? 0 : outerMargin;
+        get => syncBackupWindow.WindowState == WindowState.Maximized ? 0 : outerMargin;
         set => outerMargin = value;
     }
     public Thickness OuterMarginThickness => new(OuterMargin);
     public int WindowRadius {
-        get => mainWindow.WindowState == WindowState.Maximized ? 0 : windowRadius;
+        get => syncBackupWindow.WindowState == WindowState.Maximized ? 0 : windowRadius;
         set => windowRadius = value;
     }
     public CornerRadius WindowCornerRadius => new(WindowRadius);
@@ -69,12 +69,12 @@ public class MainViewModel : BaseViewModel
     #endregion
 
     #region Constructor
-    public MainViewModel(Window window)
+    public SyncBackupViewModel(Window window)
     {
-        mainWindow = window;
+        syncBackupWindow = window;
 
         // Window State changed event handler
-        mainWindow.StateChanged += (sender, e) => {
+        syncBackupWindow.StateChanged += (sender, e) => {
             OnPropertyChanged(nameof(OuterMargin));
             OnPropertyChanged(nameof(OuterMarginThickness));
             OnPropertyChanged(nameof(WindowRadius));
@@ -1457,9 +1457,6 @@ public class MainViewModel : BaseViewModel
         catch (Exception)
         {
             _ = DialogService.ShowDialog("Error", "Scanning failed. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
-        }
-        finally
-        {
             Clear(null);
         }
     }

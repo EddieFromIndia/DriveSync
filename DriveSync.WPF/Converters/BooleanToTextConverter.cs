@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Converters;
 
 [ValueConversion(typeof(bool), typeof(string))]
 public class BooleanToTextConverter : IValueConverter

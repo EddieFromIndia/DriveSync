@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Converters;
 
 [ValueConversion(typeof(string), typeof(string))]
 public class PathToStringConverter : IValueConverter

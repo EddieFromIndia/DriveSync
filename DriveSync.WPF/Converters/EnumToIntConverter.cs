@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Converters;
 
 [ValueConversion(typeof(ResolveMethods), typeof(int))]
 public class EnumToIntConverter : IValueConverter

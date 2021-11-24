@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Converters;
 
 [ValueConversion(typeof(bool), typeof(BitmapImage))]
 public class BooleanToImageConverter : IValueConverter

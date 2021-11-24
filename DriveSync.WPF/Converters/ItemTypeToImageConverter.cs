@@ -1,4 +1,4 @@
-﻿namespace DriveSync;
+﻿namespace DriveSync.Converters;
 
 [ValueConversion(typeof(ItemType), typeof(BitmapImage))]
 public class ItemTypeToImageConverter : IValueConverter
