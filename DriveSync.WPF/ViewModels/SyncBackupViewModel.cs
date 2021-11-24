@@ -155,6 +155,11 @@ public class SyncBackupViewModel : BaseViewModel
 
     private bool CanScanOrResolve(object sender)
     {
+        if (isResolving)
+        {
+            return false;
+        }
+
         if (!string.IsNullOrWhiteSpace(OriginalPath) && !string.IsNullOrWhiteSpace(BackupPath))
         {
             if (Directory.Exists(OriginalPath) && Directory.Exists(BackupPath) && OriginalPath != BackupPath)
@@ -1418,7 +1423,17 @@ public class SyncBackupViewModel : BaseViewModel
     /// <param name="window"></param>
     private void CloseWindow(object window)
     {
-        ((Window)window).Close();
+        if (isResolving)
+        {
+            if (DialogService.ShowDialog("Warning", "A sync process is running. You might lose data if you close this application now. Do you want to proceed anyway?", DialogButtonGroup.YesNoCancel, DialogImage.Error) == DialogResult.Yes)
+            {
+                ((Window)window).Close();
+            }
+        }
+        else
+        {
+            ((Window)window).Close();
+        }
     }
 
     /// <summary>
