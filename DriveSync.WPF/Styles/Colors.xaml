@@ -3,9 +3,6 @@
 
     <!--#region Universal Mode-->
     <SolidColorBrush x:Key="TransparentBrush" Color="Transparent" />
-    <SolidColorBrush x:Key="ThumbNormalBrush" Color="#FFECF0F3" />
-    <SolidColorBrush x:Key="ThumbHoverBrush" Color="#FFDCE3E9" />
-    <SolidColorBrush x:Key="TrackBrush" Color="#FFF9FAFB" />
 
     <SolidColorBrush x:Key="MainButtonBrush" Color="#FF005FB8" />
     <SolidColorBrush x:Key="MainButtonHoverBrush" Color="#FF006ACE" />
@@ -36,6 +33,10 @@
     <SolidColorBrush x:Key="LightLineStrokeBrush" Color="#FFBBBAB6" />
     
     <SolidColorBrush x:Key="LightToolTipBackgroundBrush" Color="White" />
+
+    <SolidColorBrush x:Key="ThumbNormalBrushLight" Color="#FFECF0F3" />
+    <SolidColorBrush x:Key="ThumbHoverBrushLight" Color="#FFDCE3E9" />
+    <SolidColorBrush x:Key="TrackBrushLight" Color="#FFF9FAFB" />
     <!--#endRegion-->
 
     <!--#region Dark Mode-->
@@ -61,5 +62,9 @@
     <SolidColorBrush x:Key="DarkLineStrokeBrush" Color="#FF636363" />
 
     <SolidColorBrush x:Key="DarkToolTipBackgroundBrush" Color="#FF777777" />
+
+    <SolidColorBrush x:Key="ThumbNormalBrushDark" Color="#FF404040" />
+    <SolidColorBrush x:Key="ThumbHoverBrushDark" Color="#FF4E4E4E" />
+    <SolidColorBrush x:Key="TrackBrushDark" Color="#FF2D2D2D" />
     <!--#endRegion-->
 </ResourceDictionary>

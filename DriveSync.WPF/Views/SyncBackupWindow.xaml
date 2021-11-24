@@ -324,7 +324,8 @@
             <TextBox Grid.Column="0"
                      Style="{DynamicResource DefaultTextBoxStyle}"
                      VerticalContentAlignment="Center"
-                     Text="{Binding OriginalPath}" />
+                     Text="{Binding OriginalPath}"
+                     IsEnabled="False" />
             <Button Grid.Column="2"
                     Style="{StaticResource ImageButton}"
                     Width="30"
@@ -356,7 +357,8 @@
             <TextBox Grid.Column="0"
                      Style="{DynamicResource DefaultTextBoxStyle}"
                      VerticalContentAlignment="Center"
-                     Text="{Binding BackupPath}" />
+                     Text="{Binding BackupPath}"
+                     IsEnabled="False" />
             <Button Grid.Column="2"
                     Style="{StaticResource ImageButton}"
                     Width="30"
@@ -503,7 +505,7 @@
                                         ToolTipService.BetweenShowDelay="500"
                                         ToolTipService.ShowOnDisabled="True"
                                         ToolTip="Delete item">
-                                    <Image Source="Assets/delete.png" />
+                                    <Image Source="/Assets/delete.png" />
                                 </Button>
                                 <Button Grid.Column="1"
                                         HorizontalAlignment="Right"
@@ -633,7 +635,7 @@
                                         ToolTipService.BetweenShowDelay="500"
                                         ToolTipService.ShowOnDisabled="True"
                                         ToolTip="Delete item">
-                                    <Image Source="Assets/delete.png" />
+                                    <Image Source="/Assets/delete.png" />
                                 </Button>
                             </Grid>
                         </DataTemplate>

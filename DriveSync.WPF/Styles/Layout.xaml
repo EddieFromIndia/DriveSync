@@ -164,18 +164,19 @@
         </Setter>
     </Style>
 
-    <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
+    <!--Light Vertical ScrollBar Template-->
+    <ControlTemplate x:Key="VerticalScrollBarLight" TargetType="{x:Type ScrollBar}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="0.00001*"/>
             </Grid.RowDefinitions>
-            <Border Grid.RowSpan="3" CornerRadius="2" Background="{StaticResource TrackBrush}" Width="8" />
+            <Border Grid.RowSpan="3" CornerRadius="2" Background="{StaticResource TrackBrushLight}" Width="8" />
             <Track Name="PART_Track" Grid.Row="1" IsDirectionReversed="true">
                 <Track.DecreaseRepeatButton>
                     <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageUpCommand" />
                 </Track.DecreaseRepeatButton>
                 <Track.Thumb>
-                    <Thumb x:Name="thumb" Style="{StaticResource ScrollBarThumb}" Background="{StaticResource ThumbNormalBrush}" />
+                    <Thumb x:Name="thumb" Style="{StaticResource ScrollBarThumb}" Background="{StaticResource ThumbNormalBrushLight}" />
                 </Track.Thumb>
                 <Track.IncreaseRepeatButton>
                     <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageDownCommand" />
@@ -184,23 +185,50 @@
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Background" TargetName="thumb" Value="{StaticResource ThumbHoverBrush}" />
+                <Setter Property="Background" TargetName="thumb" Value="{StaticResource ThumbHoverBrushLight}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    
-    <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
+
+    <!--Dark Vertical ScrollBar Template-->
+    <ControlTemplate x:Key="VerticalScrollBarDark" TargetType="{x:Type ScrollBar}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.00001*"/>
+            </Grid.RowDefinitions>
+            <Border Grid.RowSpan="3" CornerRadius="2" Background="{StaticResource TrackBrushDark}" Width="8" />
+            <Track Name="PART_Track" Grid.Row="1" IsDirectionReversed="true">
+                <Track.DecreaseRepeatButton>
+                    <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageUpCommand" />
+                </Track.DecreaseRepeatButton>
+                <Track.Thumb>
+                    <Thumb x:Name="thumb" Style="{StaticResource ScrollBarThumb}" Background="{StaticResource ThumbNormalBrushDark}" />
+                </Track.Thumb>
+                <Track.IncreaseRepeatButton>
+                    <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageDownCommand" />
+                </Track.IncreaseRepeatButton>
+            </Track>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Background" TargetName="thumb" Value="{StaticResource ThumbHoverBrushDark}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <!--Light Horizontal ScrollBar Template-->
+    <ControlTemplate x:Key="HorizontalScrollBarLight" TargetType="{x:Type ScrollBar}">
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.00001*"/>
             </Grid.ColumnDefinitions>
-            <Border Grid.ColumnSpan="3" CornerRadius="2" Background="{StaticResource TrackBrush}" Height="8"/>
+            <Border Grid.ColumnSpan="3" CornerRadius="2" Background="{StaticResource TrackBrushLight}" Height="8"/>
             <Track Name="PART_Track" Grid.Column="1" IsDirectionReversed="False" Orientation="Horizontal">
                 <Track.DecreaseRepeatButton>
                     <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageLeftCommand" />
                 </Track.DecreaseRepeatButton>
                 <Track.Thumb>
-                    <Thumb x:Name="thumb" Style="{StaticResource ScrollBarThumb}" Margin="0,1,0,1" Background="{StaticResource ThumbNormalBrush}" />
+                    <Thumb x:Name="thumb" Style="{StaticResource ScrollBarThumb}" Margin="0,1,0,1" Background="{StaticResource ThumbNormalBrushLight}" />
                 </Track.Thumb>
                 <Track.IncreaseRepeatButton>
                     <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageRightCommand" />
@@ -209,25 +237,77 @@
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Background" TargetName="thumb" Value="{StaticResource ThumbHoverBrush}" />
+                <Setter Property="Background" TargetName="thumb" Value="{StaticResource ThumbHoverBrushLight}" />
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    
+
+    <!--Dark Horizontal ScrollBar Template-->
+    <ControlTemplate x:Key="HorizontalScrollBarDark" TargetType="{x:Type ScrollBar}">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.00001*"/>
+            </Grid.ColumnDefinitions>
+            <Border Grid.ColumnSpan="3" CornerRadius="2" Background="{StaticResource TrackBrushDark}" Height="8"/>
+            <Track Name="PART_Track" Grid.Column="1" IsDirectionReversed="False" Orientation="Horizontal">
+                <Track.DecreaseRepeatButton>
+                    <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageLeftCommand" />
+                </Track.DecreaseRepeatButton>
+                <Track.Thumb>
+                    <Thumb x:Name="thumb" Style="{StaticResource ScrollBarThumb}" Margin="0,1,0,1" Background="{StaticResource ThumbNormalBrushDark}" />
+                </Track.Thumb>
+                <Track.IncreaseRepeatButton>
+                    <RepeatButton Style="{StaticResource ScrollBarPageButton}" Command="ScrollBar.PageRightCommand" />
+                </Track.IncreaseRepeatButton>
+            </Track>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Background" TargetName="thumb" Value="{StaticResource ThumbHoverBrushDark}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
     <Style x:Key="{x:Type ScrollBar}" TargetType="{x:Type ScrollBar}">
         <Setter Property="SnapsToDevicePixels" Value="True"/>
         <Setter Property="OverridesDefaultStyle" Value="true"/>
         <Style.Triggers>
-            <Trigger Property="Orientation" Value="Horizontal">
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light" />
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Orientation}" Value="Horizontal" />
+                </MultiDataTrigger.Conditions>
                 <Setter Property="Width" Value="Auto"/>
                 <Setter Property="Height" Value="18" />
-                <Setter Property="Template" Value="{StaticResource HorizontalScrollBar}" />
-            </Trigger>
-            <Trigger Property="Orientation" Value="Vertical">
+                <Setter Property="Template" Value="{StaticResource HorizontalScrollBarLight}" />
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark" />
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Orientation}" Value="Horizontal" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="18" />
+                <Setter Property="Template" Value="{StaticResource HorizontalScrollBarDark}" />
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light" />
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Orientation}" Value="Vertical" />
+                </MultiDataTrigger.Conditions>
                 <Setter Property="Width" Value="18"/>
                 <Setter Property="Height" Value="Auto" />
-                <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
-            </Trigger>
+                <Setter Property="Template" Value="{StaticResource VerticalScrollBarLight}" />
+            </MultiDataTrigger>
+            <MultiDataTrigger>
+                <MultiDataTrigger.Conditions>
+                    <Condition Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark" />
+                    <Condition Binding="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Orientation}" Value="Vertical" />
+                </MultiDataTrigger.Conditions>
+                <Setter Property="Width" Value="18"/>
+                <Setter Property="Height" Value="Auto" />
+                <Setter Property="Template" Value="{StaticResource VerticalScrollBarDark}" />
+            </MultiDataTrigger>
         </Style.Triggers>
     </Style>
 

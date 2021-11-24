@@ -10,6 +10,8 @@ public class SyncBackupViewModel : BaseViewModel
     private static readonly string textIntroMessage = "Choose Original and Backup directories...";
     private ObservableCollection<PathItem> OriginalDirectories = new();
     private ObservableCollection<PathItem> BackupDirectories = new();
+
+    private bool isResolving = false;
     #endregion
 
     #region Public Properties
@@ -95,8 +97,8 @@ public class SyncBackupViewModel : BaseViewModel
         RefreshButton_Click = new Command(Refresh, CanRefresh);
         VisibilityButton_Click = new Command(ToggleVisibility);
         ShowHideEmptyFolderButton_Click = new Command(ShowHideEmptyFolder);
-        SettingsButton_Click = new Command(Settings);
-        UpdateButton_Click = new Command(CheckForUpdates);
+        SettingsButton_Click = new Command(Settings, CanPerformMenuTasks);
+        UpdateButton_Click = new Command(CheckForUpdates, CanPerformMenuTasks);
         TutorialButton_Click = new Command(Tutorial);
         Link_Click = new Command(ToggleLink);
 
@@ -166,6 +168,11 @@ public class SyncBackupViewModel : BaseViewModel
 
     private async void Scan(object sender)
     {
+        if (isResolving)
+        {
+            return;
+        }
+
         LastOriginalPath = OriginalPath;
         LastBackupPath = BackupPath;
 
@@ -174,6 +181,7 @@ public class SyncBackupViewModel : BaseViewModel
 
     private async void AutoResolve(object sender)
     {
+        isResolving = true;
         OriginalDisplayText = "Resolving. Please wait!";
         BackupDisplayText = "Resolving. Please wait!";
         ProgressVisibility = Visibility.Visible;
@@ -199,6 +207,7 @@ public class SyncBackupViewModel : BaseViewModel
             OriginalDisplayText = string.Empty;
             BackupDisplayText = string.Empty;
             ProgressVisibility = Visibility.Hidden;
+            isResolving = false;
             return;
         }
         catch (PathTooLongException)
@@ -207,6 +216,7 @@ public class SyncBackupViewModel : BaseViewModel
             OriginalDisplayText = string.Empty;
             BackupDisplayText = string.Empty;
             ProgressVisibility = Visibility.Hidden;
+            isResolving = false;
             return;
         }
         catch (DirectoryNotFoundException)
@@ -215,6 +225,7 @@ public class SyncBackupViewModel : BaseViewModel
             OriginalDisplayText = string.Empty;
             BackupDisplayText = string.Empty;
             ProgressVisibility = Visibility.Hidden;
+            isResolving = false;
             return;
         }
         catch (FileNotFoundException)
@@ -223,6 +234,7 @@ public class SyncBackupViewModel : BaseViewModel
             OriginalDisplayText = string.Empty;
             BackupDisplayText = string.Empty;
             ProgressVisibility = Visibility.Hidden;
+            isResolving = false;
             return;
         }
         catch (NullReferenceException)
@@ -231,6 +243,7 @@ public class SyncBackupViewModel : BaseViewModel
             OriginalDisplayText = string.Empty;
             BackupDisplayText = string.Empty;
             ProgressVisibility = Visibility.Hidden;
+            isResolving = false;
             return;
         }
 
@@ -310,10 +323,12 @@ public class SyncBackupViewModel : BaseViewModel
         ProgressVisibility = Visibility.Hidden;
         OriginalDisplayText = string.Empty;
         BackupDisplayText = string.Empty;
+        isResolving = false;
     }
 
     private async void MergeOriginalAsync(object sender)
     {
+        isResolving = true;
         BackupDisplayText = string.Empty;
         ProgressVisibility = Visibility.Visible;
         ProgressString = "Awaiting authentication";
@@ -329,13 +344,14 @@ public class SyncBackupViewModel : BaseViewModel
 
                     try
                     {
-                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath), true);
+                        await Task.Run(() => File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath), true));
                     }
                     catch (UnauthorizedAccessException)
                     {
                         _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (PathTooLongException)
@@ -343,6 +359,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the file name or folder names.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -350,6 +367,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The backup folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -357,6 +375,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("File Missing", "The file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                 }
@@ -375,6 +394,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (PathTooLongException)
@@ -382,6 +402,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the folder names.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -389,6 +410,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -396,6 +418,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (NullReferenceException)
@@ -403,6 +426,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "A folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                 }
@@ -422,13 +446,14 @@ public class SyncBackupViewModel : BaseViewModel
 
                             try
                             {
-                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
+                                await Task.Run(() => File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)));
                             }
                             catch (UnauthorizedAccessException)
                             {
                                 _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (PathTooLongException)
@@ -436,6 +461,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("Name Too Long", "The name is too long. This also happens when the file is very deep in the folder structure.", DialogButtonGroup.OK, DialogImage.Error);
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (DirectoryNotFoundException)
@@ -443,6 +469,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (FileNotFoundException)
@@ -450,6 +477,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("File Missing", "The file you're trying to rename is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                         }
@@ -464,8 +492,8 @@ public class SyncBackupViewModel : BaseViewModel
                                 OriginalDisplayText = "Renaming file. Please wait!";
                                 ProgressString = "Renaming";
                                 ProgressPercentage = 10;
-                                
-                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath), true);
+
+                                await Task.Run(() => File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath), true));
                             }
                         }
                         catch (UnauthorizedAccessException)
@@ -473,6 +501,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                         catch (PathTooLongException)
@@ -480,6 +509,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Name Too Long", "The name is too long. This also happens when the file is very deep in the folder structure.", DialogButtonGroup.OK, DialogImage.Error);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                         catch (DirectoryNotFoundException)
@@ -487,6 +517,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                         catch (FileNotFoundException)
@@ -494,6 +525,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("File Missing", "The file you're trying to rename is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                         catch (NullReferenceException)
@@ -501,6 +533,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                         }
                     }
                 }
@@ -516,13 +549,14 @@ public class SyncBackupViewModel : BaseViewModel
 
                             try
                             {
-                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
+                                await Task.Run(() => Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)));
                             }
                             catch (UnauthorizedAccessException)
                             {
                                 _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (PathTooLongException)
@@ -530,6 +564,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("Path Too Long", "The destination path is too long.", DialogButtonGroup.OK, DialogImage.Error);
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (DirectoryNotFoundException)
@@ -537,6 +572,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                         }
@@ -552,8 +588,8 @@ public class SyncBackupViewModel : BaseViewModel
                                 ProgressString = "Renaming";
                                 ProgressPercentage = 10;
 
-                                Directory.Delete(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath), true);
-                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath));
+                                await Task.Run(() => Directory.Delete(((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath), true));
+                                await Task.Run(() => Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(BackupPath, OriginalPath)));
                             }
                         }
                         catch (UnauthorizedAccessException)
@@ -561,6 +597,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                         catch (PathTooLongException)
@@ -568,6 +605,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Path Too Long", "The destination path is too long.", DialogButtonGroup.OK, DialogImage.Error);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                         catch (DirectoryNotFoundException)
@@ -575,6 +613,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                         catch (NullReferenceException)
@@ -582,6 +621,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                     }
@@ -602,13 +642,14 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
                         }
 
-                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath), true);
+                        await Task.Run(() => File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(OriginalPath, BackupPath), true));
                     }
                     catch (UnauthorizedAccessException)
                     {
                         _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (PathTooLongException)
@@ -616,6 +657,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the file name or folder names.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -623,6 +665,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -630,6 +673,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("File Missing", "The file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (NullReferenceException)
@@ -637,6 +681,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                 }
@@ -648,13 +693,14 @@ public class SyncBackupViewModel : BaseViewModel
 
                     try
                     {
-                        CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
+                        await CopyFilesRecursivelyAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
                     }
                     catch (UnauthorizedAccessException)
                     {
                         _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (PathTooLongException)
@@ -662,6 +708,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the folder names.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -669,6 +716,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -676,6 +724,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (NullReferenceException)
@@ -683,6 +732,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                 }
@@ -698,8 +748,9 @@ public class SyncBackupViewModel : BaseViewModel
 
         ProgressPercentage = 100;
         ProgressString = "Done";
-        _ = DialogService.ShowDialog("Success", "Done.", DialogButtonGroup.OK, DialogImage.Complete);
+        _ = DialogService.ShowDialog("Success", "Complete.", DialogButtonGroup.OK, DialogImage.Complete);
         ProgressVisibility = Visibility.Hidden;
+        isResolving = false;
     }
 
     private async void MergeBackupAsync(object sender)
@@ -716,13 +767,14 @@ public class SyncBackupViewModel : BaseViewModel
                     BackupDisplayText = "Copying file. Please wait!";
                     try
                     {
-                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath), true);
+                        await Task.Run(() => File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath), true));
                     }
                     catch(UnauthorizedAccessException)
                     {
                         _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (PathTooLongException)
@@ -730,6 +782,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the file name or folder names.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -737,6 +790,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The backup folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -744,6 +798,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("File Missing", "The file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                 }
@@ -762,6 +817,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (PathTooLongException)
@@ -769,6 +825,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the folder names.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -776,6 +833,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -783,6 +841,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (NullReferenceException)
@@ -790,6 +849,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "A folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                 }
@@ -806,13 +866,14 @@ public class SyncBackupViewModel : BaseViewModel
 
                             try
                             {
-                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath));
+                                await Task.Run(() => File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)));
                             }
                             catch (UnauthorizedAccessException)
                             {
                                 _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (PathTooLongException)
@@ -820,6 +881,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("Name Too Long", "The name is too long. This also happens when the file is very deep in the folder structure.", DialogButtonGroup.OK, DialogImage.Error);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (DirectoryNotFoundException)
@@ -827,6 +889,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (FileNotFoundException)
@@ -834,6 +897,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("File Missing", "The file you're trying to rename is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                         }
@@ -847,13 +911,14 @@ public class SyncBackupViewModel : BaseViewModel
 
                             try
                             {
-                                File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath), true);
+                                await Task.Run(() => File.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath), true));
                             }
                             catch (UnauthorizedAccessException)
                             {
                                 _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (PathTooLongException)
@@ -861,6 +926,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("Name Too Long", "The name is too long. This also happens when the file is very deep in the folder structure.", DialogButtonGroup.OK, DialogImage.Error);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (DirectoryNotFoundException)
@@ -868,6 +934,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (FileNotFoundException)
@@ -875,6 +942,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("File Missing", "The file you're trying to rename is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                         }
@@ -890,13 +958,14 @@ public class SyncBackupViewModel : BaseViewModel
 
                             try
                             {
-                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath));
+                                await Task.Run(() => Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)));
                             }
                             catch (UnauthorizedAccessException)
                             {
                                 _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (PathTooLongException)
@@ -904,6 +973,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("Path Too Long", "The destination path is too long.", DialogButtonGroup.OK, DialogImage.Error);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                             catch (DirectoryNotFoundException)
@@ -911,6 +981,7 @@ public class SyncBackupViewModel : BaseViewModel
                                 _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
                                 return;
                             }
                         }
@@ -924,8 +995,8 @@ public class SyncBackupViewModel : BaseViewModel
                             {
                                 OriginalDisplayText = "Renaming folder. Please wait!";
 
-                                Directory.Delete(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath), true);
-                                Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath));
+                                await Task.Run(() => Directory.Delete(((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath), true));
+                                await Task.Run(() => Directory.Move(((PathItem)sender).Item.FullName, ((PathItem)sender).DifferentPath.Replace(OriginalPath, BackupPath)));
                             }
                         }
                         catch (UnauthorizedAccessException)
@@ -933,6 +1004,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
                             BackupDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                         catch (PathTooLongException)
@@ -940,6 +1012,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Path Too Long", "The destination path is too long.", DialogButtonGroup.OK, DialogImage.Error);
                             BackupDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                         catch (DirectoryNotFoundException)
@@ -947,6 +1020,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                             BackupDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                         catch (NullReferenceException)
@@ -954,6 +1028,7 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                             BackupDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
                             return;
                         }
                     }
@@ -971,13 +1046,14 @@ public class SyncBackupViewModel : BaseViewModel
                             _ = Directory.CreateDirectory(((PathItem)sender).Item.Parent.ToString().Replace(OriginalPath, BackupPath));
                         }
 
-                        File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath), true);
+                        await Task.Run(() => File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath), true));
                     }
                     catch (UnauthorizedAccessException)
                     {
                         _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (PathTooLongException)
@@ -985,6 +1061,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Path Too Long", "The destination path is too long.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -992,6 +1069,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (NullReferenceException)
@@ -999,6 +1077,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                 }
@@ -1007,13 +1086,14 @@ public class SyncBackupViewModel : BaseViewModel
                     BackupDisplayText = "Copying. Please wait!";
                     try
                     {
-                        CopyFilesRecursively(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(BackupPath, OriginalPath));
+                        await CopyFilesRecursivelyAsync(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.Parent.ToString().Replace(BackupPath, OriginalPath));
                     }
                     catch (UnauthorizedAccessException)
                     {
                         _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (PathTooLongException)
@@ -1021,6 +1101,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the folder names.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -1028,6 +1109,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -1035,6 +1117,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                     catch (NullReferenceException)
@@ -1042,6 +1125,7 @@ public class SyncBackupViewModel : BaseViewModel
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
                         return;
                     }
                 }
@@ -1057,20 +1141,23 @@ public class SyncBackupViewModel : BaseViewModel
 
         ProgressPercentage = 100;
         ProgressString = "Done";
-        _ = DialogService.ShowDialog("Success", "Done.", DialogButtonGroup.OK, DialogImage.Complete);
+        _ = DialogService.ShowDialog("Success", "Complete.", DialogButtonGroup.OK, DialogImage.Complete);
         ProgressVisibility = Visibility.Hidden;
+        isResolving = false;
     }
 
     private async void Delete(object sender)
     {
+        isResolving = true;
+        string tempOriginalDisplayText = OriginalDisplayText;
+        string tempBackupDisplayText = BackupDisplayText;
+
         if (Equals(((PathItem)sender).Item.Parent.ToString(), LastOriginalPath))
         {
             OriginalDisplayText = "Deleting. Please wait!";
-            BackupDisplayText = string.Empty;
         }
         else
         {
-            OriginalDisplayText = string.Empty;
             BackupDisplayText = "Deleting. Please wait!";
         }
 
@@ -1083,13 +1170,56 @@ public class SyncBackupViewModel : BaseViewModel
             ProgressString = $"Deleting {((PathItem)sender).Item.FullName}";
             ProgressPercentage = 20;
 
-            if (((PathItem)sender).IsFile)
+            try
             {
-                await Task.Run(() => File.Delete(((PathItem)sender).Item.FullName));
+                if (((PathItem)sender).IsFile)
+                {
+                    await Task.Run(() => File.Delete(((PathItem)sender).Item.FullName));
+                }
+                else
+                {
+                    await Task.Run(() => Directory.Delete(((PathItem)sender).Item.FullName, true));
+                }
             }
-            else
+            catch (UnauthorizedAccessException)
             {
-                await Task.Run(() => Directory.Delete(((PathItem)sender).Item.FullName, true));
+                _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file/folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                BackupDisplayText = string.Empty;
+                ProgressVisibility = Visibility.Hidden;
+                isResolving = false;
+                return;
+            }
+            catch (PathTooLongException)
+            {
+                _ = DialogService.ShowDialog("Path Too Long", "The path is too long. Try shortening the file or folder names.", DialogButtonGroup.OK, DialogImage.Error);
+                BackupDisplayText = string.Empty;
+                ProgressVisibility = Visibility.Hidden;
+                isResolving = false;
+                return;
+            }
+            catch (DirectoryNotFoundException)
+            {
+                _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                BackupDisplayText = string.Empty;
+                ProgressVisibility = Visibility.Hidden;
+                isResolving = false;
+                return;
+            }
+            catch (FileNotFoundException)
+            {
+                _ = DialogService.ShowDialog("File Missing", "A file you're trying to delete is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                BackupDisplayText = string.Empty;
+                ProgressVisibility = Visibility.Hidden;
+                isResolving = false;
+                return;
+            }
+            catch (NullReferenceException)
+            {
+                _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                BackupDisplayText = string.Empty;
+                ProgressVisibility = Visibility.Hidden;
+                isResolving = false;
+                return;
             }
 
             ProgressString = "Verifying";
@@ -1105,13 +1235,14 @@ public class SyncBackupViewModel : BaseViewModel
         ProgressString = string.Empty;
         ProgressVisibility = Visibility.Hidden;
 
-        OriginalDisplayText = string.Empty;
-        BackupDisplayText = string.Empty;
+        OriginalDisplayText = tempOriginalDisplayText;
+        BackupDisplayText = tempBackupDisplayText;
+        isResolving = false;
     }
 
     private async void ExpandOriginal(object sender)
     {
-        if (sender == null)
+        if (sender is null || isResolving)
         {
             return;
         }
@@ -1141,7 +1272,7 @@ public class SyncBackupViewModel : BaseViewModel
 
     private async void ExpandBackup(object sender)
     {
-        if (sender == null)
+        if (sender == null || isResolving)
         {
             return;
         }
@@ -1171,6 +1302,11 @@ public class SyncBackupViewModel : BaseViewModel
 
     private bool CanClear(object sender)
     {
+        if (isResolving)
+        {
+            return false;
+        }
+
         if (OriginalDisplayText == textIntroMessage
             && string.IsNullOrWhiteSpace(BackupDisplayText)
             && string.IsNullOrWhiteSpace(OriginalPath)
@@ -1223,6 +1359,11 @@ public class SyncBackupViewModel : BaseViewModel
 
     private bool CanBack(object sender)
     {
+        if (isResolving)
+        {
+            return false;
+        }
+
         return (!string.IsNullOrEmpty(LastOriginalPath) || !string.IsNullOrEmpty(LastBackupPath))
             && string.Concat(LastOriginalPath.AsSpan(0, LastOriginalPath.LastIndexOf("\\")), "\\") != new DirectoryInfo(LastOriginalPath).Root.ToString() &&
             string.Concat(LastBackupPath.AsSpan(0, LastBackupPath.LastIndexOf("\\")), "\\") != new DirectoryInfo(LastBackupPath).Root.ToString();
@@ -1238,12 +1379,22 @@ public class SyncBackupViewModel : BaseViewModel
 
     private bool CanRefresh(object sender)
     {
+        if (isResolving)
+        {
+            return false;
+        }
+
         return !string.IsNullOrEmpty(LastOriginalPath) && !string.IsNullOrEmpty(LastBackupPath);
     }
 
     private async void Refresh(object sender)
     {
         await ScanAsync(LastOriginalPath, LastBackupPath);
+    }
+
+    private bool CanPerformMenuTasks(object sender)
+    {
+        return !isResolving;
     }
 
     private void Settings(object sender)
@@ -1632,12 +1783,12 @@ public class SyncBackupViewModel : BaseViewModel
     /// </summary>
     /// <param name="originalPath"></param>
     /// <param name="backupPath"></param>
-    private static void CopyFilesRecursively(string originalPath, string backupPath)
+    private static async Task CopyFilesRecursivelyAsync(string originalPath, string backupPath)
     {
         // Creates all of the directories
         if (Directory.Exists(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath)))
         {
-            Directory.Delete(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath), true);
+            await Task.Run(() => Directory.Delete(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath), true));
         }
 
         _ = Directory.CreateDirectory(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath));
@@ -1649,7 +1800,7 @@ public class SyncBackupViewModel : BaseViewModel
         // Copies all the files & Replaces any files with the same name
         foreach (string newPath in Directory.GetFiles(originalPath, "*.*", SearchOption.AllDirectories))
         {
-            File.Copy(newPath, newPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath), true);
+            await Task.Run(() => File.Copy(newPath, newPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath), true));
         }
     }
 
@@ -1721,7 +1872,7 @@ public class SyncBackupViewModel : BaseViewModel
             }
             else
             {
-                await Task.Run(() => CopyFilesRecursively(sDir, backupPath));
+                await CopyFilesRecursivelyAsync(sDir, backupPath);
             }
         }
     }
