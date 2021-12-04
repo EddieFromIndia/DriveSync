@@ -13,13 +13,16 @@
   <ItemGroup>
     <None Remove="Assets\arrow-up-disabled.png" />
     <None Remove="Assets\arrow-up.png" />
+    <None Remove="Assets\back-to-home.png" />
     <None Remove="Assets\back.png" />
+    <None Remove="Assets\backup.png" />
     <None Remove="Assets\clear.png" />
     <None Remove="Assets\close-black.png" />
     <None Remove="Assets\close.png" />
     <None Remove="Assets\copy-left.png" />
     <None Remove="Assets\copy-right.png" />
     <None Remove="Assets\delete.png" />
+    <None Remove="Assets\dialog-caution.png" />
     <None Remove="Assets\dialog-complete.png" />
     <None Remove="Assets\dialog-delete.png" />
     <None Remove="Assets\dialog-error.png" />
@@ -28,6 +31,7 @@
     <None Remove="Assets\dialog-forbidden.png" />
     <None Remove="Assets\dialog-info.png" />
     <None Remove="Assets\dialog-locked.png" />
+    <None Remove="Assets\dialog-warning.png" />
     <None Remove="Assets\file-android.png" />
     <None Remove="Assets\file-archive.png" />
     <None Remove="Assets\file-audio.png" />
@@ -64,6 +68,7 @@
     <None Remove="Assets\restore.png" />
     <None Remove="Assets\scan.png" />
     <None Remove="Assets\settings.png" />
+    <None Remove="Assets\sync.png" />
     <None Remove="Assets\tutorial.png" />
     <None Remove="Assets\unlink.png" />
     <None Remove="Assets\update.png" />
@@ -77,7 +82,13 @@
     <Resource Include="Assets\arrow-up.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\back-to-home.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\back.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\backup.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\clear.png">
@@ -96,6 +107,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\delete.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dialog-caution.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\dialog-complete.png">
@@ -120,6 +134,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\dialog-locked.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\dialog-warning.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\file-android.png">
@@ -230,6 +247,9 @@
     <Resource Include="Assets\settings.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\sync.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\tutorial.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -262,6 +282,21 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\HomeWindow.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\MainView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Views\BackupView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 
 </Project>

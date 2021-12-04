@@ -33,6 +33,7 @@ public partial class DialogWindow : Window
             Enums.DialogImage.Info => "info",
             Enums.DialogImage.Error => "error",
             Enums.DialogImage.Forbidden => "forbidden",
+            Enums.DialogImage.Warning => "warning",
             Enums.DialogImage.Locked => "locked",
             Enums.DialogImage.File => "file",
             Enums.DialogImage.Folder => "folder",

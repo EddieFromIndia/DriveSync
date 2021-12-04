@@ -1,12 +1,8 @@
 ﻿namespace DriveSync.ViewModels;
 
-public class SyncBackupViewModel : BaseViewModel
+public class SyncViewModel : BaseViewModel
 {
     #region Private Properties
-    private readonly Window syncBackupWindow;
-    private int outerMargin = 10;
-    private int windowRadius = 8;
-
     private static readonly string textIntroMessage = "Choose Original and Backup directories...";
     private ObservableCollection<PathItem> OriginalDirectories = new();
     private ObservableCollection<PathItem> BackupDirectories = new();
@@ -15,17 +11,6 @@ public class SyncBackupViewModel : BaseViewModel
     #endregion
 
     #region Public Properties
-    public int OuterMargin {
-        get => syncBackupWindow.WindowState == WindowState.Maximized ? 0 : outerMargin;
-        set => outerMargin = value;
-    }
-    public Thickness OuterMarginThickness => new(OuterMargin);
-    public int WindowRadius {
-        get => syncBackupWindow.WindowState == WindowState.Maximized ? 0 : windowRadius;
-        set => windowRadius = value;
-    }
-    public CornerRadius WindowCornerRadius => new(WindowRadius);
-
     public ObservableCollection<PathItem> OriginalDirectoriesToDisplay { get; set; } = new();
     public ObservableCollection<PathItem> BackupDirectoriesToDisplay { get; set; } = new();
     public string OriginalDisplayText { get; set; } = textIntroMessage;
@@ -44,13 +29,7 @@ public class SyncBackupViewModel : BaseViewModel
     #endregion
 
     #region Command Declarations
-    public ICommand CloseButton_Click { get; set; }
-    public ICommand MaximizeButton_Click { get; set; }
-    public ICommand MinimizeButton_Click { get; set; }
-    public ICommand Header_Click { get; set; }
-    public ICommand Header_DoubleClick { get; set; }
-    public ICommand Header_RightClick { get; set; }
-
+    public ICommand HomeButton_Click { get; set; }
     public ICommand BrowseButton_Click { get; set; }
     public ICommand ScanButton_Click { get; set; }
     public ICommand AutoResolveButton_Click { get; set; }
@@ -71,19 +50,10 @@ public class SyncBackupViewModel : BaseViewModel
     #endregion
 
     #region Constructor
-    public SyncBackupViewModel(Window window)
+    public SyncViewModel()
     {
-        syncBackupWindow = window;
-
-        // Window State changed event handler
-        syncBackupWindow.StateChanged += (sender, e) => {
-            OnPropertyChanged(nameof(OuterMargin));
-            OnPropertyChanged(nameof(OuterMarginThickness));
-            OnPropertyChanged(nameof(WindowRadius));
-            OnPropertyChanged(nameof(WindowCornerRadius));
-        };
-
         // Command defintions
+        HomeButton_Click = new Command(Home);
         BrowseButton_Click = new Command(Browse);
         ScanButton_Click = new Command(Scan, CanScanOrResolve);
         AutoResolveButton_Click = new Command(AutoResolve, CanScanOrResolve);
@@ -101,18 +71,16 @@ public class SyncBackupViewModel : BaseViewModel
         UpdateButton_Click = new Command(CheckForUpdates, CanPerformMenuTasks);
         TutorialButton_Click = new Command(Tutorial);
         Link_Click = new Command(ToggleLink);
-
-        CloseButton_Click = new Command(CloseWindow);
-        MaximizeButton_Click = new Command(MaximizeWindow);
-        MinimizeButton_Click = new Command(MinimizeWindow);
-        Header_Click = new Command(MoveWindow);
-        Header_DoubleClick = new Command(HeaderDoubleClick);
-        Header_RightClick = new Command(ShowSystemMenu);
     }
 
     #endregion
 
     #region Command Implementations
+    private void Home(object sender)
+    {
+        ViewModelService.CurrentViewModel.BackToHome();
+    }
+
     private void Browse(object sender)
     {
         string TempPath = string.Empty;
@@ -1170,7 +1138,7 @@ public class SyncBackupViewModel : BaseViewModel
         ProgressString = "Awaiting authentication";
         ProgressPercentage = 0;
 
-        if (DialogService.ShowDialog("Delete Confirmation", $"This will delete {((PathItem)sender).Item.Name}! Are you sure?", DialogButtonGroup.YesNo, DialogImage.Delete) == DialogResult.Yes)
+        if (DialogService.ShowDialog("Delete Confirmation", $"This will delete {((PathItem)sender).Item.Name}! Are you sure?", DialogButtonGroup.YesNo, DialogImage.Warning) == DialogResult.Yes)
         {
             ProgressString = $"Deleting {((PathItem)sender).Item.FullName}";
             ProgressPercentage = 20;
@@ -1415,70 +1383,6 @@ public class SyncBackupViewModel : BaseViewModel
     private void Tutorial(object sender)
     {
 
-    }
-
-    /// <summary>
-    /// Closes the window
-    /// </summary>
-    /// <param name="window"></param>
-    private void CloseWindow(object window)
-    {
-        if (isResolving)
-        {
-            if (DialogService.ShowDialog("Warning", "A sync process is running. You might lose data if you close this application now. Do you want to proceed anyway?", DialogButtonGroup.YesNoCancel, DialogImage.Error) == DialogResult.Yes)
-            {
-                ((Window)window).Close();
-            }
-        }
-        else
-        {
-            ((Window)window).Close();
-        }
-    }
-
-    /// <summary>
-    /// Maximizes or restores the window
-    /// </summary>
-    /// <param name="window"></param>
-    private void MaximizeWindow(object window)
-    {
-        ((Window)window).WindowState ^= WindowState.Maximized;
-    }
-
-    /// <summary>
-    /// Minimizes the window
-    /// </summary>
-    /// <param name="window"></param>
-    private void MinimizeWindow(object window)
-    {
-        ((Window)window).WindowState = WindowState.Minimized;
-    }
-
-    /// <summary>
-    /// Maximizes or restores the window
-    /// </summary>
-    /// <param name="window"></param>
-    private void HeaderDoubleClick(object window)
-    {
-        ((Window)window).WindowState ^= WindowState.Maximized;
-    }
-
-    /// <summary>
-    /// Moves the window
-    /// </summary>
-    /// <param name="window"></param>
-    private void MoveWindow(object window)
-    {
-        ((Window)window).DragMove();
-    }
-
-    /// <summary>
-    /// Shows system menu on right click at the header.
-    /// </summary>
-    /// <param name="window"></param>
-    private void ShowSystemMenu(object window)
-    {
-        SystemCommands.ShowSystemMenu((Window)window, GetMousePosition((Window)window));
     }
     #endregion
 
@@ -1944,18 +1848,6 @@ public class SyncBackupViewModel : BaseViewModel
     private static bool IsDirectoryEmpty(string path)
     {
         return !Directory.EnumerateFileSystemEntries(path).Any();
-    }
-
-    /// <summary>
-    /// Gets the mouse position on the screen when the method is called. 
-    /// </summary>
-    /// <param name="window"></param>
-    /// <returns>the mouse position.</returns>
-    private static Point GetMousePosition(Window window)
-    {
-        Point position = Mouse.GetPosition(window);
-
-        return window.WindowState == WindowState.Maximized ? position : new Point(position.X + window.Left, position.Y + window.Top);
     }
     #endregion
 }

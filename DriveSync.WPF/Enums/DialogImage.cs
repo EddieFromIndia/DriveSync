@@ -6,6 +6,7 @@ public enum DialogImage
     Info,
     Error,
     Forbidden,
+    Warning,
     Locked,
     File,
     Folder,
