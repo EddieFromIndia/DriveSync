@@ -339,7 +339,7 @@
                                         Style="{DynamicResource ManualResolveButton}"
                                         Command="{Binding DataContext.DeleteButton_Click,
                                                   RelativeSource={RelativeSource FindAncestor,
-                                                  AncestorType={x:Type Window}}}"
+                                                  AncestorType={x:Type UserControl}}}"
                                         CommandParameter="{Binding}"
                                         ToolTipService.InitialShowDelay="500"
                                         ToolTipService.BetweenShowDelay="500"
@@ -354,7 +354,7 @@
                                         Style="{DynamicResource ManualResolveButton}"
                                         Command="{Binding DataContext.MergeOriginal_Click,
                                                   RelativeSource={RelativeSource FindAncestor,
-                                                  AncestorType={x:Type Window}}}"
+                                                  AncestorType={x:Type UserControl}}}"
                                         CommandParameter="{Binding}"
                                         ToolTipService.InitialShowDelay="500"
                                         ToolTipService.BetweenShowDelay="500"
@@ -451,7 +451,7 @@
                                         Style="{DynamicResource ManualResolveButton}"
                                         Command="{Binding DataContext.MergeBackup_Click,
                                                   RelativeSource={RelativeSource FindAncestor,
-                                                  AncestorType={x:Type Window}}}"
+                                                  AncestorType={x:Type UserControl}}}"
                                         CommandParameter="{Binding}"
                                         ToolTipService.InitialShowDelay="500"
                                         ToolTipService.BetweenShowDelay="500"
@@ -469,7 +469,7 @@
                                         Style="{DynamicResource ManualResolveButton}"
                                         Command="{Binding DataContext.DeleteButton_Click,
                                                   RelativeSource={RelativeSource FindAncestor,
-                                                  AncestorType={x:Type Window}}}"
+                                                  AncestorType={x:Type UserControl}}}"
                                         CommandParameter="{Binding}"
                                         ToolTipService.InitialShowDelay="500"
                                         ToolTipService.BetweenShowDelay="500"
