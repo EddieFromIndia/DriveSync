@@ -41,7 +41,7 @@ public class HomeViewModel : BaseViewModel
     {
         homeWindow = window;
 
-        ViewModelService.CurrentViewModel = this;
+        ViewModelService.Home = this;
         SelectedViewModel = new MainViewModel();
 
         // Window State changed event handler
@@ -68,10 +68,15 @@ public class HomeViewModel : BaseViewModel
 
     #endregion
 
-    #region Command Implementations
+    #region Navigation Methods
     public void Backup()
     {
-        SelectedViewModel = new SyncViewModel();
+        SelectedViewModel = new BackupViewModel();
+    }
+
+    public void BackupProcessing(ObservableCollection<BackupJobModel> jobs)
+    {
+        SelectedViewModel = new BackupProcessingViewModel(jobs);
     }
 
     public void Sync()
@@ -83,7 +88,9 @@ public class HomeViewModel : BaseViewModel
     {
         SelectedViewModel = new MainViewModel();
     }
+    #endregion
 
+    #region Command Implementations
     private void Settings(object sender)
     {
 
@@ -105,7 +112,36 @@ public class HomeViewModel : BaseViewModel
     /// <param name="window"></param>
     private void CloseWindow(object window)
     {
-        ((Window)window).Close();
+        switch (OperationService.OperationType)
+        {
+            case OperationType.None:
+                ((Window)window).Close();
+                break;
+            case OperationType.Backup:
+                if (DialogService.ShowDialog("Warning", "A backup operation is running. Closing the application may result in the loss of data. Are you sure you want to close the application?", DialogButtonGroup.YesNoCancel, DialogImage.Warning) == DialogResult.Yes)
+                {
+                    ((Window)window).Close();
+                }
+                break;
+            case OperationType.Restore:
+                if (DialogService.ShowDialog("Warning", "A restore operation is running. Closing the application may result in the loss of data. Are you sure you want to close the application?", DialogButtonGroup.YesNoCancel, DialogImage.Warning) == DialogResult.Yes)
+                {
+                    ((Window)window).Close();
+                }
+                break;
+            case OperationType.Sync:
+                if (DialogService.ShowDialog("Warning", "A sync operation is running. Closing the application may result in the loss of data. Are you sure you want to close the application?", DialogButtonGroup.YesNoCancel, DialogImage.Warning) == DialogResult.Yes)
+                {
+                    ((Window)window).Close();
+                }
+                break;
+            case OperationType.Delete:
+                if (DialogService.ShowDialog("Warning", "A delete operation is running. Closing the application may result in the loss of data. Are you sure you want to close the application?", DialogButtonGroup.YesNoCancel, DialogImage.Warning) == DialogResult.Yes)
+                {
+                    ((Window)window).Close();
+                }
+                break;
+        }
     }
 
     /// <summary>

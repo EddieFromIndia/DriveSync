@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:view="clr-namespace:DriveSync.Views"
         xmlns:vm="clr-namespace:DriveSync.ViewModels"
         xmlns:converter="clr-namespace:DriveSync.Converters"
@@ -19,6 +18,12 @@
     <Window.Resources>
         <DataTemplate x:Name="MainViewTemplate" DataType="{x:Type vm:MainViewModel}">
             <view:MainView DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate x:Name="BackupViewTemplate" DataType="{x:Type vm:BackupViewModel}">
+            <view:BackupView DataContext="{Binding}" />
+        </DataTemplate>
+        <DataTemplate x:Name="BackupProcessingViewTemplate" DataType="{x:Type vm:BackupProcessingViewModel}">
+            <view:BackupProcessingView DataContext="{Binding}" />
         </DataTemplate>
         <DataTemplate x:Name="SyncViewTemplate" DataType="{x:Type vm:SyncViewModel}">
             <view:SyncView DataContext="{Binding}" />
@@ -157,14 +162,13 @@
                                                         CommandParameter="{Binding RelativeSource={RelativeSource
                                                                                                    Mode=FindAncestor,
                                                                                                    AncestorType={x:Type Window}}}">
-                                                    <Image Source="{Binding RelativeSource={RelativeSource
-                                                                                            Mode=FindAncestor,
-                                                                                            AncestorType={x:Type Window}},
-                                                                    Converter={x:Static converter:WindowStateToImageConverter.Instance},
-                                                                    ConverterParameter='close',
-                                                                    Path=WindowState,
-                                                                    Mode=OneWay}"
-                                                           Height="16" />
+                                                    <Grid Width="11">
+                                                        <Path Data="M29.916016,0L31.999023,2.0700073 17.988037,16 32,29.930054 29.91803,
+                                                              32 15.905029,18.070007 2.0820313,31.812012 0,29.742004 13.822998,
+                                                              16 0.0010375977,2.2590332 2.0840454,0.18902588 15.905029,13.929016z"
+                                                              Style="{DynamicResource PathStyle}"
+                                                              Stretch="Uniform" />
+                                                    </Grid>
                                                 </Button>
                                             </Grid>
                                         </StackPanel>

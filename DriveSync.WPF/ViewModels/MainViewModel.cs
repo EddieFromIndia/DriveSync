@@ -23,12 +23,12 @@ public class MainViewModel : BaseViewModel
     #region Command Implementations
     private void Backup(object sender)
     {
-        ViewModelService.CurrentViewModel.Backup();
+        ViewModelService.Home.Backup();
     }
 
     private void Sync(object sender)
     {
-        ViewModelService.CurrentViewModel.Sync();
+        ViewModelService.Home.Sync();
     }
     #endregion
 }

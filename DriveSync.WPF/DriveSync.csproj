@@ -15,12 +15,14 @@
     <None Remove="Assets\arrow-up.png" />
     <None Remove="Assets\back-to-home.png" />
     <None Remove="Assets\back.png" />
+    <None Remove="Assets\backup-image.png" />
     <None Remove="Assets\backup.png" />
     <None Remove="Assets\clear.png" />
     <None Remove="Assets\close-black.png" />
     <None Remove="Assets\close.png" />
     <None Remove="Assets\copy-left.png" />
     <None Remove="Assets\copy-right.png" />
+    <None Remove="Assets\create-backup.png" />
     <None Remove="Assets\delete.png" />
     <None Remove="Assets\dialog-caution.png" />
     <None Remove="Assets\dialog-complete.png" />
@@ -64,10 +66,12 @@
     <None Remove="Assets\refresh.png" />
     <None Remove="Assets\rename.png" />
     <None Remove="Assets\resolve.png" />
+    <None Remove="Assets\restore-backup.png" />
     <None Remove="Assets\restore-black.png" />
     <None Remove="Assets\restore.png" />
     <None Remove="Assets\scan.png" />
     <None Remove="Assets\settings.png" />
+    <None Remove="Assets\sync-backup.png" />
     <None Remove="Assets\sync.png" />
     <None Remove="Assets\tutorial.png" />
     <None Remove="Assets\unlink.png" />
@@ -88,22 +92,22 @@
     <Resource Include="Assets\back.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\backup-image.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\backup.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\clear.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\close-black.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="Assets\close.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
     <Resource Include="Assets\copy-left.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\copy-right.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\create-backup.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\delete.png">
@@ -235,6 +239,9 @@
     <Resource Include="Assets\resolve.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\restore-backup.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\restore-black.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -245,6 +252,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\settings.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\sync-backup.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\sync.png">
@@ -285,6 +295,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\BackupProcessingView.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\HomeWindow.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

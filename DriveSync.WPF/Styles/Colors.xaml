@@ -19,6 +19,7 @@
 
     <SolidColorBrush x:Key="LightSectionBackgroundBrush" Color="White" />
     <SolidColorBrush x:Key="LightAddressAreaBrush" Color="#FFF0F5F7" />
+    <SolidColorBrush x:Key="LightBackupHoverBrush" Color="#FFF8FDFF" />
     
     <SolidColorBrush x:Key="MainButtonDisabledLightBrush" Color="#FF9AA9B8" />
 
@@ -30,7 +31,10 @@
     <SolidColorBrush x:Key="ButtonLightTextBrush" Color="White" />
     <SolidColorBrush x:Key="DisabledButtonLightTextBrush" Color="#FFE8EBEE" />
 
+    <SolidColorBrush x:Key="LightBackupTextBoxBrush" Color="#FFE9F1F7" />
+
     <SolidColorBrush x:Key="LightLineStrokeBrush" Color="#FFBBBAB6" />
+    <SolidColorBrush x:Key="LightPathFillBrush" Color="Black" />
     
     <SolidColorBrush x:Key="LightToolTipBackgroundBrush" Color="White" />
 
@@ -48,6 +52,7 @@
 
     <SolidColorBrush x:Key="DarkSectionBackgroundBrush" Color="#FF202020" />
     <SolidColorBrush x:Key="DarkAddressAreaBrush" Color="#FF2C2C2C" />
+    <SolidColorBrush x:Key="DarkBackupHoverBrush" Color="#FF2C2C2C" />
 
     <SolidColorBrush x:Key="MainButtonDisabledDarkBrush" Color="#FF3C3C3C" />
 
@@ -58,8 +63,11 @@
     <SolidColorBrush x:Key="SecondaryDarkTextBrush" Color="#FFAAAAAA" />
     <SolidColorBrush x:Key="ButtonDarkTextBrush" Color="White" />
     <SolidColorBrush x:Key="DisabledButtonDarkTextBrush" Color="#FF777777" />
+    
+    <SolidColorBrush x:Key="DarkBackupTextBoxBrush" Color="#FF171717" />
 
     <SolidColorBrush x:Key="DarkLineStrokeBrush" Color="#FF636363" />
+    <SolidColorBrush x:Key="DarkPathFillBrush" Color="White" />
 
     <SolidColorBrush x:Key="DarkToolTipBackgroundBrush" Color="#FF777777" />
 

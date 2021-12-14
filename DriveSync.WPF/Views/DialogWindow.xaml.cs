@@ -29,7 +29,7 @@ public partial class DialogWindow : Window
         Body = body;
         string dialogImage = image switch
         {
-            Enums.DialogImage.Complete => "complete",
+            Enums.DialogImage.Success => "complete",
             Enums.DialogImage.Info => "info",
             Enums.DialogImage.Error => "error",
             Enums.DialogImage.Forbidden => "forbidden",

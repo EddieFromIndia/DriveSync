@@ -78,7 +78,7 @@ public class SyncViewModel : BaseViewModel
     #region Command Implementations
     private void Home(object sender)
     {
-        ViewModelService.CurrentViewModel.BackToHome();
+        ViewModelService.Home.BackToHome();
     }
 
     private void Browse(object sender)
@@ -161,6 +161,8 @@ public class SyncViewModel : BaseViewModel
         ProgressString = "Modifying files";
         ProgressPercentage = 10;
 
+        OperationService.OperationType = OperationType.Sync;
+
         try
         {
             switch (ResolveMethod)
@@ -219,7 +221,10 @@ public class SyncViewModel : BaseViewModel
             isResolving = false;
             return;
         }
-
+        finally
+        {
+            OperationService.OperationType = OperationType.None;
+        }
         //await ScanAsync(OriginalPath, BackupPath);
         //ProgressString = "Calculating";
         //ProgressPercentage = 20;
@@ -291,7 +296,7 @@ public class SyncViewModel : BaseViewModel
 
         ProgressString = "Done";
         ProgressPercentage = 100;
-        _ = DialogService.ShowDialog("Success", "Resolve Complete.", DialogButtonGroup.OK, DialogImage.Complete);
+        _ = DialogService.ShowDialog("Success", "Resolve Complete.", DialogButtonGroup.OK, DialogImage.Success);
         ProgressString = string.Empty;
         ProgressVisibility = Visibility.Hidden;
         OriginalDisplayText = string.Empty;
@@ -302,6 +307,7 @@ public class SyncViewModel : BaseViewModel
     private async void MergeOriginalAsync(object sender)
     {
         isResolving = true;
+        OperationService.OperationType = OperationType.Sync;
         BackupDisplayText = string.Empty;
         ProgressVisibility = Visibility.Visible;
         ProgressString = "Awaiting authentication";
@@ -325,6 +331,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (PathTooLongException)
@@ -333,6 +340,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -341,6 +349,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -349,6 +358,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                 }
@@ -368,6 +378,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (PathTooLongException)
@@ -376,6 +387,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -384,6 +396,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -392,6 +405,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (NullReferenceException)
@@ -400,6 +414,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                 }
@@ -427,6 +442,7 @@ public class SyncViewModel : BaseViewModel
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (PathTooLongException)
@@ -435,6 +451,7 @@ public class SyncViewModel : BaseViewModel
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (DirectoryNotFoundException)
@@ -443,6 +460,7 @@ public class SyncViewModel : BaseViewModel
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (FileNotFoundException)
@@ -451,6 +469,7 @@ public class SyncViewModel : BaseViewModel
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                         }
@@ -475,6 +494,7 @@ public class SyncViewModel : BaseViewModel
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                         catch (PathTooLongException)
@@ -483,6 +503,7 @@ public class SyncViewModel : BaseViewModel
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                         catch (DirectoryNotFoundException)
@@ -491,6 +512,7 @@ public class SyncViewModel : BaseViewModel
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                         catch (FileNotFoundException)
@@ -499,6 +521,7 @@ public class SyncViewModel : BaseViewModel
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                         catch (NullReferenceException)
@@ -507,6 +530,7 @@ public class SyncViewModel : BaseViewModel
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                         }
                     }
                 }
@@ -530,6 +554,7 @@ public class SyncViewModel : BaseViewModel
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (PathTooLongException)
@@ -538,6 +563,7 @@ public class SyncViewModel : BaseViewModel
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (DirectoryNotFoundException)
@@ -546,6 +572,7 @@ public class SyncViewModel : BaseViewModel
                                 OriginalDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                         }
@@ -571,6 +598,7 @@ public class SyncViewModel : BaseViewModel
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                         catch (PathTooLongException)
@@ -579,6 +607,7 @@ public class SyncViewModel : BaseViewModel
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                         catch (DirectoryNotFoundException)
@@ -587,6 +616,7 @@ public class SyncViewModel : BaseViewModel
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                         catch (NullReferenceException)
@@ -595,6 +625,7 @@ public class SyncViewModel : BaseViewModel
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                     }
@@ -623,6 +654,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (PathTooLongException)
@@ -631,6 +663,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -639,6 +672,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -647,6 +681,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (NullReferenceException)
@@ -655,6 +690,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                 }
@@ -674,6 +710,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (PathTooLongException)
@@ -682,6 +719,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -690,6 +728,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -698,6 +737,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (NullReferenceException)
@@ -706,6 +746,7 @@ public class SyncViewModel : BaseViewModel
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                 }
@@ -721,9 +762,10 @@ public class SyncViewModel : BaseViewModel
 
         ProgressPercentage = 100;
         ProgressString = "Done";
-        _ = DialogService.ShowDialog("Success", "Complete.", DialogButtonGroup.OK, DialogImage.Complete);
+        _ = DialogService.ShowDialog("Success", "Complete.", DialogButtonGroup.OK, DialogImage.Success);
         ProgressVisibility = Visibility.Hidden;
         isResolving = false;
+        OperationService.OperationType = OperationType.None;
     }
 
     private async void MergeBackupAsync(object sender)
@@ -732,6 +774,7 @@ public class SyncViewModel : BaseViewModel
         ProgressVisibility = Visibility.Visible;
         ProgressString = "Awaiting authentication";
         ProgressPercentage = 0;
+        OperationService.OperationType = OperationType.Sync;
         switch (((PathItem)sender).Status)
         {
             case ItemStatus.ExistsButDifferent:
@@ -748,6 +791,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (PathTooLongException)
@@ -756,6 +800,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -764,6 +809,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -772,6 +818,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                 }
@@ -791,6 +838,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (PathTooLongException)
@@ -799,6 +847,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -807,6 +856,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -815,6 +865,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (NullReferenceException)
@@ -823,6 +874,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                 }
@@ -847,6 +899,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (PathTooLongException)
@@ -855,6 +908,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (DirectoryNotFoundException)
@@ -863,6 +917,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (FileNotFoundException)
@@ -871,6 +926,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                         }
@@ -892,6 +948,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (PathTooLongException)
@@ -900,6 +957,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (DirectoryNotFoundException)
@@ -908,6 +966,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (FileNotFoundException)
@@ -916,6 +975,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                         }
@@ -939,6 +999,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (PathTooLongException)
@@ -947,6 +1008,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                             catch (DirectoryNotFoundException)
@@ -955,6 +1017,7 @@ public class SyncViewModel : BaseViewModel
                                 BackupDisplayText = string.Empty;
                                 ProgressVisibility = Visibility.Hidden;
                                 isResolving = false;
+                                OperationService.OperationType = OperationType.None;
                                 return;
                             }
                         }
@@ -978,6 +1041,7 @@ public class SyncViewModel : BaseViewModel
                             BackupDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                         catch (PathTooLongException)
@@ -986,6 +1050,7 @@ public class SyncViewModel : BaseViewModel
                             BackupDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                         catch (DirectoryNotFoundException)
@@ -994,6 +1059,7 @@ public class SyncViewModel : BaseViewModel
                             BackupDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                         catch (NullReferenceException)
@@ -1002,6 +1068,7 @@ public class SyncViewModel : BaseViewModel
                             BackupDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
+                            OperationService.OperationType = OperationType.None;
                             return;
                         }
                     }
@@ -1027,6 +1094,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (PathTooLongException)
@@ -1035,6 +1103,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -1043,6 +1112,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (NullReferenceException)
@@ -1051,6 +1121,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                 }
@@ -1067,6 +1138,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (PathTooLongException)
@@ -1075,6 +1147,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (DirectoryNotFoundException)
@@ -1083,6 +1156,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (FileNotFoundException)
@@ -1091,6 +1165,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                     catch (NullReferenceException)
@@ -1099,6 +1174,7 @@ public class SyncViewModel : BaseViewModel
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
+                        OperationService.OperationType = OperationType.None;
                         return;
                     }
                 }
@@ -1114,9 +1190,10 @@ public class SyncViewModel : BaseViewModel
 
         ProgressPercentage = 100;
         ProgressString = "Done";
-        _ = DialogService.ShowDialog("Success", "Complete.", DialogButtonGroup.OK, DialogImage.Complete);
+        _ = DialogService.ShowDialog("Success", "Complete.", DialogButtonGroup.OK, DialogImage.Success);
         ProgressVisibility = Visibility.Hidden;
         isResolving = false;
+        OperationService.OperationType = OperationType.None;
     }
 
     private async void Delete(object sender)
@@ -1143,6 +1220,8 @@ public class SyncViewModel : BaseViewModel
             ProgressString = $"Deleting {((PathItem)sender).Item.FullName}";
             ProgressPercentage = 20;
 
+            OperationService.OperationType = OperationType.Delete;
+
             try
             {
                 if (((PathItem)sender).IsFile)
@@ -1160,6 +1239,7 @@ public class SyncViewModel : BaseViewModel
                 BackupDisplayText = string.Empty;
                 ProgressVisibility = Visibility.Hidden;
                 isResolving = false;
+                OperationService.OperationType = OperationType.None;
                 return;
             }
             catch (PathTooLongException)
@@ -1168,6 +1248,7 @@ public class SyncViewModel : BaseViewModel
                 BackupDisplayText = string.Empty;
                 ProgressVisibility = Visibility.Hidden;
                 isResolving = false;
+                OperationService.OperationType = OperationType.None;
                 return;
             }
             catch (DirectoryNotFoundException)
@@ -1176,6 +1257,7 @@ public class SyncViewModel : BaseViewModel
                 BackupDisplayText = string.Empty;
                 ProgressVisibility = Visibility.Hidden;
                 isResolving = false;
+                OperationService.OperationType = OperationType.None;
                 return;
             }
             catch (FileNotFoundException)
@@ -1184,6 +1266,7 @@ public class SyncViewModel : BaseViewModel
                 BackupDisplayText = string.Empty;
                 ProgressVisibility = Visibility.Hidden;
                 isResolving = false;
+                OperationService.OperationType = OperationType.None;
                 return;
             }
             catch (NullReferenceException)
@@ -1192,6 +1275,7 @@ public class SyncViewModel : BaseViewModel
                 BackupDisplayText = string.Empty;
                 ProgressVisibility = Visibility.Hidden;
                 isResolving = false;
+                OperationService.OperationType = OperationType.None;
                 return;
             }
 
@@ -1203,7 +1287,7 @@ public class SyncViewModel : BaseViewModel
             ProgressString = "Done";
             ProgressPercentage = 100;
 
-            _ = DialogService.ShowDialog("Complete", "Deleted successfully.", DialogButtonGroup.OK, DialogImage.Complete);
+            _ = DialogService.ShowDialog("Complete", "Deleted successfully.", DialogButtonGroup.OK, DialogImage.Success);
         }
         ProgressString = string.Empty;
         ProgressVisibility = Visibility.Hidden;
@@ -1211,6 +1295,7 @@ public class SyncViewModel : BaseViewModel
         OriginalDisplayText = tempOriginalDisplayText;
         BackupDisplayText = tempBackupDisplayText;
         isResolving = false;
+        OperationService.OperationType = OperationType.None;
     }
 
     private async void ExpandOriginal(object sender)

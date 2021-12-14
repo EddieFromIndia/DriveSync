@@ -2,5 +2,5 @@
 
 public static class ViewModelService
 {
-    public static HomeViewModel CurrentViewModel;
+    public static HomeViewModel Home;
 }

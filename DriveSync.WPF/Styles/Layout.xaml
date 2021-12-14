@@ -112,6 +112,45 @@
         </Style.Triggers>
     </Style>
 
+    <!--Backup Job Area-->
+    <Style x:Key="BackupJobBackgroundStyle" TargetType="{x:Type Border}">
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
+                <Setter Property="Background" Value="{DynamicResource LightSectionBackgroundBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Background" Value="{DynamicResource DarkSectionBackgroundBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
+    <!--Unscrollable ListView-->
+    <Style x:Key="UnscrollableListViewStyle" TargetType="{x:Type ListView}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListView}">
+                    <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="1" SnapsToDevicePixels="True">
+                        <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Paths-->
+    <Style x:Key="PathStyle" TargetType="{x:Type Path}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Light">
+                <Setter Property="Fill" Value="{DynamicResource LightPathFillBrush}" />
+            </DataTrigger>
+            <DataTrigger Binding="{Binding Source={x:Static properties:Settings.Default}, Path=Theme}" Value="Dark">
+                <Setter Property="Fill" Value="{DynamicResource DarkPathFillBrush}" />
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+
     <!--Scroll Bar Begin-->
     <Style x:Key="ScrollBarLineButton" TargetType="{x:Type RepeatButton}">
         <Setter Property="Visibility" Value="Hidden"/>

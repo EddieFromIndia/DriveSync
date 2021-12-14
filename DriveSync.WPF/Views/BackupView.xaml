@@ -3,10 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:converter="clr-namespace:DriveSync.Converters"
         mc:Ignorable="d">
-    
 
     <Grid>
         <Grid.ColumnDefinitions>
@@ -18,7 +16,10 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="75" /> <!--Menu-->
             <RowDefinition Height="15" /> <!--Padding-->
-            <RowDefinition Height="*" /> <!--Description Area-->
+            <RowDefinition Height="30" /> <!--Heading-->
+            <RowDefinition Height="30" /> <!--Sub-heading-->
+            <RowDefinition Height="15" /> <!--Padding-->
+            <RowDefinition Height="*" /> <!--Main Area-->
             <RowDefinition Height="20" /> <!--Padding-->
             <RowDefinition Height="30" /> <!--Buttons-->
             <RowDefinition Height="10" /> <!--Padding-->
@@ -45,58 +46,6 @@
                     <TextBlock Text="Back To Home" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
                 </StackPanel>
             </Button>
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding RefreshButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Refresh">
-                <StackPanel>
-                    <Image Source="/Assets/refresh.png" Width="28" Margin="4" />
-                    <TextBlock Text="Refresh" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="70"
-                    Margin="0 2 0 0"
-                    Command="{Binding VisibilityButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Show/hide folders and files that have no discrepancies.">
-                <StackPanel>
-                    <Image Width="36" Source="{Binding ShowEqualEntries,
-                                Converter={x:Static converter:BooleanToImageConverter.Instance},
-                                ConverterParameter='visibility'}" />
-                    <TextBlock Text="{Binding ShowEqualEntries,
-                                Converter={x:Static converter:BooleanToTextConverter.Instance},
-                                ConverterParameter='visibility',
-                                FallbackValue='Hide equal files/folders'}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="70"
-                    Margin="0 2 0 0"
-                    Command="{Binding ShowHideEmptyFolderButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Show/hide empty folders">
-                <StackPanel>
-                    <Image Width="36" Source="{Binding ShowEmptyFolder,
-                                Converter={x:Static converter:BooleanToImageConverter.Instance},
-                                ConverterParameter='folder-empty'}" />
-                    <TextBlock Text="{Binding ShowEmptyFolder,
-                                Converter={x:Static converter:BooleanToTextConverter.Instance},
-                                ConverterParameter='folder-empty',
-                                FallbackValue='Hide empty folders'}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-
-            <Line Style="{DynamicResource LineSeparatorStyle}" Margin="20 0 10 0" />
-
             <Button Style="{DynamicResource HeaderButton}"
                     Width="65"
                     Margin="0 2 0 0"
@@ -141,26 +90,217 @@
             </Button>
         </StackPanel>
 
-        <!--Original-->
-        
+        <TextBlock Grid.Column="1" Grid.Row="2" Margin="0 10 0 0" FontSize="16" TextAlignment="Center" Text="Add a new backup job and click on Start Backup." />
+        <TextBlock Grid.Column="1" Grid.Row="3" FontStyle="Italic" VerticalAlignment="Center" TextAlignment="Center" Text="You can add multiple backup jobs at a time." />
+
+        <!--Main Area-->
+        <ScrollViewer Grid.Column="1" Grid.Row="5" VerticalScrollBarVisibility="Auto" Background="Transparent">
+            <StackPanel>
+                <ListView ItemsSource="{Binding Jobs}"
+                          Style="{DynamicResource UnscrollableListViewStyle}"
+                          Background="Transparent"
+                          BorderThickness="0">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            <Setter Property="Margin" Value="0 0 0 15" />
+                            <Setter Property="Focusable" Value="true" />
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                        <ContentPresenter />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Style="{DynamicResource BackupJobBackgroundStyle}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="30" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="40" /> <!--0 Heading-->
+                                        <RowDefinition Height="30" /> <!--1 Original-->
+                                        <RowDefinition Height="20" /> <!--2 Padding-->
+                                        <RowDefinition Height="*" /> <!--3 Backups-->
+                                        <RowDefinition Height="40" /> <!--4 Add Backup Button-->
+                                    </Grid.RowDefinitions>
+
+                                    <Button Grid.Column="4"
+                                            Grid.Row="0"
+                                            Style="{DynamicResource ImageButton}"
+                                            Margin="0 0 12 0"
+                                            Command="{Binding DataContext.DeleteJobButton_Click,
+                                                              RelativeSource={RelativeSource FindAncestor,
+                                                              AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}">
+                                        <Grid Width="11">
+                                            <Path Data="M29.916016,0L31.999023,2.0700073 17.988037,16 32,29.930054 29.91803,
+                                                              32 15.905029,18.070007 2.0820313,31.812012 0,29.742004 13.822998,
+                                                              16 0.0010375977,2.2590332 2.0840454,0.18902588 15.905029,13.929016z"
+                                                              Style="{DynamicResource PathStyle}"
+                                                              Stretch="Uniform" />
+                                        </Grid>
+                                    </Button>
+
+                                    <TextBlock Grid.Column="0"
+                                               Grid.ColumnSpan="5"
+                                               Grid.Row="0"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               FontSize="16"
+                                               TextAlignment="Center"
+                                               Text="{Binding Name}" />
+                            
+                                    <TextBlock Grid.Column="1"
+                                               Grid.Row="1"
+                                               VerticalAlignment="Center"
+                                               Text="Original: " />
+
+                                    <TextBox Grid.Column="2"
+                                             Grid.Row="1"
+                                             HorizontalAlignment="Stretch"
+                                             Style="{DynamicResource BackupTextBoxStyle}"
+                                             VerticalContentAlignment="Center"
+                                             Text="{Binding Original, Mode=OneWay}"
+                                             IsEnabled="False" />
+                                    <Button Grid.Column="3"
+                                            Grid.Row="1"
+                                            Style="{StaticResource ImageButton}"
+                                            Width="30"
+                                            Command="{Binding DataContext.BrowseOriginalButton_Click,
+                                                              RelativeSource={RelativeSource FindAncestor,
+                                                              AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}"
+                                            ToolTipService.InitialShowDelay="500"
+                                            ToolTipService.BetweenShowDelay="500"
+                                            ToolTipService.ShowOnDisabled="True"
+                                            ToolTip="Browse">
+                                        <Image Source="/Assets/folder-open.png" />
+                                    </Button>
+
+                                    <ListView Grid.Column="1"
+                                              Grid.ColumnSpan="3"
+                                              Grid.Row="3"
+                                              ItemsSource="{Binding Backups}"
+                                              Style="{DynamicResource UnscrollableListViewStyle}"
+                                              Background="Transparent"
+                                              BorderThickness="0">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                                <Setter Property="Focusable" Value="true" />
+                                                <Setter Property="Margin" Value="0 0 0 8" />
+                                                <Setter Property="Background" Value="Transparent" />
+                                                <Setter Property="Padding" Value="0" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                            <ContentPresenter />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="80" />
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="80" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="*" />
+                                                    </Grid.RowDefinitions>
+
+                                                    <TextBlock Grid.Column="0"
+                                                               Grid.Row="1"
+                                                               VerticalAlignment="Center"
+                                                               Text="Backup: " />
+
+                                                    <TextBox Grid.Column="1"
+                                                             Grid.Row="1"
+                                                             Style="{DynamicResource BackupTextBoxStyle}"
+                                                             VerticalContentAlignment="Center"
+                                                             Text="{Binding Path, Mode=OneWay}"
+                                                             IsEnabled="False" />
+                                                    <Button Grid.Column="2"
+                                                            Grid.Row="1"
+                                                            Style="{StaticResource ImageButton}"
+                                                            Width="30"
+                                                            Command="{Binding DataContext.BrowseBackupButton_Click,
+                                                                              RelativeSource={RelativeSource FindAncestor,
+                                                                              AncestorType={x:Type UserControl}}}"
+                                                            CommandParameter="{Binding}"
+                                                            ToolTipService.InitialShowDelay="500"
+                                                            ToolTipService.BetweenShowDelay="500"
+                                                            ToolTipService.ShowOnDisabled="True"
+                                                            ToolTip="Browse">
+                                                        <Image Source="/Assets/folder-open.png" />
+                                                    </Button>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+
+                                    <Button Grid.Column="1"
+                                            Grid.ColumnSpan="2"
+                                            Grid.Row="4"
+                                            Style="{DynamicResource AddBackupLocationButton}"
+                                            Content="+ Add another backup location"
+                                            Margin="0 0 0 8"
+                                            HorizontalContentAlignment="Left"
+                                            ToolTipService.InitialShowDelay="500"
+                                            ToolTipService.BetweenShowDelay="500"
+                                            ToolTipService.ShowOnDisabled="True"
+                                            ToolTip="{Binding Path=IsEnabled,
+                                                      RelativeSource={RelativeSource Self},
+                                                      Converter={x:Static converter:EnabledToStringConverter.Instance}}"
+                                            Command="{Binding DataContext.AddBackupButton_Click,
+                                                              RelativeSource={RelativeSource FindAncestor,
+                                                              AncestorType={x:Type UserControl}}}"
+                                            CommandParameter="{Binding}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <Button Content="+ Add another backup job"
+                        Style="{DynamicResource AddBackupJobButton}"
+                        HorizontalContentAlignment="Left"
+                        Height="35"
+                        Padding="20 0 0 0"
+                        Command="{Binding AddJobButton_Click}" />
+            </StackPanel>
+        </ScrollViewer>
+
+
         <!--Main Button Area-->
         <StackPanel Grid.Column="1"
                     Grid.Row="7"
-                    Grid.ColumnSpan="3"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
             <Button Style="{DynamicResource GeneralButton}"
                     Width="100"
                     Margin="0 0 20 0"
-                    Command="{Binding ScanButton_Click}"
+                    Command="{Binding BackupButton_Click}"
                     IsDefault="True"
                     ToolTipService.InitialShowDelay="500"
                     ToolTipService.BetweenShowDelay="500"
                     ToolTipService.ShowOnDisabled="True"
-                    ToolTip="{Binding RelativeSource={x:Static RelativeSource.Self},
-                            Converter={x:Static converter:ButtonEnabledToStringConverter.Instance},
-                            ConverterParameter='Compare the original and backup for discrepancies (Enter).',
-                            Path=IsEnabled, Mode=OneWay}"
+                    ToolTip="Start backing up all the jobs (Enter)."
                     Content="Start Backup" />
 
             <Button Style="{DynamicResource GeneralButton}"
@@ -173,23 +313,6 @@
                     ToolTip="Clear jobs (Esc)."
                     Content="Clear" />
 
-        </StackPanel>
-
-        <StackPanel Grid.Column="3"
-                    Grid.Row="9"
-                    Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    VerticalAlignment="Center"
-                    Visibility="{Binding ProgressVisibility}">
-
-            <TextBlock Text="{Binding ProgressString}"
-                       Margin="0 0 10 0"
-                       FontSize="11" />
-            <ProgressBar Width="120"
-                         Height="16"
-                         Minimum="0"
-                         Maximum="100"
-                         Value="{Binding ProgressPercentage}" />
         </StackPanel>
     </Grid>
 </UserControl>
