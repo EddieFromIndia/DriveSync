@@ -8,6 +8,7 @@ public class MainViewModel : BaseViewModel
     #region Command Declarations
     public ICommand BackupButton_Click { get; set; }
     public ICommand SyncButton_Click { get; set; }
+    public ICommand RestoreButton_Click { get; set; }
     #endregion
 
     #region Constructor
@@ -16,6 +17,7 @@ public class MainViewModel : BaseViewModel
         // Command defintions
         BackupButton_Click = new Command(Backup);
         SyncButton_Click = new Command(Sync);
+        RestoreButton_Click = new Command(Restore);
     }
 
     #endregion
@@ -29,6 +31,11 @@ public class MainViewModel : BaseViewModel
     private void Sync(object sender)
     {
         ViewModelService.Home.Sync();
+    }
+
+    private void Restore(object sender)
+    {
+        ViewModelService.Home.Restore();
     }
     #endregion
 }

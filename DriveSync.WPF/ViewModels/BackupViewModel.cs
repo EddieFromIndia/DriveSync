@@ -165,6 +165,11 @@ public class BackupViewModel : BaseViewModel
     private void DeleteJob(object sender)
     {
         Jobs.Remove(sender as BackupJobModel);
+
+        if (Jobs.Count == 0)
+        {
+            AddJob(null);
+        }
     }
 
     private void AddBackup(object sender)
@@ -174,7 +179,20 @@ public class BackupViewModel : BaseViewModel
 
     private void DeleteBackup(object sender)
     {
+        (int, int) path = (0, 0);
 
+        for (int i = 0; i < Jobs.Count; i++)
+        {
+            for (int j = 0; j < Jobs[i].Backups.Count; j++)
+            {
+                if (sender as BackupPathModel == Jobs[i].Backups[j])
+                {
+                    path = (i, j);
+                }
+            }
+        }
+
+        Jobs[path.Item1].Backups.RemoveAt(path.Item2);
     }
 
     private bool CanClear(object sender)

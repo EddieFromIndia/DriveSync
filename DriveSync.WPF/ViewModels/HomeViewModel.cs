@@ -84,6 +84,11 @@ public class HomeViewModel : BaseViewModel
         SelectedViewModel = new SyncViewModel();
     }
 
+    public void Restore()
+    {
+        SelectedViewModel = new RestoreViewModel();
+    }
+
     public void BackToHome()
     {
         SelectedViewModel = new MainViewModel();

@@ -3,7 +3,7 @@
 public class SyncViewModel : BaseViewModel
 {
     #region Private Properties
-    private static readonly string textIntroMessage = "Choose Original and Backup directories...";
+    private static readonly string textIntroMessage = "Choose Original and Backup folders.";
     private ObservableCollection<PathItem> OriginalDirectories = new();
     private ObservableCollection<PathItem> BackupDirectories = new();
 

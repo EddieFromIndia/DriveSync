@@ -8,7 +8,5 @@ public partial class BackupView : UserControl
     public BackupView()
     {
         InitializeComponent();
-
-        DataContext = new BackupViewModel();
     }
 }

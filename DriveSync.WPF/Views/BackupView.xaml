@@ -137,7 +137,7 @@
 
                                     <Button Grid.Column="4"
                                             Grid.Row="0"
-                                            Style="{DynamicResource ImageButton}"
+                                            Style="{DynamicResource DeleteJobButton}"
                                             Margin="0 0 12 0"
                                             Command="{Binding DataContext.DeleteJobButton_Click,
                                                               RelativeSource={RelativeSource FindAncestor,
@@ -189,7 +189,7 @@
                                     </Button>
 
                                     <ListView Grid.Column="1"
-                                              Grid.ColumnSpan="3"
+                                              Grid.ColumnSpan="4"
                                               Grid.Row="3"
                                               ItemsSource="{Binding Backups}"
                                               Style="{DynamicResource UnscrollableListViewStyle}"
@@ -213,11 +213,12 @@
                                         </ListView.ItemContainerStyle>
                                         <ListView.ItemTemplate>
                                             <DataTemplate>
-                                                <Grid>
+                                                <Grid Background="Transparent">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="80" />
                                                         <ColumnDefinition Width="*" />
                                                         <ColumnDefinition Width="80" />
+                                                        <ColumnDefinition Width="30" />
                                                     </Grid.ColumnDefinitions>
 
                                                     <Grid.RowDefinitions>
@@ -225,18 +226,19 @@
                                                     </Grid.RowDefinitions>
 
                                                     <TextBlock Grid.Column="0"
-                                                               Grid.Row="1"
+                                                               Grid.Row="0"
                                                                VerticalAlignment="Center"
                                                                Text="Backup: " />
 
                                                     <TextBox Grid.Column="1"
-                                                             Grid.Row="1"
+                                                             Grid.Row="0"
                                                              Style="{DynamicResource BackupTextBoxStyle}"
                                                              VerticalContentAlignment="Center"
                                                              Text="{Binding Path, Mode=OneWay}"
                                                              IsEnabled="False" />
+                                                    
                                                     <Button Grid.Column="2"
-                                                            Grid.Row="1"
+                                                            Grid.Row="0"
                                                             Style="{StaticResource ImageButton}"
                                                             Width="30"
                                                             Command="{Binding DataContext.BrowseBackupButton_Click,
@@ -248,6 +250,23 @@
                                                             ToolTipService.ShowOnDisabled="True"
                                                             ToolTip="Browse">
                                                         <Image Source="/Assets/folder-open.png" />
+                                                    </Button>
+
+                                                    <Button Grid.Column="3"
+                                                            Grid.Row="0"
+                                                            Style="{DynamicResource DeleteBackupButton}"
+                                                            Margin="0 0 20 0"
+                                                            Command="{Binding DataContext.DeleteBackupButton_Click,
+                                                                              RelativeSource={RelativeSource FindAncestor,
+                                                                              AncestorType={x:Type UserControl}}}"
+                                                            CommandParameter="{Binding}">
+                                                        <Grid Width="11">
+                                                            <Path Data="M29.916016,0L31.999023,2.0700073 17.988037,16 32,29.930054 29.91803,
+                                                                  32 15.905029,18.070007 2.0820313,31.812012 0,29.742004 13.822998,
+                                                                  16 0.0010375977,2.2590332 2.0840454,0.18902588 15.905029,13.929016z"
+                                                                  Style="{DynamicResource PathStyle}"
+                                                                  Stretch="Uniform" />
+                                                        </Grid>
                                                     </Button>
                                                 </Grid>
                                             </DataTemplate>

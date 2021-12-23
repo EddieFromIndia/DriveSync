@@ -28,6 +28,9 @@
         <DataTemplate x:Name="SyncViewTemplate" DataType="{x:Type vm:SyncViewModel}">
             <view:SyncView DataContext="{Binding}" />
         </DataTemplate>
+        <DataTemplate x:Name="RestoreViewTemplate" DataType="{x:Type vm:RestoreViewModel}">
+            <view:RestoreView DataContext="{Binding}" />
+        </DataTemplate>
         
         <!--#region Main Window Styling-->
         <Style TargetType="{x:Type view:HomeWindow}">

@@ -78,7 +78,7 @@
                 MinWidth="385"
                 MaxWidth="500"
                 Style="{DynamicResource HomePageButton}"
-                Command="{Binding SyncButton_Click}">
+                Command="{Binding RestoreButton_Click}">
             <Button.Content>
                 <StackPanel>
                     <Image Height="60" Source="/Assets/restore-backup.png" />
