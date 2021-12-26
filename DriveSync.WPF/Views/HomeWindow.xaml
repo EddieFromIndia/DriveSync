@@ -107,6 +107,7 @@
                                                     <ColumnDefinition Width="48" />
                                                     <ColumnDefinition Width="48" />
                                                     <ColumnDefinition Width="48" />
+                                                    <ColumnDefinition Width="48" />
                                                 </Grid.ColumnDefinitions>
 
                                                 <Image Grid.Column="0"
@@ -123,21 +124,34 @@
                                                         HorizontalAlignment="Right"
                                                         ToolTipService.InitialShowDelay="500"
                                                         ToolTipService.BetweenShowDelay="500"
+                                                        ToolTip="Options"
+                                                        Command="{Binding OptionsButton_Click}"
+                                                        CommandParameter="{Binding RelativeSource={RelativeSource
+                                                                                                   Mode=FindAncestor,
+                                                                                                   AncestorType={x:Type Window}}}">
+                                                    <Grid Width="10" Margin="0 1 0 0">
+                                                        <Path Data="M0,0l32,0 0,2 -32,0z M0,13l32,0 0,2 -32,0z M0,26l32,0 0,2 -32,0z"
+                                                              Style="{DynamicResource PathStyle}"
+                                                              Stretch="Uniform" UseLayoutRounding="True" />
+                                                    </Grid>
+                                                </Button>
+                                                <Button Grid.Column="3"
+                                                        Style="{DynamicResource TitleBarButton}"
+                                                        HorizontalAlignment="Right"
+                                                        ToolTipService.InitialShowDelay="500"
+                                                        ToolTipService.BetweenShowDelay="500"
                                                         ToolTip="Minimize"
                                                         Command="{Binding MinimizeButton_Click}"
                                                         CommandParameter="{Binding RelativeSource={RelativeSource
                                                                                                    Mode=FindAncestor,
                                                                                                    AncestorType={x:Type Window}}}">
-                                                    <Image Source="{Binding RelativeSource={RelativeSource
-                                                                                            Mode=FindAncestor,
-                                                                                            AncestorType={x:Type Window}},
-                                                                    Converter={x:Static converter:WindowStateToImageConverter.Instance},
-                                                                    ConverterParameter='minimize',
-                                                                    Path=WindowState,
-                                                                    Mode=OneWay}"
-                                                           Height="16" />
+                                                    <Grid Width="10" Margin="0 1 0 0">
+                                                        <Path Data="M0,0l32,0 0,2 -32,0z"
+                                                              Style="{DynamicResource PathStyle}"
+                                                              Stretch="Uniform" SnapsToDevicePixels="True" />
+                                                    </Grid>
                                                 </Button>
-                                                <Button Grid.Column="3"
+                                                <Button Grid.Column="4"
                                                         Style="{DynamicResource TitleBarButton}"
                                                         ToolTipService.InitialShowDelay="500"
                                                         ToolTipService.BetweenShowDelay="500"
@@ -146,16 +160,18 @@
                                                         CommandParameter="{Binding RelativeSource={RelativeSource
                                                                                                    Mode=FindAncestor,
                                                                                                    AncestorType={x:Type Window}}}">
-                                                    <Image Source="{Binding RelativeSource={RelativeSource
+                                                    <Grid Width="10">
+                                                        <Path Data="{Binding RelativeSource={RelativeSource
                                                                                             Mode=FindAncestor,
                                                                                             AncestorType={x:Type Window}},
-                                                                    Converter={x:Static converter:WindowStateToImageConverter.Instance},
-                                                                    ConverterParameter='maximize',
+                                                                    Converter={x:Static converter:WindowStateToPathConverter.Instance},
                                                                     Path=WindowState,
                                                                     Mode=OneWay}"
-                                                           Height="16" />
+                                                              Style="{DynamicResource PathStyle}"
+                                                              Stretch="Uniform" />
+                                                    </Grid>
                                                 </Button>
-                                                <Button Grid.Column="4"
+                                                <Button Grid.Column="5"
                                                         Style="{DynamicResource TitleBarButton}"
                                                         HorizontalAlignment="Right"
                                                         ToolTipService.InitialShowDelay="500"
@@ -165,7 +181,7 @@
                                                         CommandParameter="{Binding RelativeSource={RelativeSource
                                                                                                    Mode=FindAncestor,
                                                                                                    AncestorType={x:Type Window}}}">
-                                                    <Grid Width="11">
+                                                    <Grid Width="10">
                                                         <Path Data="M29.916016,0L31.999023,2.0700073 17.988037,16 32,29.930054 29.91803,
                                                               32 15.905029,18.070007 2.0820313,31.812012 0,29.742004 13.822998,
                                                               16 0.0010375977,2.2590332 2.0840454,0.18902588 15.905029,13.929016z"

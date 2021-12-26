@@ -15,8 +15,10 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="75" /> <!--Menu-->
-            <RowDefinition Height="30" /> <!--Padding-->
+            <RowDefinition Height="40" /> <!--Padding-->
+            <RowDefinition Height="25" /> <!--Heading-->
+            <RowDefinition Height="25" /> <!--Sub-heading-->
+            <RowDefinition Height="25" /> <!--Padding-->
             <RowDefinition Height="30" /> <!--Restore from-->
             <RowDefinition Height="10" /> <!--Padding-->
             <RowDefinition Height="30" /> <!--Restore to-->
@@ -30,88 +32,28 @@
         </Grid.RowDefinitions>
 
         <!--Menu-->
-        <StackPanel Grid.Column="0"
-                    Grid.Row="0"
-                    Grid.ColumnSpan="5"
-                    Orientation="Horizontal"
-                    Style="{DynamicResource HeaderStyle}">
+        <Button Grid.Column="1"
+                Grid.Row="0"
+                HorizontalAlignment="Left"                
+                Style="{DynamicResource HeaderButton}"
+                Margin="0 12 0 0"
+                Command="{Binding HomeButton_Click}"
+                ToolTipService.InitialShowDelay="500"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.ShowOnDisabled="True"
+                ToolTip="Back to Home">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/Assets/back-to-home.png" Width="28" />
+                <TextBlock Text="Back To Home" TextAlignment="Center" VerticalAlignment="Center" Margin="8 0" TextWrapping="WrapWithOverflow" />
+            </StackPanel>
+        </Button>
 
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="30 2 0 0"
-                    Command="{Binding HomeButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Back to Home">
-                <StackPanel>
-                    <Image Source="/Assets/back-to-home.png" Width="28" Margin="4" />
-                    <TextBlock Text="Back To Home" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding RefreshButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Refresh">
-                <StackPanel>
-                    <Image Source="/Assets/refresh.png" Width="28" Margin="4" />
-                    <TextBlock Text="Refresh" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-
-            <Line Style="{DynamicResource LineSeparatorStyle}" Margin="20 0 10 0" />
-
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding SettingsButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Settings">
-                <StackPanel>
-                    <Image Source="/Assets/settings.png" Width="32" Margin="2" />
-                    <TextBlock Text="Settings" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding UpdateButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Check for updates">
-                <StackPanel>
-                    <Image Source="/Assets/update.png" Width="32" Margin="2" />
-                    <TextBlock Text="Check for updates" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-
-            <Line Style="{DynamicResource LineSeparatorStyle}" Margin="20 0 10 0" />
-
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding TutorialButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Tutorials">
-                <StackPanel>
-                    <Image Source="/Assets/tutorial.png" Width="32" Margin="2" />
-                    <TextBlock Text="Tutorials" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-        </StackPanel>
+        <TextBlock Grid.Column="1" Grid.Row="1" FontSize="16" VerticalAlignment="Top" TextAlignment="Center" Text="Select a backup, choose a destination, and click on Restore." />
+        <TextBlock Grid.Column="1" Grid.Row="2" FontStyle="Italic" VerticalAlignment="Center" TextAlignment="Center" Text="Note: Anything on the destination will be deleted." />
 
         <!--Restore from-->
         <Grid Grid.Column="1"
-              Grid.Row="2"
+              Grid.Row="4"
               HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120" />
@@ -143,7 +85,7 @@
 
         <!--Restore to-->
         <Grid Grid.Column="1"
-              Grid.Row="4"
+              Grid.Row="6"
               HorizontalAlignment="Stretch">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="120" />
@@ -175,7 +117,7 @@
 
         <!--Address Display Area-->
         <Border Grid.Column="1"
-                Grid.Row="6"
+                Grid.Row="8"
                 Style="{DynamicResource AddressAreaStyle}">
             <Grid Visibility="{Binding LastPath,
                                Converter={x:Static converter:StringToVisibilityConverter.Instance},
@@ -212,7 +154,7 @@
         </Border>
 
         <!--Content Display Area-->
-        <Grid Grid.Column="1" Grid.Row="7">
+        <Grid Grid.Column="1" Grid.Row="9">
             <Border Style="{DynamicResource MainDisplayAreaStyle}">
                 <ListView x:Name="ContentDisplay"
                           ItemsSource="{Binding DirectoriesToDisplay}"
@@ -267,7 +209,7 @@
         
         <!--Main Button Area-->
         <StackPanel Grid.Column="1"
-                    Grid.Row="9"
+                    Grid.Row="11"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
             <Button Style="{DynamicResource GeneralButton}"
@@ -295,7 +237,7 @@
 
         <!--Footer-->
         <StackPanel Grid.Column="1"
-                    Grid.Row="11"
+                    Grid.Row="13"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"

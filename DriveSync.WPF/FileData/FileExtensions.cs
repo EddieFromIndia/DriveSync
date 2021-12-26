@@ -29,8 +29,8 @@ public class FileExtensions
                 "tfm", "ttc", "ttf", "ufo", "woff", "woff2" };
 
     public static List<string> Image = new()
-        { "3fr", "arw", "avif", "bmp", "cr2", "dc3", "dcm", "dib", "dic", "dng", "eps", "gif", "icb", "ico", "j2c", "j2k", "jp2",
-                "jpe", "jpeg", "jpc", "jpf", "jpg", "jps", "jpx", "mpo", "nef", "orf", "pam", "pbm", "pcx", "pdd", "pef", "pfm", "pgm", "png",
+        { "3fr", "arw", "avci", "avcs", "avif", "avifs", "bmp", "cr2", "dc3", "dcm", "dib", "dic", "dng", "eps", "gif", "heic", "heics", "heif", "heifs", "icb", "ico",
+                "j2c", "j2k", "jp2", "jpe", "jpeg", "jpc", "jpf", "jpg", "jps", "jpx", "mpo", "nef", "orf", "pam", "pbm", "pcx", "pdd", "pef", "pfm", "pgm", "png",
                 "pnm", "ppm", "psb", "psd", "psdt", "pxr", "raf", "raw", "rle", "rw2", "sct", "sr2", "svg", "tga", "tif", "tiff", "vda", "vst", "xbm", "xpm" };
 
     public static List<string> MarkupLanguage = new()
@@ -52,7 +52,7 @@ public class FileExtensions
         { "doc", "docm", "docx", "dotm", "dotx", "eml", "ini", "md", "odt", "rtf", "txt", "xps" };
 
     public static List<string> Video = new()
-        { "3g2", "3gp", "amv", "asf", "avi", "drc", "f4v", "flv", "gifv", "m4v", "mkv", "m2ts", "m2v", "m4p", "m4v",
+        { "3g2", "3gp", "amv", "asf", "avi", "drc", "f4v", "flv", "gifv", "hevc", "m4v", "mkv", "m2ts", "m2v", "m4p", "m4v",
                 "mov", "mp4", "mpe", "mpeg", "mpg", "mpv", "mts", "mxf", "nsv", "ogv", "rm", "rmvb", "ts", "viv", "vob", "webm", "wmv" };
 
     private static readonly List<string> HashSearchableExtensions = new()

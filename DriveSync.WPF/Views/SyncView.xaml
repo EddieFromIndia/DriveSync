@@ -99,51 +99,6 @@
                                 FallbackValue='Hide empty folders'}" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
                 </StackPanel>
             </Button>
-
-            <Line Style="{DynamicResource LineSeparatorStyle}" Margin="20 0 10 0" />
-
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding SettingsButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Settings">
-                <StackPanel>
-                    <Image Source="/Assets/settings.png" Width="32" Margin="2" />
-                    <TextBlock Text="Settings" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding UpdateButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Check for updates">
-                <StackPanel>
-                    <Image Source="/Assets/update.png" Width="32" Margin="2" />
-                    <TextBlock Text="Check for updates" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-
-            <Line Style="{DynamicResource LineSeparatorStyle}" Margin="20 0 10 0" />
-
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding TutorialButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Tutorials">
-                <StackPanel>
-                    <Image Source="/Assets/tutorial.png" Width="32" Margin="2" />
-                    <TextBlock Text="Tutorials" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
         </StackPanel>
 
         <!--Original-->

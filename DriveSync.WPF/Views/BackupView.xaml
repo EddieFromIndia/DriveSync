@@ -3,7 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:converter="clr-namespace:DriveSync.Converters"
              mc:Ignorable="d">
 
@@ -15,11 +14,10 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="75" /> <!--Menu-->
-            <RowDefinition Height="15" /> <!--Padding-->
-            <RowDefinition Height="30" /> <!--Heading-->
-            <RowDefinition Height="30" /> <!--Sub-heading-->
-            <RowDefinition Height="15" /> <!--Padding-->
+            <RowDefinition Height="40" /> <!--Padding-->
+            <RowDefinition Height="25" /> <!--Heading-->
+            <RowDefinition Height="25" /> <!--Sub-heading-->
+            <RowDefinition Height="25" /> <!--Padding-->
             <RowDefinition Height="*" /> <!--Main Area-->
             <RowDefinition Height="20" /> <!--Padding-->
             <RowDefinition Height="30" /> <!--Buttons-->
@@ -28,74 +26,27 @@
         </Grid.RowDefinitions>
 
         <!--Menu-->
-        <StackPanel Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    Grid.Row="0"
-                    Orientation="Horizontal"
-                    Style="{DynamicResource HeaderStyle}">
+        <Button Grid.Column="1"
+                Grid.Row="0"
+                HorizontalAlignment="Left"                
+                Style="{DynamicResource HeaderButton}"
+                Margin="0 12 0 0"
+                Command="{Binding HomeButton_Click}"
+                ToolTipService.InitialShowDelay="500"
+                ToolTipService.BetweenShowDelay="500"
+                ToolTipService.ShowOnDisabled="True"
+                ToolTip="Back to Home">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/Assets/back-to-home.png" Width="28" />
+                <TextBlock Text="Back To Home" TextAlignment="Center" VerticalAlignment="Center" Margin="8 0" TextWrapping="WrapWithOverflow" />
+            </StackPanel>
+        </Button>
 
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="30 2 0 0"
-                    Command="{Binding HomeButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Back to Home">
-                <StackPanel>
-                    <Image Source="/Assets/back-to-home.png" Width="28" Margin="4" />
-                    <TextBlock Text="Back To Home" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding SettingsButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Settings">
-                <StackPanel>
-                    <Image Source="/Assets/settings.png" Width="32" Margin="2" />
-                    <TextBlock Text="Settings" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding UpdateButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Check for updates">
-                <StackPanel>
-                    <Image Source="/Assets/update.png" Width="32" Margin="2" />
-                    <TextBlock Text="Check for updates" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-
-            <Line Style="{DynamicResource LineSeparatorStyle}" Margin="20 0 10 0" />
-
-            <Button Style="{DynamicResource HeaderButton}"
-                    Width="65"
-                    Margin="0 2 0 0"
-                    Command="{Binding TutorialButton_Click}"
-                    ToolTipService.InitialShowDelay="500"
-                    ToolTipService.BetweenShowDelay="500"
-                    ToolTipService.ShowOnDisabled="True"
-                    ToolTip="Tutorials">
-                <StackPanel>
-                    <Image Source="/Assets/tutorial.png" Width="32" Margin="2" />
-                    <TextBlock Text="Tutorials" TextAlignment="Center" TextWrapping="WrapWithOverflow" />
-                </StackPanel>
-            </Button>
-        </StackPanel>
-
-        <TextBlock Grid.Column="1" Grid.Row="2" Margin="0 10 0 0" FontSize="16" TextAlignment="Center" Text="Add a new backup job and click on Start Backup." />
-        <TextBlock Grid.Column="1" Grid.Row="3" FontStyle="Italic" VerticalAlignment="Center" TextAlignment="Center" Text="You can add multiple backup jobs at a time." />
+        <TextBlock Grid.Column="1" Grid.Row="1" FontSize="16" VerticalAlignment="Top" TextAlignment="Center" Text="Add a new backup job and click on Start Backup." />
+        <TextBlock Grid.Column="1" Grid.Row="2" FontStyle="Italic" VerticalAlignment="Center" TextAlignment="Center" Text="You can add multiple backup jobs at a time." />
 
         <!--Main Area-->
-        <ScrollViewer Grid.Column="1" Grid.Row="5" VerticalScrollBarVisibility="Auto" Background="Transparent">
+        <ScrollViewer Grid.Column="1" Grid.Row="4" VerticalScrollBarVisibility="Auto" Background="Transparent">
             <StackPanel>
                 <ListView ItemsSource="{Binding Jobs}"
                           Style="{DynamicResource UnscrollableListViewStyle}"
@@ -310,7 +261,7 @@
 
         <!--Main Button Area-->
         <StackPanel Grid.Column="1"
-                    Grid.Row="7"
+                    Grid.Row="6"
                     Orientation="Horizontal"
                     HorizontalAlignment="Right">
             <Button Style="{DynamicResource GeneralButton}"
