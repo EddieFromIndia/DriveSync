@@ -546,9 +546,11 @@
 
             <TextBlock Text="{Binding ProgressString}"
                        Margin="0 0 10 0"
+                       VerticalAlignment="Center"
                        FontSize="11" />
             <ProgressBar Width="120"
-                         Height="16"
+                         Height="12"
+                         VerticalAlignment="Center"
                          Minimum="0"
                          Maximum="100"
                          Value="{Binding ProgressPercentage}" />

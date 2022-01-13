@@ -212,6 +212,15 @@ public class SyncViewModel : BaseViewModel
             isResolving = false;
             return;
         }
+        catch (IOException e)
+        {
+            _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+            OriginalDisplayText = string.Empty;
+            BackupDisplayText = string.Empty;
+            ProgressVisibility = Visibility.Hidden;
+            isResolving = false;
+            return;
+        }
         catch (NullReferenceException)
         {
             _ = DialogService.ShowDialog("Folder Missing", "A folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
@@ -361,6 +370,15 @@ public class SyncViewModel : BaseViewModel
                         OperationService.OperationType = OperationType.None;
                         return;
                     }
+                    catch (IOException e)
+                    {
+                        _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
+                        OperationService.OperationType = OperationType.None;
+                        return;
+                    }
                 }
                 else
                 {
@@ -402,6 +420,15 @@ public class SyncViewModel : BaseViewModel
                     catch (FileNotFoundException)
                     {
                         _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
+                        OperationService.OperationType = OperationType.None;
+                        return;
+                    }
+                    catch (IOException e)
+                    {
+                        _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
@@ -472,6 +499,15 @@ public class SyncViewModel : BaseViewModel
                                 OperationService.OperationType = OperationType.None;
                                 return;
                             }
+                            catch (IOException e)
+                            {
+                                _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+                                OriginalDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
+                                OperationService.OperationType = OperationType.None;
+                                return;
+                            }
                         }
                     }
                     else
@@ -524,6 +560,15 @@ public class SyncViewModel : BaseViewModel
                             OperationService.OperationType = OperationType.None;
                             return;
                         }
+                        catch (IOException e)
+                        {
+                            _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+                            OriginalDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
+                            OperationService.OperationType = OperationType.None;
+                            return;
+                        }
                         catch (NullReferenceException)
                         {
                             _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
@@ -531,6 +576,7 @@ public class SyncViewModel : BaseViewModel
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
                             OperationService.OperationType = OperationType.None;
+                            return;
                         }
                     }
                 }
@@ -575,6 +621,15 @@ public class SyncViewModel : BaseViewModel
                                 OperationService.OperationType = OperationType.None;
                                 return;
                             }
+                            catch (IOException e)
+                            {
+                                _ = DialogService.ShowDialog("Folder Missing", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+                                OriginalDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
+                                OperationService.OperationType = OperationType.None;
+                                return;
+                            }
                         }
                     }
                     else
@@ -613,6 +668,15 @@ public class SyncViewModel : BaseViewModel
                         catch (DirectoryNotFoundException)
                         {
                             _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                            OriginalDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
+                            OperationService.OperationType = OperationType.None;
+                            return;
+                        }
+                        catch (IOException e)
+                        {
+                            _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
@@ -684,6 +748,15 @@ public class SyncViewModel : BaseViewModel
                         OperationService.OperationType = OperationType.None;
                         return;
                     }
+                    catch (IOException e)
+                    {
+                        _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
+                        OperationService.OperationType = OperationType.None;
+                        return;
+                    }
                     catch (NullReferenceException)
                     {
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
@@ -734,6 +807,15 @@ public class SyncViewModel : BaseViewModel
                     catch (FileNotFoundException)
                     {
                         _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        OriginalDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
+                        OperationService.OperationType = OperationType.None;
+                        return;
+                    }
+                    catch (IOException e)
+                    {
+                        _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
                         OriginalDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
@@ -821,6 +903,15 @@ public class SyncViewModel : BaseViewModel
                         OperationService.OperationType = OperationType.None;
                         return;
                     }
+                    catch (IOException e)
+                    {
+                        _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
+                        OperationService.OperationType = OperationType.None;
+                        return;
+                    }
                 }
                 else
                 {
@@ -862,6 +953,15 @@ public class SyncViewModel : BaseViewModel
                     catch (FileNotFoundException)
                     {
                         _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
+                        OperationService.OperationType = OperationType.None;
+                        return;
+                    }
+                    catch (IOException e)
+                    {
+                        _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
@@ -929,6 +1029,15 @@ public class SyncViewModel : BaseViewModel
                                 OperationService.OperationType = OperationType.None;
                                 return;
                             }
+                            catch (IOException e)
+                            {
+                                _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
+                                OperationService.OperationType = OperationType.None;
+                                return;
+                            }
                         }
                     }
                     else
@@ -978,6 +1087,15 @@ public class SyncViewModel : BaseViewModel
                                 OperationService.OperationType = OperationType.None;
                                 return;
                             }
+                            catch (IOException e)
+                            {
+                                _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
+                                OperationService.OperationType = OperationType.None;
+                                return;
+                            }
                         }
                     }
                 }
@@ -1020,6 +1138,15 @@ public class SyncViewModel : BaseViewModel
                                 OperationService.OperationType = OperationType.None;
                                 return;
                             }
+                            catch (IOException e)
+                            {
+                                _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+                                BackupDisplayText = string.Empty;
+                                ProgressVisibility = Visibility.Hidden;
+                                isResolving = false;
+                                OperationService.OperationType = OperationType.None;
+                                return;
+                            }
                         }
                     }
                     else
@@ -1056,6 +1183,15 @@ public class SyncViewModel : BaseViewModel
                         catch (DirectoryNotFoundException)
                         {
                             _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                            BackupDisplayText = string.Empty;
+                            ProgressVisibility = Visibility.Hidden;
+                            isResolving = false;
+                            OperationService.OperationType = OperationType.None;
+                            return;
+                        }
+                        catch (IOException e)
+                        {
+                            _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
                             BackupDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
@@ -1115,6 +1251,15 @@ public class SyncViewModel : BaseViewModel
                         OperationService.OperationType = OperationType.None;
                         return;
                     }
+                    catch (IOException e)
+                    {
+                        _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
+                        OperationService.OperationType = OperationType.None;
+                        return;
+                    }
                     catch (NullReferenceException)
                     {
                         _ = DialogService.ShowDialog("Folder Missing", "The folder is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
@@ -1162,6 +1307,15 @@ public class SyncViewModel : BaseViewModel
                     catch (FileNotFoundException)
                     {
                         _ = DialogService.ShowDialog("File Missing", "A file you're trying to copy is missing. Check if the drive is still connected.", DialogButtonGroup.OK, DialogImage.Error);
+                        BackupDisplayText = string.Empty;
+                        ProgressVisibility = Visibility.Hidden;
+                        isResolving = false;
+                        OperationService.OperationType = OperationType.None;
+                        return;
+                    }
+                    catch (IOException e)
+                    {
+                        _ = DialogService.ShowDialog("Error", e.Message, DialogButtonGroup.OK, DialogImage.Error);
                         BackupDisplayText = string.Empty;
                         ProgressVisibility = Visibility.Hidden;
                         isResolving = false;
