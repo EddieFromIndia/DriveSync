@@ -29,7 +29,7 @@ public class FileExtensions
                 "tfm", "ttc", "ttf", "ufo", "woff", "woff2" };
 
     public static List<string> Image = new()
-        { "3fr", "arw", "avci", "avcs", "avif", "avifs", "bmp", "cr2", "dc3", "dcm", "dib", "dic", "dng", "eps", "gif", "heic", "heics", "heif", "heifs", "icb", "ico",
+        { "3fr", "ai", "arw", "avci", "avcs", "avif", "avifs", "bmp", "cr2", "dc3", "dcm", "dib", "dic", "dng", "eps", "gif", "heic", "heics", "heif", "heifs", "icb", "ico",
                 "j2c", "j2k", "jp2", "jpe", "jpeg", "jpc", "jpf", "jpg", "jps", "jpx", "mpo", "nef", "orf", "pam", "pbm", "pcx", "pdd", "pef", "pfm", "pgm", "png",
                 "pnm", "ppm", "psb", "psd", "psdt", "pxr", "raf", "raw", "rle", "rw2", "sct", "sr2", "svg", "tga", "tif", "tiff", "vda", "vst", "xbm", "xpm" };
 
