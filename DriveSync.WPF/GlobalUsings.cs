@@ -2,8 +2,8 @@
 global using DriveSync.Models;
 global using DriveSync.Properties;
 global using DriveSync.Services;
-global using DriveSync.Views;
 global using DriveSync.ViewModels;
+global using DriveSync.Views;
 global using System;
 global using System.Collections.Generic;
 global using System.Collections.ObjectModel;
@@ -21,4 +21,4 @@ global using System.Windows.Input;
 global using System.Windows.Interop;
 global using System.Windows.Media;
 global using System.Windows.Media.Imaging;
-global using System.Xml.Serialization;
+global using System.Windows.Threading;

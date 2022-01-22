@@ -649,7 +649,7 @@ public class SyncViewModel : BaseViewModel
                         }
                         catch (UnauthorizedAccessException)
                         {
-                            _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                            _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder, or a file is read-only or is in use.", DialogButtonGroup.OK, DialogImage.Forbidden);
                             OriginalDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
@@ -867,7 +867,7 @@ public class SyncViewModel : BaseViewModel
                     {
                         await Task.Run(() => File.Copy(((PathItem)sender).Item.FullName, ((PathItem)sender).Item.FullName.Replace(BackupPath, OriginalPath), true));
                     }
-                    catch(UnauthorizedAccessException)
+                    catch (UnauthorizedAccessException)
                     {
                         _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file.", DialogButtonGroup.OK, DialogImage.Forbidden);
                         BackupDisplayText = string.Empty;
@@ -1164,7 +1164,7 @@ public class SyncViewModel : BaseViewModel
                         }
                         catch (UnauthorizedAccessException)
                         {
-                            _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                            _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this folder, or a file is read-only or is in use.", DialogButtonGroup.OK, DialogImage.Forbidden);
                             BackupDisplayText = string.Empty;
                             ProgressVisibility = Visibility.Hidden;
                             isResolving = false;
@@ -1389,7 +1389,7 @@ public class SyncViewModel : BaseViewModel
             }
             catch (UnauthorizedAccessException)
             {
-                _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file/folder.", DialogButtonGroup.OK, DialogImage.Forbidden);
+                _ = DialogService.ShowDialog("Access Denied", "You are not authorized to access this file/folder, or a file is read-only or is in use.", DialogButtonGroup.OK, DialogImage.Forbidden);
                 BackupDisplayText = string.Empty;
                 ProgressVisibility = Visibility.Hidden;
                 isResolving = false;
@@ -1963,10 +1963,32 @@ public class SyncViewModel : BaseViewModel
     /// <param name="backupPath"></param>
     private static async Task CopyFilesRecursivelyAsync(string originalPath, string backupPath)
     {
+        Dispatcher dispatcher = Application.Current.Dispatcher;
         // Creates all of the directories
         if (Directory.Exists(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath)))
         {
-            await Task.Run(() => Directory.Delete(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath), true));
+            await Task.Run(() => {
+                try
+                {
+                    Directory.Delete(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath), true);
+                }
+                catch (UnauthorizedAccessException e)
+                {
+                    dispatcher.Invoke(() => _ = DialogService.ShowDialog("Access Denied", $"{ e.Message } The file might be read-only. Skipping the file.", DialogButtonGroup.OK, DialogImage.Forbidden));
+                }
+                catch (PathTooLongException e)
+                {
+                    dispatcher.Invoke(() => _ = DialogService.ShowDialog("Path too long", $"{ e.Message } Try deleting it manually. Skipping the file.", DialogButtonGroup.OK, DialogImage.Error));
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    dispatcher.Invoke(() => _ = DialogService.ShowDialog("Folder not found", $"The folder \"{ originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath) }\" is not found. Check if the drive is still connected. Trying to skip the folder.", DialogButtonGroup.OK, DialogImage.Error));
+                }
+                catch (IOException e)
+                {
+                    dispatcher.Invoke(() => _ = DialogService.ShowDialog("Error", $"{ e.Message }", DialogButtonGroup.OK, DialogImage.Error));
+                }
+            });
         }
 
         _ = Directory.CreateDirectory(originalPath.Replace(new DirectoryInfo(originalPath).Parent.ToString(), backupPath));
@@ -1993,21 +2015,66 @@ public class SyncViewModel : BaseViewModel
     {
         List<Task> tasks = new();
 
+        Dispatcher dispatcher = Application.Current.Dispatcher;
         // Deletes folders in backup that are not in original
-        foreach (string tDir in Directory.GetDirectories(backupPath))
+        List<string> backupDirectories = Directory.GetDirectories(backupPath).ToList();
+        foreach (string bDir in backupDirectories)
         {
-            if (Directory.GetDirectories(originalPath, new DirectoryInfo(tDir).Name).Length == 0)
+            if (Directory.GetDirectories(originalPath, new DirectoryInfo(bDir).Name).Length == 0)
             {
-                tasks.Add(Task.Run(() => Directory.Delete(tDir, true)));
+                tasks.Add(Task.Run(() => {
+                    try
+                    {
+                        Directory.Delete(bDir, true);
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        dispatcher.Invoke(() => _ = DialogService.ShowDialog("Access Denied", $"{ e.Message } The file might be read-only. Skipping the file.", DialogButtonGroup.OK, DialogImage.Forbidden));
+                    }
+                    catch (PathTooLongException)
+                    {
+                        dispatcher.Invoke(() => _ = DialogService.ShowDialog("Path too long", $"The path \"{ new DirectoryInfo(bDir).FullName }\" is too long. Try deleting it manually. Skipping the file.", DialogButtonGroup.OK, DialogImage.Error));
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        dispatcher.Invoke(() => _ = DialogService.ShowDialog("Folder not found", $"The folder \"{ new DirectoryInfo(bDir).FullName }\" is not found. Check if the drive is still connected. Trying to skip the folder.", DialogButtonGroup.OK, DialogImage.Error));
+                    }
+                    catch (IOException e)
+                    {
+                        dispatcher.Invoke(() => _ = DialogService.ShowDialog("Error", $"{ e.Message }", DialogButtonGroup.OK, DialogImage.Error));
+                    }
+                }));
             }
         }
 
         // Deletes files in backup that are not in original
-        foreach (string tFile in Directory.GetFiles(backupPath))
+        List<string> backupFiles = Directory.GetFiles(backupPath).ToList();
+        foreach (string bFile in backupFiles)
         {
-            if (Directory.GetFiles(originalPath, new DirectoryInfo(tFile).Name).Length == 0)
+            if (Directory.GetFiles(originalPath, new DirectoryInfo(bFile).Name).Length == 0)
             {
-                tasks.Add(Task.Run(() => File.Delete(tFile)));
+                tasks.Add(Task.Run(() => {
+                    try
+                    {
+                        File.Delete(bFile);
+                    }
+                    catch (UnauthorizedAccessException e)
+                    {
+                        dispatcher.Invoke(() => _ = DialogService.ShowDialog("Access Denied", $"{ e.Message } The file might be read-only. Skipping the file.", DialogButtonGroup.OK, DialogImage.Forbidden));
+                    }
+                    catch (PathTooLongException)
+                    {
+                        dispatcher.Invoke(() => _ = DialogService.ShowDialog("Path too long", $"The path \"{ new DirectoryInfo(bFile).FullName }\" is too long. Try manually deleting it. Skipping the file.", DialogButtonGroup.OK, DialogImage.Error));
+                    }
+                    catch (DirectoryNotFoundException)
+                    {
+                        dispatcher.Invoke(() => _ = DialogService.ShowDialog("File not found", $"The file \"{ new DirectoryInfo(bFile).FullName }\" is not found. Check if the drive is still connected. Trying to skip the file.", DialogButtonGroup.OK, DialogImage.Error));
+                    }
+                    catch (IOException e)
+                    {
+                        dispatcher.Invoke(() => _ = DialogService.ShowDialog("Error", $"{ e.Message }", DialogButtonGroup.OK, DialogImage.Error));
+                    }
+                }));
             }
         }
 
