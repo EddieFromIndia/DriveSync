@@ -1832,6 +1832,16 @@ public class SyncViewModel : BaseViewModel
                 }
             }
 
+            // Check all files inside entry2
+            foreach (string file in Directory.GetFiles(entry2))
+            {
+                // If file does not exist in entry1, return false, else continue
+                if (!File.Exists(file.Replace(entry2, entry1)))
+                {
+                    return false;
+                }
+            }
+
             // Check all folders inside entry1
             foreach (string dir in Directory.GetDirectories(entry1))
             {
@@ -1844,6 +1854,16 @@ public class SyncViewModel : BaseViewModel
                     }
                 }
                 else
+                {
+                    return false;
+                }
+            }
+
+            // Check all folders inside entry2
+            foreach (string dir in Directory.GetDirectories(entry2))
+            {
+                // if items does not exist in entry1, return false, else continue
+                if (!Directory.Exists(dir.Replace(entry2, entry1)))
                 {
                     return false;
                 }
